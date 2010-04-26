@@ -4,11 +4,10 @@ CFLAGS:=-W -Wall -Wextra
 
 .PHONY: all clean
 
-all: quipkit lib/gl_old/gl.so lib/sdl/sdl.so
+all: quipkit lib/sdl/sdl.so
 
 clean:
 	rm -f quipkit *.o
-	rm -f lib/gl_old/gl.so lib/gl_old/*.o
 	rm -f lib/sdl/sdl.so lib/sdl/*.o
 
 ### Quipkit ###
@@ -24,19 +23,6 @@ quipkit.o: quipkit.c
 		${CFLAGS} \
 		`pkg-config --cflags lua` \
 		-c quipkit.c
-
-### OpenGL bindings ###
-
-lib/gl_old/gl.so: lib/gl_old/gl.o
-	ld -shared -soname gl.so -o lib/gl_old/gl.so \
-		`pkg-config --libs gl` \
-		lib/gl_old/gl.o
-
-lib/gl_old/gl.o: lib/gl_old/gl.c
-	gcc -fPIC -o lib/gl_old/gl.o \
-		${CFLAGS} \
-		`pkg-config --cflags gl` \
-		-c lib/gl_old/gl.c
 
 ### SDL bindings ###
 
