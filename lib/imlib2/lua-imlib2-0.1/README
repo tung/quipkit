@@ -1,0 +1,13 @@
+Package: lua-imlib2
+Version: 0.1
+Author: A.S. Bradbury
+Website: http://asbradbury.org/projects/lua-imlib2/
+License: MIT/X11
+Description:
+  Provides a mostly complete binding to the imlib2 image manipulation library.  
+  You will need these libraries installed in order to use lua-imlib2 
+  (preferably a recent version). This release makes no effort to wrap the X11 
+  related Imlib2 functionality, but aims to support all other features. The 
+  API is fully documented. If you encounter any problems or have  any 
+  suggestions (or patches) then please contact me through the website listed 
+  above.
