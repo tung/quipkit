@@ -1,11 +1,7 @@
 require "game"
-require "glpng"
-
-local smile_texture
 
 function game.init()
     SDL.WM.SetCaption("OpenGL with SDL", "OpenGL")
-    smile_texture = glpng.PngBind("test/smile.png", glpng.NOMIPMAP, glpng.ALPHA, gl.CLAMP, gl.LINEAR, gl.LINEAR)
 end
 
 game.events[SDL.QUIT] = function ()
@@ -31,18 +27,14 @@ function game.draw()
     gl.ClearColor(0, 0, 0, 0)
     gl.Clear(gl.COLOR_BUFFER_BIT)
 
-    gl.BindTexture(gl.TEXTURE_2D, smile_texture.id)
-    gl.Begin(gl.QUADS)
-        gl.TexCoord(0, 0)
-        gl.Vertex(-1, -1, -2)
-        gl.TexCoord(1, 0)
+    gl.Begin(gl.TRIANGLES)
+        gl.Color(1, 0, 0)
+        gl.Vertex(0, 1, -2)
+        gl.Color(0, 1, 0)
         gl.Vertex(1, -1, -2)
-        gl.TexCoord(1, 1)
-        gl.Vertex(1, 1, -2)
-        gl.TexCoord(0, 1)
-        gl.Vertex(-1, 1, -2)
+        gl.Color(0, 0, 1)
+        gl.Vertex(-1, -1, -2)
     gl.End()
-
     gl.Flush()
 end
 
