@@ -1,3 +1,3 @@
 #include <lua.h>
 
-void load_sdl_event(lua_State *L);
+void load_sdl_event(lua_State *L, int index);

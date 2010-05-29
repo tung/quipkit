@@ -142,7 +142,7 @@ int luaopen_sdl(lua_State *L) {
     add_sdl_constants(L);
 
     /* Add sub-modules. */
-    load_sdl_event(L);
+    load_sdl_event(L, -1);
     load_sdl_gl(L);
     load_sdl_video(L);
     load_sdl_wm(L);

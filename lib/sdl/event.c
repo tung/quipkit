@@ -37,14 +37,14 @@ static void hat_position_to_table(lua_State *L, Uint8 value) {
 }
 
 
-static Uint8 table_to_hat_position(lua_State *L) {
-    /* Assume table to convert is on top of the stack. */
+/* Inflate Lua table at index into hat position bitmask. */
+static Uint8 table_to_hat_position(lua_State *L, int index) {
     Uint8 hat_pos = 0;
     #define gethat(pos) \
         do { \
             lua_pushinteger(L, SDL_HAT_##pos); \
-            lua_gettable(L, -2); \
-            if (lua_toboolean(L, - 1)) { \
+            lua_gettable(L, index < 0 ? index - 1 : index); \
+            if (lua_toboolean(L, -1)) { \
                 hat_pos |= SDL_HAT_##pos; \
             } \
             lua_pop(L, 1); \
@@ -83,13 +83,12 @@ static void mod_to_table(lua_State *L, SDLMod mod) {
 }
 
 
-static SDLMod table_to_mod(lua_State *L) {
-    /* Assume table to convert is on top of the stack. */
+static SDLMod table_to_mod(lua_State *L, int index) {
     SDLMod mod = 0;
     #define getmod(m) \
         do { \
             lua_pushinteger(L, KMOD_##m); \
-            lua_gettable(L, -2); \
+            lua_gettable(L, index < 0 ? index - 1 : index); \
             if (lua_toboolean(L, -1)) { \
                 mod |= KMOD_##m; \
             } \
@@ -120,11 +119,10 @@ static void unicode_to_string(lua_State *L, Uint16 uc_char) {
 }
 
 
-static Uint16 string_to_unicode(lua_State *L) {
-    /* Assume string to convert is on top of the table. */
+static Uint16 string_to_unicode(lua_State *L, int index) {
     Uint16 uc_char;
     size_t l;
-    const char *s = lua_tolstring(L, -1, &l);
+    const char *s = lua_tolstring(L, index, &l);
     /* Go with big endian, as above. */
     uc_char = 0;
     if (l >= 1) {
@@ -158,25 +156,24 @@ static void keysym_to_table(lua_State *L, SDL_keysym keysym) {
 }
 
 
-static void table_to_keysym(lua_State *L, SDL_Event *event) {
-    /* Assume table to convert is on top of the stack. */
+static void table_to_keysym(lua_State *L, int index, SDL_Event *event) {
     lua_pushliteral(L, "scancode");
-    lua_gettable(L, -2);
+    lua_gettable(L, index < 0 ? index - 1: index);
     event->key.keysym.scancode = lua_tointeger(L, -1);
     lua_pop(L, 1);
 
     lua_pushliteral(L, "sym");
-    lua_gettable(L, -2);
+    lua_gettable(L, index < 0 ? index - 1: index);
     event->key.keysym.sym = lua_tointeger(L, -1);
     lua_pop(L, 1);
 
     lua_pushliteral(L, "mod");
-    lua_gettable(L, -2);
-    event->key.keysym.mod = table_to_mod(L);
+    lua_gettable(L, index < 0 ? index - 1: index);
+    event->key.keysym.mod = table_to_mod(L, -1);
     lua_pop(L, 1);
 
     lua_pushliteral(L, "unicode");
-    lua_gettable(L, -2);
+    lua_gettable(L, index < 0 ? index - 1: index);
     switch (lua_type(L, -1)) {
         case LUA_TNIL:
             event->key.keysym.unicode = 0;
@@ -185,7 +182,7 @@ static void table_to_keysym(lua_State *L, SDL_Event *event) {
             event->key.keysym.unicode = lua_tointeger(L, -1);
             break;
         case LUA_TSTRING:
-            event->key.keysym.unicode = string_to_unicode(L);
+            event->key.keysym.unicode = string_to_unicode(L, -1);
             break;
         default:
             luaL_error(L, "bad unicode field type (expected nil/number/string, got %s)", lua_typename(L, -1));
@@ -208,13 +205,12 @@ static void button_state_to_table(lua_State *L, Uint8 state) {
 }
 
 
-static Uint8 table_to_button_state(lua_State *L) {
-    /* Assume table to convert is on top of the stack. */
+static Uint8 table_to_button_state(lua_State *L, int index) {
     Uint8 state = 0;
     #define getstateflag(n) \
         do { \
             lua_pushinteger(L, n); \
-            lua_gettable(L, -2); \
+            lua_gettable(L, index < 0 ? index - 1 : index); \
             if (lua_toboolean(L, -1)) { \
                 state |= 1 << (8 - n); \
             } \
@@ -573,7 +569,7 @@ static int PushEvent(lua_State *L) {
 
             lua_pushliteral(L, "value");
             lua_gettable(L, -2);
-            event.jhat.value = table_to_hat_position(L);
+            event.jhat.value = table_to_hat_position(L, -1);
             lua_pop(L, 1);
 
             popevent(L);
@@ -586,7 +582,7 @@ static int PushEvent(lua_State *L) {
 
             lua_pushliteral(L, "keysym");
             lua_gettable(L, -2);
-            table_to_keysym(L, &event);
+            table_to_keysym(L, -1, &event);
             lua_pop(L, 1);
 
             popevent(L);
@@ -607,7 +603,7 @@ static int PushEvent(lua_State *L) {
 
             lua_pushliteral(L, "state");
             lua_gettable(L, -2);
-            event.motion.state = table_to_button_state(L);
+            event.motion.state = table_to_button_state(L, -1);
             lua_pop(L, 1);
 
             getint(motion, x);
@@ -723,13 +719,13 @@ static const name_Uint8_pair sdl_event_constants[] = {
 };
 #undef defeconst
 
-static void load_sdl_event_constants(lua_State *L) {
-    /* Assume "SDL" module table is on top of the stack. */
+/* Load SDL event constants into SDL module table at index. */
+static void load_sdl_event_constants(lua_State *L, int index) {
     const name_Uint8_pair *p;
     for (p = sdl_event_constants; p->name != NULL; p++) {
         lua_pushstring(L, p->name);
         lua_pushinteger(L, p->uint);
-        lua_settable(L, -3);
+        lua_settable(L, index < 0 ? index - 2 : index);
     }
 }
 
@@ -873,13 +869,14 @@ static const name_SDLKey_pair sdl_key_constants[] = {
 };
 #undef defkey
 
-static void load_sdlk_constants(lua_State *L) {
+/* Load SDL key constants into SDL module table at index. */
+static void load_sdlk_constants(lua_State *L, int index) {
     const name_SDLKey_pair *p;
     lua_createtable(L, 0, sizeof(sdl_key_constants) / sizeof(name_SDLKey_pair));
     for (p = sdl_key_constants; p->name != NULL; p++) {
         lua_pushstring(L, p->name);
         lua_pushinteger(L, p->key);
-        lua_rawset(L, -3);
+        lua_rawset(L, index < 0 ? index - 2 : index);
     }
     lua_setglobal(L, "SDLK");
 }
@@ -902,13 +899,14 @@ static const name_SDLMod_pair sdl_kmod_constants[] = {
 };
 #undef defkmod
 
-static void load_kmod_constants(lua_State *L) {
+/* Load SDL key modifier constants into SDL module table at index. */
+static void load_kmod_constants(lua_State *L, int index) {
     const name_SDLMod_pair *p;
     lua_createtable(L, 0, sizeof(sdl_kmod_constants) / sizeof(name_SDLMod_pair));
     for (p = sdl_kmod_constants; p->name != NULL; p++) {
         lua_pushstring(L, p->name);
         lua_pushinteger(L, p->mod);
-        lua_rawset(L, -3);
+        lua_rawset(L, index < 0 ? index - 2 : index);
     }
     lua_setglobal(L, "KMOD");
 }
@@ -924,10 +922,10 @@ static const luaL_reg sdl_event_functions [] = {
     {NULL, NULL}
 };
 
-void load_sdl_event(lua_State *L) {
+void load_sdl_event(lua_State *L, int index) {
     /* Assume "SDL" module table is on top of the stack. */
     luaL_register(L, NULL, sdl_event_functions);
-    load_sdl_event_constants(L);
-    load_sdlk_constants(L);
-    load_kmod_constants(L);
+    load_sdl_event_constants(L, index);
+    load_sdlk_constants(L, index);
+    load_kmod_constants(L, index);
 }
