@@ -43,14 +43,14 @@ static const name_SDL_GLattr_pair sdl_gl_attributes[] = {
     {NULL, 0}
 };
 
-static void add_sdl_gl_constants(lua_State *L) {
+/* Add SDL GL constants to SDL.GL submodule table at index. */
+static void add_sdl_gl_constants(lua_State *L, int index) {
     const name_SDL_GLattr_pair *p;
 
     for (p = sdl_gl_attributes; p->name != NULL; p++) {
-        /* Assume SDL.GL sub-module is on top of the stack. */
         lua_pushstring(L, p->name);
         lua_pushinteger(L, p->attr);    /* I hope Lua integers can hold SDL_GLattrs. */
-        lua_settable(L, -3);
+        lua_settable(L, index < 0 ? index - 2 : index);
     }
 }
 
@@ -61,13 +61,12 @@ static const struct luaL_reg sdl_gl_functions[] = {
     {NULL, NULL}
 };
 
-void load_sdl_gl(lua_State *L) {
-    /* Assume "SDL" module table is on top of the stack. */
+void load_sdl_gl(lua_State *L, int index) {
     lua_pushliteral(L, "GL");
     lua_newtable(L);
     luaL_register(L, NULL, sdl_gl_functions);
 
-    add_sdl_gl_constants(L);
+    add_sdl_gl_constants(L, -1);
 
-    lua_settable(L, -3);
+    lua_settable(L, index < 0 ? index - 2 : index);
 }
