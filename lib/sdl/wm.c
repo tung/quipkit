@@ -23,10 +23,10 @@ static const luaL_reg sdl_wm_functions[] = {
     {NULL, NULL}
 };
 
-void load_sdl_wm(lua_State *L) {
-    /* Assume "SDL" module table is on top of the stack. */
+/* Load window manager API into SDL module table at index. */
+void load_sdl_wm(lua_State *L, int index) {
     lua_pushliteral(L, "WM");
     lua_newtable(L);
     luaL_register(L, NULL, sdl_wm_functions);
-    lua_settable(L, -3);
+    lua_settable(L, index < 0 ? index - 2 : index);
 }
