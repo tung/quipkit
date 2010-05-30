@@ -922,8 +922,8 @@ static const luaL_reg sdl_event_functions [] = {
     {NULL, NULL}
 };
 
+/* Load event API into SDL module table at index. */
 void load_sdl_event(lua_State *L, int index) {
-    /* Assume "SDL" module table is on top of the stack. */
     luaL_register(L, NULL, sdl_event_functions);
     load_sdl_event_constants(L, index);
     load_sdlk_constants(L, index);

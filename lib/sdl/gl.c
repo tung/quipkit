@@ -61,6 +61,7 @@ static const struct luaL_reg sdl_gl_functions[] = {
     {NULL, NULL}
 };
 
+/* Load GL API into SDL module table at index. */
 void load_sdl_gl(lua_State *L, int index) {
     lua_pushliteral(L, "GL");
     lua_newtable(L);
