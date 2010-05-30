@@ -14,15 +14,13 @@
 /* Not an official SDL function, but helps Lua/SDL binding users. */
 /* boolean main_result[, string message] -> ... */
 static int Assert(lua_State *L) {
-    int b;
-    const char *msg;
-    b = lua_toboolean(L, 1);
+    int b = lua_toboolean(L, 1);
 
     /* Mimic Lua's assert(). */
-    msg = luaL_optstring(L, 2, "SDL assertion failed!");
+    const char *msg = luaL_optstring(L, 2, "SDL assertion failed!");
     if (!b) {
         lua_pushstring(L, msg);
-        SDL_Quit();     /* This call is why Lua's assert() isn't adequate. */
+        SDL_Quit();     // This call is why Lua's assert() isn't adequate.
         lua_error(L);
     }
 
@@ -33,8 +31,7 @@ static int Assert(lua_State *L) {
 
 /* number milliseconds -> */
 static int Delay(lua_State *L) {
-    Uint32 ms;
-    ms = luaL_checkint(L, 1);
+    Uint32 ms = luaL_checkint(L, 1);
     SDL_Delay(ms);
     return 0;
 }
@@ -50,11 +47,8 @@ static int GetTicks(lua_State *L) {
 /* number flag -> boolean success[, string message]     OR  */
 /* array flags{} -> boolean success[, string message]       */
 static int Init(lua_State *L) {
-    int i;
     int l;
-    Uint32 flag;
     Uint32 flags = 0;
-
     switch (lua_type(L, 1)) {
         case LUA_TNUMBER:
             flags = lua_tointeger(L, 1);
@@ -63,7 +57,7 @@ static int Init(lua_State *L) {
         case LUA_TTABLE:
             /* Accumulate SDL_INIT_* flags. */
             l = lua_objlen(L, 1);
-            for (i = 1; i <= l; i++) {
+            for (int i = 1; i <= l; i++) {
                 lua_rawgeti(L, 1, i);
                 if (!lua_isnumber(L, -1)) {
                     /* All SDL functions except this and Quit throw errors instead. */
@@ -71,8 +65,7 @@ static int Init(lua_State *L) {
                     lua_pushfstring(L, "expected SDL_INIT_* flag at arg 1 index %d, got %s", i, lua_typename(L, -1));
                     return 2;
                 }
-                flag = lua_tointeger(L, -1);
-                flags |= flag;
+                flags |= lua_tointeger(L, -1);
                 lua_pop(L, 1);
             }
             break;
@@ -119,7 +112,7 @@ static void add_sdl_constants(lua_State *L, int index) {
     const name_Uint32_pair *p;
     for (p = sdl_init_flags; p->name != NULL; p++) {
         lua_pushstring(L, p->name);
-        lua_pushinteger(L, p->uint);    /* I hope Lua integers can hold SDL_INIT_* flags... */
+        lua_pushinteger(L, p->uint);    // I hope Lua integers can hold SDL_INIT_* flags...
         lua_settable(L, index < 0 ? index - 2 : index);
     }
 }

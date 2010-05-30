@@ -8,10 +8,8 @@
 
 /* string title, string icon_name -> */
 static int SetCaption(lua_State *L) {
-    const char *title;
-    const char *icon_name;
-    title = luaL_checkstring(L, 1);
-    icon_name = luaL_checkstring(L, 2);
+    const char *title = luaL_checkstring(L, 1);
+    const char *icon_name = luaL_checkstring(L, 2);
     SDL_WM_SetCaption(title, icon_name);
     return 0;
 }

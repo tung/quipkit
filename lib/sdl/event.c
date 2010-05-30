@@ -120,11 +120,10 @@ static void unicode_to_string(lua_State *L, Uint16 uc_char) {
 
 
 static Uint16 string_to_unicode(lua_State *L, int index) {
-    Uint16 uc_char;
     size_t l;
     const char *s = lua_tolstring(L, index, &l);
     /* Go with big endian, as above. */
-    uc_char = 0;
+    Uint16 uc_char = 0;
     if (l >= 1) {
         uc_char = s[1] << 8;
         if (l >= 2) {
@@ -463,7 +462,8 @@ static int GetKeyName(lua_State *L) {
 
 /* -> array buttons_state{0..8}, number x, number y */
 static int GetMouseState(lua_State *L) {
-    int x, y;
+    int x;
+    int y;
     Uint8 buttons = SDL_GetMouseState(&x, &y);
     button_state_to_table(L, buttons);
     lua_pushinteger(L, x);
@@ -497,15 +497,13 @@ static int PumpEvents(lua_State *L) {
 
 /* table event -> */
 static int PushEvent(lua_State *L) {
-    SDL_Event event;
-    int type;
-
     luaL_checktype(L, 1, LUA_TTABLE);
 
     /* Get the event type. */
     lua_pushliteral(L, "type");
     lua_gettable(L, 1);
-    type = lua_tointeger(L, -1);
+    int type = lua_tointeger(L, -1);
+    SDL_Event event;
     event.type = type;
 
     #define pushevent(st, n) \

@@ -1,4 +1,4 @@
-CFLAGS:=-W -Wall -Wextra
+CFLAGS:=-std=c99 -W -Wall -Wextra
 
 ### Tasks ###
 
