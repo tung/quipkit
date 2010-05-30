@@ -115,15 +115,12 @@ static const name_Uint32_pair sdl_init_flags[] = {
     {NULL, 0}
 };
 
-static void add_sdl_constants(lua_State *L) {
+static void add_sdl_constants(lua_State *L, int index) {
     const name_Uint32_pair *p;
-
-    /* Add SDL_INIT_* flag constants. */
     for (p = sdl_init_flags; p->name != NULL; p++) {
-        /* Assume SDL module table is on top of the stack. */
         lua_pushstring(L, p->name);
         lua_pushinteger(L, p->uint);    /* I hope Lua integers can hold SDL_INIT_* flags... */
-        lua_settable(L, -3);
+        lua_settable(L, index < 0 ? index - 2 : index);
     }
 }
 
@@ -139,7 +136,7 @@ static const struct luaL_reg sdl_functions[] = {
 
 int luaopen_sdl(lua_State *L) {
     luaL_register(L, "SDL", sdl_functions);
-    add_sdl_constants(L);
+    add_sdl_constants(L, -1);
 
     /* Add sub-modules. */
     load_sdl_event(L, -1);
