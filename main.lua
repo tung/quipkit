@@ -1,1 +1,1 @@
-require "test/game"
+require "test/pngtest"

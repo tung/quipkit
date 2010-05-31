@@ -4,7 +4,7 @@ CFLAGS:=-std=c99 -W -Wall -Wextra
 
 .PHONY: all clean
 
-all: quipkit lib/sdl/sdl.so
+all: quipkit lib/png/png.so lib/sdl/sdl.so
 
 clean:
 	-rm -f quipkit *.o
@@ -23,6 +23,19 @@ quipkit.o: quipkit.c
 		${CFLAGS} \
 		`pkg-config --cflags lua5.1` \
 		-c quipkit.c
+
+### libpng bindings ###
+
+lib/png/png.so: lib/png/png.o
+	gcc -shared -Wl,-soname,png.so -o lib/png/png.so \
+		`pkg-config --libs libpng lua5.1` \
+		lib/png/png.o
+
+lib/png/png.o: lib/png/png.c
+	gcc -fPIC -o lib/png/png.o \
+		${CFLAGS} \
+		`pkg-config --cflags libpng lua5.1` \
+		-c lib/png/png.c
 
 ### SDL bindings ###
 
