@@ -128,6 +128,15 @@ static const export_const_lua png_constants[] = {
     {NULL, 0}
 };
 
+static void add_png_constants(lua_State *L, int index) {
+    const export_const_lua *p;
+    for (p = png_constants; p->name; p++) {
+        lua_pushstring(L, p->name);
+        lua_pushinteger(L, p->value);
+        lua_rawset(L, index < 0 ? index - 2 : index);
+    }
+}
+
 
 static const struct luaL_reg png_functions[] = {
     {"Open", Open},
@@ -136,5 +145,6 @@ static const struct luaL_reg png_functions[] = {
 
 int luaopen_png(lua_State *L) {
     luaL_register(L, "PNG", png_functions);
+    add_png_constants(L, -1);
     return 1;
 }
