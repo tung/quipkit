@@ -69,11 +69,6 @@ static int Open(lua_State *L) {
     fclose(fp);
     fp = NULL;
 
-    if (!png_get_rows(png_ptr, info_ptr)) {
-        png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-        return luaL_error(L, "Could not read PNG image data from %s", filename);
-    }
-
     int width = png_get_image_width(png_ptr, info_ptr);
     int height = png_get_image_height(png_ptr, info_ptr);
 
@@ -110,6 +105,10 @@ static int Open(lua_State *L) {
     lua_pushliteral(L, "data");
     unsigned char *image_data = (unsigned char *)lua_newuserdata(L, width * height * channels);
     png_bytepp row_pointers = png_get_rows(png_ptr, info_ptr);
+    if (!row_pointers) {
+        png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+        return luaL_error(L, "Could not read PNG image data from %s", filename);
+    }
     for (int y = 0; y < height; ++y) {
         memcpy(image_data + y * width * channels, row_pointers[y], width * channels);
     }
