@@ -58,7 +58,6 @@ end
 run = function ()
     -- Is this a good way of going about things?
     assert(SDL.Init(SDL.INIT_EVERYTHING))
-    init()
 
     -- TODO: Allow customisation of these.
     SDL.GL.SetAttribute(SDL.GL.DOUBLEBUFFER, 1)
@@ -66,6 +65,8 @@ run = function ()
     SDL.GL.SetAttribute(SDL.GL.GREEN_SIZE, 8)
     SDL.GL.SetAttribute(SDL.GL.BLUE_SIZE, 8)
     SDL.SetVideoMode(640, 480, 32, SDL.OPENGL)
+
+    init()
 
     SDL.Assert(pcall(loop))
 

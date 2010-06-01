@@ -1,1 +1,1 @@
-require "test/pngtest"
+require "test/smile"
