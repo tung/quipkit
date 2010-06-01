@@ -108,7 +108,7 @@ static int Open(lua_State *L) {
     lua_rawset(L, -3);
 
     lua_pushliteral(L, "data");
-    char *image_data = (char *)lua_newuserdata(L, width * height * channels);
+    unsigned char *image_data = (unsigned char *)lua_newuserdata(L, width * height * channels);
     png_bytepp row_pointers = png_get_rows(png_ptr, info_ptr);
     for (int y = 0; y < height; ++y) {
         memcpy(image_data + y * width * channels, row_pointers[y], width * channels);
