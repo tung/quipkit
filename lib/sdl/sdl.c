@@ -108,11 +108,12 @@ static const name_Uint32_pair sdl_init_flags[] = {
     {NULL, 0}
 };
 
+/* Load base SDL constants into SDL module table at index. */
 static void add_sdl_constants(lua_State *L, int index) {
     const name_Uint32_pair *p;
     for (p = sdl_init_flags; p->name != NULL; p++) {
         lua_pushstring(L, p->name);
-        lua_pushinteger(L, p->uint);    // I hope Lua integers can hold SDL_INIT_* flags...
+        lua_pushinteger(L, p->uint);    // Assume Lua integers can hold SDL_INIT_* flags.
         lua_settable(L, index < 0 ? index - 2 : index);
     }
 }

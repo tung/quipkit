@@ -46,7 +46,7 @@ static void add_sdl_gl_constants(lua_State *L, int index) {
     const name_SDL_GLattr_pair *p;
     for (p = sdl_gl_attributes; p->name != NULL; p++) {
         lua_pushstring(L, p->name);
-        lua_pushinteger(L, p->attr);    // I hope Lua integers can hold SDL_GLattrs.
+        lua_pushinteger(L, p->attr);    // Assume Lua integers can hold SDL_GLattrs.
         lua_settable(L, index < 0 ? index - 2 : index);
     }
 }

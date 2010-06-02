@@ -62,11 +62,12 @@ static const name_Uint32_pair sdl_SetVideoMode_constants[] = {
     {NULL, 0}
 };
 
+/* Load SDL video constants into SDL module table at index. */
 static void load_sdl_video_constants(lua_State *L, int index) {
     const name_Uint32_pair *p;
     for (p = sdl_SetVideoMode_constants; p->name != NULL; p++) {
         lua_pushstring(L, p->name);
-        lua_pushinteger(L, p->uint);    // I hope Lua can hold flags in its numbers properly.
+        lua_pushinteger(L, p->uint);    // Assume Lua numbers can hold SDL video constants.
         lua_settable(L, index < 0 ? index - 2 : index);
     }
 }
@@ -77,13 +78,18 @@ static const luaL_reg sdl_video_functions[] = {
     {NULL, NULL}
 };
 
-/* Load video API into SDL module table at index. */
-void load_sdl_video(lua_State *L, int index) {
+/* Load SDL video functions into SDL module table at index. */
+static void load_sdl_video_functions(lua_State *L, int index) {
     const luaL_Reg *reg;
     for (reg = sdl_video_functions; reg->name != NULL; reg++) {
         lua_pushstring(L, reg->name);
         lua_pushcfunction(L, reg->func);
         lua_rawset(L, index < 0 ? index - 2 : index);
     }
+}
+
+/* Load video API into SDL module table at index. */
+void load_sdl_video(lua_State *L, int index) {
+    load_sdl_video_functions(L, index);
     load_sdl_video_constants(L, index);
 }
