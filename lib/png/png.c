@@ -133,7 +133,7 @@ static void add_png_constants(lua_State *L, int index) {
     for (p = png_constants; p->name; p++) {
         lua_pushstring(L, p->name);
         lua_pushinteger(L, p->value);
-        lua_rawset(L, index < 0 ? index - 2 : index);
+        lua_settable(L, index < 0 ? index - 2 : index);
     }
 }
 
