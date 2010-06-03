@@ -18,13 +18,13 @@ RPGs are notorious in indie game dev circles for being rare to find, hard to mak
 
 Making RPGs differs from making other kinds of games:
 
-* Much more content is needed.
+* Much more *content* is needed.
 ** Players go through it much quicker.
 ** Players expect the game to be long.
-* Much more state needs maintaining.
+* Much more *state* needs maintaining.
 ** Players expect many branching paths.
 ** Testing takes a lot longer.
-* RPGs are like several games influencing each other.
+* RPGs are like *several games* influencing each other.
 ** Map exploration meets combat meets money/stat management meets puzzle meets etc.
 ** And they _all_ have to be fun if the RPG is not to suck!
 
