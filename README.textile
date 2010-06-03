@@ -1,0 +1,47 @@
+h1. Quipkit
+
+Hi, I'm Tung, and I'm making this new game engine/editor combo called *Quipkit*.
+
+Quipkit is a computer role-playing game dev kit for the little guy. It was born as a newer alternative to the aging "Sphere RPG Engine":http://www.spheredev.org/, which provides tools and a programming platform to help create SNES-era RPGs.
+
+
+h2. Status
+
+*Quipkit is in its early days. It's not in any releasable state.*
+
+If you're still here, chances are you know me and want to see my code, or you're interested in helping me work on it. In either case, welcome!
+
+
+h2. The Indie RPG Problem
+
+RPGs are notorious in indie game dev circles for being rare to find, hard to make and of dubious quality if they're ever finished.
+
+Making RPGs differs from making other kinds of games:
+
+* Much more content is needed.
+** Players go through it much quicker.
+** Players expect the game to be long.
+* Much more state needs maintaining.
+** Players expect many branching paths.
+** Testing takes a lot longer.
+* RPGs are like several games influencing each other.
+** Map exploration meets combat meets money/stat management meets puzzle meets etc.
+** And they _all_ have to be fun if the RPG is not to suck!
+
+In short, there's more _everything_! Today's tools won't cut it.
+
+
+h2. The Quipkit Answer
+
+Quipkit aims to help you make that "more everything" in your quest to make the next indie RPG.
+
+The *game engine* runs on "Lua":http://www.lua.org/, a simple, powerful, gets-out-of-your-way scripting language to help keep your code under control. With Lua's power, handling all that state and those mini-game systems should be a snap!
+
+The Quipkit *editor*, also (to be) Lua-powered, gives you the power to make and tweak RPG content faster than ever with _tools_. You can script your own and use others'. Writing, drawing and directing your RPG can be streamlined, by yourself or with the help of your computer programming buddies.
+
+
+h2. For More Info
+
+Quipkit's source is available on Github: "http://github.com/tung/quipkit":http://github.com/tung/quipkit
+
+Quipkit has a wiki with ideas, also on Github: "http://wiki.github.com/tung/quipkit/":http://wiki.github.com/tung/quipkit/
