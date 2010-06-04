@@ -9,6 +9,8 @@ h2. Status
 
 *Quipkit is in its early days. It's not in any releasable state.*
 
+Right now, Quipkit builds as a basic game engine with some SDL, OpenGL and libpng bindings. It can build on Linux and Windows. Running it should show a yellow smiley face for a few seconds before closing.
+
 If you're still here, chances are you know me and want to see my code, or you're interested in helping me work on it. In either case, welcome!
 
 
