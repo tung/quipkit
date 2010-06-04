@@ -9,6 +9,10 @@
 
 #include "name_Uint_pair.h"
 
+#ifdef __MINGW32__
+#   include "sdl.h"
+#endif
+
 
 
 /* Not an official SDL function, but helps Lua/SDL binding users. */
@@ -128,7 +132,11 @@ static const struct luaL_reg sdl_functions[] = {
     {NULL, NULL}
 };
 
-int luaopen_sdl(lua_State *L) {
+int
+#ifdef __MINGW32__
+DLL_EXPORT
+#endif
+luaopen_sdl(lua_State *L) {
     luaL_register(L, "SDL", sdl_functions);
     add_sdl_constants(L, -1);
 
@@ -140,3 +148,12 @@ int luaopen_sdl(lua_State *L) {
 
     return 1;
 }
+
+#ifdef __MINGW32__
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
+    (void)hinstDLL;
+    (void)fdwReason;
+    (void)lpvReserved;
+    return TRUE;
+}
+#endif

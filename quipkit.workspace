@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="Workspace">
+		<Project filename="quipkit.cbp" active="1">
+			<Depends filename="lib/sdl/sdl.cbp" />
+			<Depends filename="lib/png/png.cbp" />
+		</Project>
+		<Project filename="lib/sdl/sdl.cbp" />
+		<Project filename="lib/png/png.cbp" />
+	</Workspace>
+</CodeBlocks_workspace_file>

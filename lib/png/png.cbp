@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="png" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option platforms="Windows;" />
+				<Option output="bin\Debug\luapng" prefix_auto="0" extension_auto="1" />
+				<Option object_output="obj\Debug\" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option platforms="Windows;" />
+				<Option output="bin\Release\luapng" prefix_auto="0" extension_auto="1" />
+				<Option object_output="obj\Release\" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wextra" />
+			<Add option="-Wall" />
+			<Add option="-std=c99" />
+			<Add directory="..\..\contrib\lua\include" />
+			<Add directory="..\..\contrib\libpng\include" />
+			<Add directory="..\..\contrib\zlib\include" />
+		</Compiler>
+		<Linker>
+			<Add library="..\..\contrib\lua\lua51.lib" />
+			<Add library="..\..\contrib\lua\lua5.1.lib" />
+			<Add library="..\..\contrib\libpng\lib\libpng.lib" />
+			<Add library="..\..\contrib\zlib\lib\zlib.lib" />
+			<Add directory="..\..\contrib\lua" />
+			<Add directory="..\..\contrib\libpng\lib" />
+			<Add directory="..\..\contrib\zlib\lib" />
+		</Linker>
+		<Unit filename="png.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="png.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

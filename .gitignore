@@ -1,4 +1,9 @@
+*~
 *.o
 *.so
 *.swp
+*.depend
+*.layout
 quipkit
+/obj
+/bin

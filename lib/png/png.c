@@ -5,6 +5,10 @@
 #include <lua.h>
 #include <lauxlib.h>
 
+#ifdef __MINGW32__
+#   include "png.h"
+#endif
+
 
 
 typedef struct {
@@ -143,8 +147,21 @@ static const struct luaL_reg png_functions[] = {
     {NULL, NULL}
 };
 
-int luaopen_png(lua_State *L) {
+int
+#ifdef __MINGW32__
+DLL_EXPORT
+#endif
+luaopen_png(lua_State *L) {
     luaL_register(L, "PNG", png_functions);
     add_png_constants(L, -1);
     return 1;
 }
+
+#ifdef __MINGW32__
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
+    (void)hinstDLL;
+    (void)fdwReason;
+    (void)lpvReserved;
+    return TRUE;
+}
+#endif

@@ -40,6 +40,28 @@ The *game engine* runs on "Lua":http://www.lua.org/, a simple, powerful, gets-ou
 The Quipkit *editor*, also (to be) Lua-powered, gives you the power to make and tweak RPG content faster than ever with _tools_. You can script your own and use others'. Writing, drawing and directing your RPG can be streamlined, by yourself or with the help of your computer programming buddies.
 
 
+h2. Building Quipkit
+
+Right now only the engine is available.
+
+h3. On Linux
+
+Install the development libs for:
+
+* OpenGL
+* SDL
+* libpng
+* Lua 5.1
+
+Then type @make@. Enter @./quipkit@ to try it out.
+
+h3. On Windows
+
+Install the Code::Blocks + MinGW combo from the Code::Blocks website.
+
+Open @quipkit.workspace@ and build the "Quipkit" project, which should build the "sdl" and "png" libraries as well. Run it from the IDE to try it out.
+
+
 h2. For More Info
 
 Quipkit's source is available on Github: "http://github.com/tung/quipkit":http://github.com/tung/quipkit
