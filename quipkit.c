@@ -4,7 +4,7 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
-int main() {
+int main(int argc, char *argv[]) {
     lua_State *L = (lua_State *)lua_open();
     luaL_openlibs(L);
 
@@ -14,7 +14,12 @@ int main() {
         return 1;
     }
 
-    if (luaL_loadfile(L, "main.lua") || lua_pcall(L, 0, 0, 0)) {
+    const char *main_script = "main.lua";
+    if (argc > 1) {
+        main_script = argv[1];
+    }
+
+    if (luaL_loadfile(L, main_script) || lua_pcall(L, 0, 0, 0)) {
         fprintf(stderr, "%s\n", lua_tostring(L, -1));
         lua_close(L);
         return 1;
