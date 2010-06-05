@@ -38,7 +38,7 @@ lib/png/png.o: lib/png/png.c
 QK_SDL_CFLAGS:=${QK_CFLAGS} `sdl-config --cflags`
 QK_SDL_LIBS:=${QK_LIBS} `sdl-config --libs`
 
-lib/sdl/sdl.so: lib/sdl/sdl.o lib/sdl/event.o lib/sdl/gl.o lib/sdl/video.o lib/sdl/wm.o
+lib/sdl/sdl.so: lib/sdl/sdl.o lib/sdl/event.o lib/sdl/gl.o lib/sdl/surface.o lib/sdl/video.o lib/sdl/wm.o
 	gcc -shared -Wl,-soname,$(notdir $@) -o $@ ${QK_SDL_LIBS} $+
 
 lib/sdl/sdl.o: lib/sdl/sdl.c lib/sdl/name_Uint_pair.h lib/sdl/event.h lib/sdl/gl.h lib/sdl/video.h lib/sdl/wm.h
@@ -47,7 +47,9 @@ lib/sdl/event.o: lib/sdl/event.c lib/sdl/event.h lib/sdl/name_Uint_pair.h
 	gcc -fPIC -o $@ ${QK_SDL_CFLAGS} -c $<
 lib/sdl/gl.o: lib/sdl/gl.c lib/sdl/gl.h
 	gcc -fPIC -o $@ ${QK_SDL_CFLAGS} -c $<
-lib/sdl/video.o: lib/sdl/video.c lib/sdl/video.h lib/sdl/name_Uint_pair.h
+lib/sdl/surface.o: lib/sdl/surface.c lib/sdl/surface.h
+	gcc -fPIC -o $@ ${QK_SDL_CFLAGS} -c $<
+lib/sdl/video.o: lib/sdl/video.c lib/sdl/video.h lib/sdl/name_Uint_pair.h lib/sdl/surface.h
 	gcc -fPIC -o $@ ${QK_SDL_CFLAGS} -c $<
 lib/sdl/wm.o: lib/sdl/wm.c lib/sdl/wm.h
 	gcc -fPIC -o $@ ${QK_SDL_CFLAGS} -c $<

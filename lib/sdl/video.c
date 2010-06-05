@@ -4,10 +4,25 @@
 
 #include "video.h"
 #include "name_Uint_pair.h"
+#include "surface.h"
 
 
 
-/* number width, number height, number bpp, (number flag OR array flags{}) -> */
+/**
+ * Exported SDL Functions
+ */
+
+/* userdatum<Lua SDL Surface> screen -> */
+static int Flip(lua_State *L) {
+    lua_sdl_surface *s = check_lua_sdl_surface(L, 1);
+    if (SDL_Flip(s->surface) != 0) {
+        return luaL_error(L, "SDL_Flip failed: %s", SDL_GetError());
+    }
+    return 0;
+}
+
+
+/* number width, number height, number bpp, (number flag OR array flags{}) -> userdatum<Lua SDL Surface> screen */
 static int SetVideoMode(lua_State *L) {
     int width = luaL_checkint(L, 1);
     int height = luaL_checkint(L, 2);
@@ -41,8 +56,9 @@ static int SetVideoMode(lua_State *L) {
         luaL_error(L, "SDL_SetVideoMode failed: %s", SDL_GetError());
     }
 
-    /* TODO: Return the screen surface somehow. Unlike most surfaces, it doesn't need freeing: SDL_Quit() does that. */
-    return 0;
+    /* Screen surface should not be freed: SDL_Quit does it for us. */
+    push_lua_sdl_surface(L, surface, 0);
+    return 1;
 }
 
 
@@ -74,6 +90,7 @@ static void load_sdl_video_constants(lua_State *L, int index) {
 
 
 static const luaL_reg sdl_video_functions[] = {
+    {"Flip", Flip},
     {"SetVideoMode", SetVideoMode},
     {NULL, NULL}
 };
@@ -88,8 +105,15 @@ static void load_sdl_video_functions(lua_State *L, int index) {
     }
 }
 
+
+
+/**
+ * Public API
+ */
+
 /* Load video API into SDL module table at index. */
 void load_sdl_video(lua_State *L, int index) {
+    setup_lua_sdl_surface(L, index);
     load_sdl_video_functions(L, index);
     load_sdl_video_constants(L, index);
 }
