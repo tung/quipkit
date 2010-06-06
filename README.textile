@@ -30,7 +30,7 @@ Making RPGs differs from making other kinds of games:
 ** Map exploration meets combat meets money/stat management meets puzzle meets etc.
 ** And they _all_ have to be fun if the RPG is not to suck!
 
-In short, there's more _everything_! Today's tools won't cut it.
+In short, RPGs are much bigger than other games, so stock tools won't cut it.
 
 
 h2. The Quipkit Answer
@@ -50,10 +50,10 @@ h3. On Linux
 
 Install the development libs for:
 
+* Lua 5.1
 * OpenGL
 * SDL
 * libpng
-* Lua 5.1
 
 Then type @make@. Enter @./quipkit@ to try it out.
 
@@ -66,6 +66,8 @@ Open @quipkit.workspace@ and build the "Quipkit" project, which should build the
 
 h2. For More Info
 
-Quipkit's source is available on Github: "http://github.com/tung/quipkit":http://github.com/tung/quipkit
+Quipkit's source is available on GitHub: "http://github.com/tung/quipkit":http://github.com/tung/quipkit
 
-Quipkit has a wiki with ideas, also on Github: "http://wiki.github.com/tung/quipkit/":http://wiki.github.com/tung/quipkit/
+The issues page gives a good idea of Quipkit's direction: "http://github.com/tung/quipkit/issues":http://github.com/tung/quipkit/issues
+
+The wiki with design notes and ideas: "http://wiki.github.com/tung/quipkit/":http://wiki.github.com/tung/quipkit/
