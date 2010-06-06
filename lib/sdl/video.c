@@ -57,7 +57,7 @@ static int SetVideoMode(lua_State *L) {
     }
 
     /* Screen surface should not be freed: SDL_Quit does it for us. */
-    push_lua_sdl_surface(L, surface, 0);
+    push_lua_sdl_surface(L, surface, 0, LUA_NOREF);
     return 1;
 }
 

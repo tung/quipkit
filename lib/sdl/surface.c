@@ -25,6 +25,7 @@ static int lua_sdl_surface_finalize(lua_State *L) {
         SDL_FreeSurface(s->surface);
         s->surface = NULL;
         s->can_free = 0;
+        luaL_unref(L, LUA_REGISTRYINDEX, s->pixel_ref);
     }
     return 0;
 }
@@ -84,6 +85,31 @@ static int BlitSurface(lua_State *L) {
 }
 
 
+/* userdatum pixels, number width, number height, number depth, number pitch, number Rmask, number Gmask, number Bmask, number Amask -> userdatum<Lua SDL Surface> surface */
+static int CreateRGBSurfaceFrom(lua_State *L) {
+    void *pixels = lua_touserdata(L, 1);
+    if (!pixels) {
+        return luaL_error(L, "bad argument #1 to 'CreateRGBSurfaceFrom' (userdatum expected, got %s)", lua_typename(L, 1));
+    }
+    int width = luaL_checkinteger(L, 2);
+    int height = luaL_checkinteger(L, 3);
+    int depth = luaL_checkinteger(L, 4);
+    int pitch = luaL_checkinteger(L, 5);
+    Uint32 Rmask = luaL_checkint(L, 6);
+    Uint32 Gmask = luaL_checkint(L, 7);
+    Uint32 Bmask = luaL_checkint(L, 8);
+    Uint32 Amask = luaL_checkint(L, 9);
+    SDL_Surface *s = SDL_CreateRGBSurfaceFrom(pixels, width, height, depth, pitch,
+                                              Rmask, Gmask, Bmask, Amask);
+    if (!s) {
+        return luaL_error(L, "SDL_CreateRGBSurfaceFrom failed: %s", SDL_GetError());
+    }
+    /* Create the surface with a ref to the pixel userdatum, so it lives as long as the surface. */
+    push_lua_sdl_surface(L, s, 1, luaL_ref(L, LUA_REGISTRYINDEX));
+    return 1;
+}
+
+
 /* string file -> userdatum<Lua SDL Surface> bmp */
 static int LoadBMP(lua_State *L) {
     const char *file = luaL_checkstring(L, 1);
@@ -91,7 +117,7 @@ static int LoadBMP(lua_State *L) {
     if (bmp == NULL) {
         return luaL_error(L, "SDL_LoadBMP failed: %s", SDL_GetError());
     }
-    push_lua_sdl_surface(L, bmp, 1);
+    push_lua_sdl_surface(L, bmp, 1, LUA_NOREF);
     return 1;
 }
 
@@ -104,6 +130,7 @@ static int FreeSurface(lua_State *L) {
 
 static const luaL_reg sdl_surface_functions[] = {
     {"BlitSurface", BlitSurface},
+    {"CreateRGBSurfaceFrom", CreateRGBSurfaceFrom},
     {"FreeSurface", FreeSurface},
     {"LoadBMP", LoadBMP},
     {NULL, NULL}
@@ -134,13 +161,14 @@ lua_sdl_surface *check_lua_sdl_surface(lua_State *L, int index) {
 
 
 /* Push a new Lua SDL Surface userdatum onto the stack. */
-void push_lua_sdl_surface(lua_State *L, SDL_Surface *surface, int can_free) {
+void push_lua_sdl_surface(lua_State *L, SDL_Surface *surface, int can_free, int pixel_ref) {
     lua_sdl_surface *s = (lua_sdl_surface *)lua_newuserdata(L, sizeof(lua_sdl_surface));
     luaL_getmetatable(L, LUA_SDL_SURFACE_KEY);
     lua_setmetatable(L, -2);
 
     s->surface = surface;
     s->can_free = can_free;
+    s->pixel_ref = pixel_ref;
 }
 
 
