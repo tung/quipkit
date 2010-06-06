@@ -61,6 +61,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="sdl.h" />
+		<Unit filename="surface.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="surface.h" />
 		<Unit filename="video.c">
 			<Option compilerVar="CC" />
 		</Unit>
