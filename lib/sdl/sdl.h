@@ -1,5 +1,5 @@
-#ifndef SDL_H_INCLUDED
-#define SDL_H_INCLUDED
+#ifndef QUIPKIT_SDL_H_INCLUDED
+#define QUIPKIT_SDL_H_INCLUDED
 
 /** Everything below was swiped from Code::Blocks' DLL template. */
 
@@ -27,4 +27,4 @@ int DLL_EXPORT luaopen_sdl(lua_State *L);
 }
 #endif
 
-#endif // SDL_H_INCLUDED
+#endif
