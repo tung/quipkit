@@ -11,6 +11,10 @@
 
 
 
+/**
+ * Declarations
+ */
+
 typedef struct {
     const char *name;
     int value;
@@ -23,6 +27,10 @@ typedef enum {
 } pixel_format;
 
 
+
+/**
+ * Exported PNG Functions
+ */
 
 /* Open a PNG file. Supports 24-bit RGB and 32-bit RGBA formats. */
 /* string filename -> table image{ number width, number height, number format, userdata data } */
@@ -124,6 +132,10 @@ static int Open(lua_State *L) {
 }
 
 
+
+/**
+ * Public API
+ */
 
 static const export_const_lua png_constants[] = {
     /* Pixel formats. */

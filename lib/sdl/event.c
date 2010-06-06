@@ -7,6 +7,10 @@
 
 
 
+/**
+ * Declarations
+ */
+
 typedef struct {
     const char *name;
     SDLKey key;
@@ -18,6 +22,10 @@ typedef struct {
 } name_SDLMod_pair;
 
 
+
+/**
+ * Exported SDL Event Functions
+ */
 
 /* Deflate joystick hat positions into an array. Access like event.jhat.value[SDL.HAT_CENTERED]. */
 /* Not sure how to incorporate SDL's convenience macros. */
@@ -677,6 +685,10 @@ static int WaitEvent(lua_State *L) {
 }
 
 
+
+/**
+ * Public API
+ */
 
 #define defeconst(name) {#name, SDL_##name}
 static const name_Uint8_pair sdl_event_constants[] = {

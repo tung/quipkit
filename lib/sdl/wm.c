@@ -6,6 +6,10 @@
 
 
 
+/**
+ * Exported SDL WM Functions
+ */
+
 /* string title, string icon_name -> */
 static int SetCaption(lua_State *L) {
     const char *title = luaL_checkstring(L, 1);
@@ -15,6 +19,10 @@ static int SetCaption(lua_State *L) {
 }
 
 
+
+/**
+ * Public API
+ */
 
 static const luaL_reg sdl_wm_functions[] = {
     {"SetCaption", SetCaption},

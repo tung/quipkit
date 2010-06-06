@@ -128,6 +128,11 @@ static int FreeSurface(lua_State *L) {
 }
 
 
+
+/**
+ * Public API
+ */
+
 static const luaL_reg sdl_surface_functions[] = {
     {"BlitSurface", BlitSurface},
     {"CreateRGBSurfaceFrom", CreateRGBSurfaceFrom},
@@ -146,11 +151,6 @@ static void load_sdl_surface_functions(lua_State *L, int index) {
     }
 }
 
-
-
-/**
- * Public API
- */
 
 /* Check if the element at index is a Lua SDL Surface and if so return it. */
 lua_sdl_surface *check_lua_sdl_surface(lua_State *L, int index) {

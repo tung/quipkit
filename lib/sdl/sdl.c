@@ -15,6 +15,10 @@
 
 
 
+/**
+ * Exported SDL Functions
+ */
+
 /* Not an official SDL function, but helps Lua/SDL binding users. */
 /* boolean main_result[, string message] -> ... */
 static int Assert(lua_State *L) {
@@ -99,6 +103,10 @@ static int Quit(lua_State *L) {
 }
 
 
+
+/**
+ * Public API
+ */
 
 static const name_Uint32_pair sdl_init_flags[] = {
     {"INIT_TIMER", SDL_INIT_TIMER},

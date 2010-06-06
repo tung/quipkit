@@ -41,7 +41,7 @@
 			<Add library="contrib\lua\lua5.1.lib" />
 			<Add directory="contrib\lua" />
 		</Linker>
-		<Unit filename=".gitignore">
+		<Unit filename="Makefile">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Unit filename="README.textile">
@@ -67,6 +67,12 @@
 		</Unit>
 		<Unit filename="quipkit.c">
 			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="test\blit.lua">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="test\blitpng.lua">
+			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Unit filename="test\game.lua">
 			<Option target="&lt;{~None~}&gt;" />

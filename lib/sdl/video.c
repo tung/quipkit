@@ -9,7 +9,7 @@
 
 
 /**
- * Exported SDL Functions
+ * Exported SDL Video Functions
  */
 
 /* userdatum<Lua SDL Surface> screen -> */
@@ -63,6 +63,10 @@ static int SetVideoMode(lua_State *L) {
 
 
 
+/**
+ * Public API
+ */
+
 static const name_Uint32_pair sdl_SetVideoMode_constants[] = {
     {"SWSURFACE", SDL_SWSURFACE},
     {"HWSURFACE", SDL_HWSURFACE},
@@ -105,11 +109,6 @@ static void load_sdl_video_functions(lua_State *L, int index) {
     }
 }
 
-
-
-/**
- * Public API
- */
 
 /* Load video API into SDL module table at index. */
 void load_sdl_video(lua_State *L, int index) {

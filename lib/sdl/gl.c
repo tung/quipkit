@@ -6,6 +6,21 @@
 
 
 
+/**
+ * Declarations
+ */
+
+typedef struct {
+    const char *name;
+    SDL_GLattr attr;
+} name_SDL_GLattr_pair;
+
+
+
+/**
+ * Exported SDL OpenGL Functions
+ */
+
 /* -> */
 static int SwapBuffers(lua_State *L) {
     (void)L;
@@ -27,10 +42,9 @@ static int SetAttribute(lua_State *L) {
 
 
 
-typedef struct {
-    const char *name;
-    SDL_GLattr attr;
-} name_SDL_GLattr_pair;
+/**
+ * Public API
+ */
 
 static const name_SDL_GLattr_pair sdl_gl_attributes[] = {
     {"DOUBLEBUFFER", SDL_GL_DOUBLEBUFFER},
