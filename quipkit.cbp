@@ -77,6 +77,9 @@
 		<Unit filename="test\game.lua">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
+		<Unit filename="test\gametest.lua">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="test\gl.lua">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
