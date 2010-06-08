@@ -1,41 +1,32 @@
 require "game"
 
-function game.init()
-    SDL.WM.SetCaption("OpenGL with SDL", "OpenGL")
+function game.Init()
+    SDL.WM.SetCaption("Colored Triangle", "OpenGL")
 end
 
-game.events[SDL.QUIT] = function ()
+game.Events[SDL.QUIT] = function ()
     return false
 end
 
 local milliseconds = 0
-function game.update(delta)
+function game.Update(delta)
     milliseconds = milliseconds + delta
     return milliseconds < 5000
 end
 
-function game.draw()
-    gl.Viewport(80, 0, 480, 480)
-
-    gl.MatrixMode(gl.PROJECTION)
-    gl.LoadIdentity()
-    gl.Frustum(-1, 1, -1, 1, 1, 100)
-
-    gl.MatrixMode(gl.MODELVIEW)
-    gl.LoadIdentity()
-
-    gl.ClearColor(0, 0, 0, 0)
-    gl.Clear(gl.COLOR_BUFFER_BIT)
+function game.Draw()
+    game.ClearScreen()
 
     gl.Begin(gl.TRIANGLES)
         gl.Color(1, 0, 0)
-        gl.Vertex(0, 1, -2)
+        gl.Vertex(320, 120)
         gl.Color(0, 1, 0)
-        gl.Vertex(1, -1, -2)
+        gl.Vertex(195, 360)
         gl.Color(0, 0, 1)
-        gl.Vertex(-1, -1, -2)
+        gl.Vertex(445, 360)
     gl.End()
-    gl.Flush()
 end
 
-game.run()
+game.Screen = {w = 640, h = 480}
+
+game.Run()

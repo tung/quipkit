@@ -1,1 +1,1 @@
-require "test/smile"
+require "test/gametest"
