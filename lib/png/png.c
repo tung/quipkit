@@ -16,6 +16,11 @@
  */
 
 typedef struct {
+    const char *filename;
+    lua_State *L;
+} luapng_error;
+
+typedef struct {
     const char *name;
     int value;
 } export_const_lua;
@@ -29,13 +34,33 @@ typedef enum {
 
 
 /**
+ * Lua PNG Helper Functions
+ */
+
+/* Handler for internal libpng errors. Pushes a string that the original function can then throw as a Lua error. */
+static void error_handler(png_structp png_ptr, png_const_charp message) {
+    luapng_error *error_ptr = (luapng_error *)png_get_error_ptr(png_ptr);
+    lua_pushfstring(error_ptr->L, "Internal libpng error while loading %s: %s", error_ptr->filename, message);
+
+    jmp_buf jmpbuf;
+    memcpy(jmpbuf, png_ptr->jmpbuf, sizeof(jmp_buf));
+    longjmp(jmpbuf, 1);
+}
+
+
+
+/**
  * Exported PNG Functions
  */
 
 /* Open a PNG file. Supports 24-bit RGB and 32-bit RGBA formats. */
 /* string filename -> table image{ number width, number height, number format, userdata data } */
 static int Open(lua_State *L) {
+    luapng_error error_data;
+    error_data.L = L;
+
     const char *filename = luaL_checkstring(L, 1);
+    error_data.filename = filename;
     FILE *fp = fopen(filename, "rb");
     if (fp == NULL) {
         return luaL_error(L, "Could not open %s", filename);
@@ -49,7 +74,8 @@ static int Open(lua_State *L) {
         return luaL_error(L, "Invalid PNG header in %s", filename);
     }
 
-    png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    /* Create the PNG read struct, passing in the Lua state so we can push errors onto the stack. */
+    png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, (png_voidp)&error_data, (png_error_ptr)error_handler, NULL);
     if (!png_ptr) {
         fclose(fp);
         return luaL_error(L, "Could not create PNG read struct");
@@ -68,7 +94,7 @@ static int Open(lua_State *L) {
         if (fp) {
             fclose(fp);
         }
-        return luaL_error(L, "Internal libpng error while loading %s", filename);
+        return lua_error(L);
     }
 
     png_init_io(png_ptr, fp);
