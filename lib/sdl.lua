@@ -3,7 +3,7 @@ if WIN32 then
     path = "lib/sdl/bin/Debug/luasdl.dll"
 else
     -- Assume Linux for now.
-    path = "lib/sdl/sdl.so"
+    path = "lib/sdl/libluasdl.so"
 end
 local entry = "luaopen_sdl"
 local f = assert(package.loadlib(path, entry))

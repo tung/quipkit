@@ -4,12 +4,12 @@ CFLAGS:=-std=c99 -W -Wall -Wextra
 
 .PHONY: all clean
 
-all: quipkit lib/png/png.so lib/sdl/sdl.so
+all: quipkit lib/png/libluapng.so lib/sdl/libluasdl.so
 
 clean:
 	-rm -f quipkit *.o
-	-rm -f lib/png/png.so lib/png/*.o
-	-rm -f lib/sdl/sdl.so lib/sdl/*.o
+	-rm -f lib/png/libluapng.so lib/png/*.o
+	-rm -f lib/sdl/libluasdl.so lib/sdl/*.o
 
 ### Quipkit ###
 
@@ -27,7 +27,7 @@ quipkit.o: quipkit.c
 QK_PNG_CFLAGS:=${QK_CFLAGS} `pkg-config --cflags libpng`
 QK_PNG_LIBS:=${QK_LIBS} `pkg-config --libs libpng`
 
-lib/png/png.so: lib/png/png.o
+lib/png/libluapng.so: lib/png/png.o
 	gcc -shared -Wl,-soname,$(notdir $@) -o $@ ${QK_PNG_LIBS} $+
 
 lib/png/png.o: lib/png/png.c
@@ -38,7 +38,7 @@ lib/png/png.o: lib/png/png.c
 QK_SDL_CFLAGS:=${QK_CFLAGS} `sdl-config --cflags`
 QK_SDL_LIBS:=${QK_LIBS} `sdl-config --libs`
 
-lib/sdl/sdl.so: lib/sdl/sdl.o lib/sdl/event.o lib/sdl/gl.o lib/sdl/surface.o lib/sdl/video.o lib/sdl/wm.o
+lib/sdl/libluasdl.so: lib/sdl/sdl.o lib/sdl/event.o lib/sdl/gl.o lib/sdl/surface.o lib/sdl/video.o lib/sdl/wm.o
 	gcc -shared -Wl,-soname,$(notdir $@) -o $@ ${QK_SDL_LIBS} $+
 
 lib/sdl/sdl.o: lib/sdl/sdl.c lib/sdl/name_Uint_pair.h lib/sdl/event.h lib/sdl/gl.h lib/sdl/video.h lib/sdl/wm.h
