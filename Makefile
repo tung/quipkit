@@ -4,28 +4,28 @@ CFLAGS:=-std=c99 -W -Wall -Wextra
 
 .PHONY: all clean
 
-all: quipkit lib/png/libluapng.so lib/sdl/libluasdl.so
+all: game lib/png/libluapng.so lib/sdl/libluasdl.so
 
 clean:
-	-rm -f quipkit *.o
+	-rm -f game *.o
 	-rm -f lib/png/libluapng.so lib/png/*.o
 	-rm -f lib/sdl/libluasdl.so lib/sdl/*.o
 
-### Quipkit ###
+### Quipkit Engine ###
 
-QK_CFLAGS:=${CFLAGS} `pkg-config --cflags lua5.1`
-QK_LIBS:=`pkg-config --libs lua5.1`
+QKENG_CFLAGS:=${CFLAGS} `pkg-config --cflags lua5.1`
+QKENG_LIBS:=`pkg-config --libs lua5.1`
 
-quipkit: quipkit.o
-	gcc -o $@ ${QK_LIBS} $^
+game: game.o
+	gcc -o $@ ${QKENG_LIBS} $^
 
-quipkit.o: quipkit.c
-	gcc -o $@ ${QK_CFLAGS} -c $^
+game.o: game.c
+	gcc -o $@ ${QKENG_CFLAGS} -c $^
 
 ### libpng bindings ###
 
-QK_PNG_CFLAGS:=${QK_CFLAGS} `pkg-config --cflags libpng`
-QK_PNG_LIBS:=${QK_LIBS} `pkg-config --libs libpng`
+QK_PNG_CFLAGS:=${QKENG_CFLAGS} `pkg-config --cflags libpng`
+QK_PNG_LIBS:=${QKENG_LIBS} `pkg-config --libs libpng`
 
 lib/png/libluapng.so: lib/png/png.o
 	gcc -shared -Wl,-soname,$(notdir $@) -o $@ ${QK_PNG_LIBS} $+
@@ -35,8 +35,8 @@ lib/png/png.o: lib/png/png.c
 
 ### SDL bindings ###
 
-QK_SDL_CFLAGS:=${QK_CFLAGS} `sdl-config --cflags`
-QK_SDL_LIBS:=${QK_LIBS} `sdl-config --libs`
+QK_SDL_CFLAGS:=${QKENG_CFLAGS} `sdl-config --cflags`
+QK_SDL_LIBS:=${QKENG_LIBS} `sdl-config --libs`
 
 lib/sdl/libluasdl.so: lib/sdl/sdl.o lib/sdl/event.o lib/sdl/gl.o lib/sdl/surface.o lib/sdl/video.o lib/sdl/wm.o
 	gcc -shared -Wl,-soname,$(notdir $@) -o $@ ${QK_SDL_LIBS} $+

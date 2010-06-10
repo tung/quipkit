@@ -4,6 +4,6 @@
 *.swp
 *.depend
 *.layout
-quipkit
+game
 /obj
 /bin

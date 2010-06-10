@@ -55,7 +55,7 @@ Install the development libs for:
 * SDL
 * libpng
 
-Then type @make@. Enter @./quipkit@ to try it out.
+Then type @make@. Enter @./game@ to try it out.
 
 h3. On Windows
 
