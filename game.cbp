@@ -2,7 +2,7 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="Quipkit" />
+		<Option title="Quipkit Engine" />
 		<Option platforms="Windows;" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
@@ -47,6 +47,9 @@
 		<Unit filename="README.textile">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
+		<Unit filename="game.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="init.lua">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
@@ -64,9 +67,6 @@
 		</Unit>
 		<Unit filename="main.lua">
 			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="quipkit.c">
-			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="test\blit.lua">
 			<Option target="&lt;{~None~}&gt;" />

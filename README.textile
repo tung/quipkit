@@ -61,7 +61,7 @@ h3. On Windows
 
 Install the Code::Blocks + MinGW combo from the Code::Blocks website.
 
-Open @quipkit.workspace@ and build the "Quipkit" project, which should build the "sdl" and "png" libraries as well. Run it from the IDE to try it out.
+Open @quipkit.workspace@ and build the "Quipkit Engine" project, which should build the "sdl" and "png" libraries as well. Run it from the IDE to try it out.
 
 
 h2. For More Info
