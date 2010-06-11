@@ -43,7 +43,7 @@ static void error_handler(png_structp png_ptr, png_const_charp message) {
     lua_pushfstring(error_ptr->L, "Internal libpng error while loading %s: %s", error_ptr->filename, message);
 
     jmp_buf jmpbuf;
-    memcpy(jmpbuf, png_ptr->jmpbuf, sizeof(jmp_buf));
+    memcpy(jmpbuf, png_jmpbuf(png_ptr), sizeof(jmp_buf));
     longjmp(jmpbuf, 1);
 }
 
