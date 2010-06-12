@@ -30,7 +30,7 @@ QK_PNG_LIBS:=${QKENG_LIBS} `pkg-config --libs libpng`
 lib/png/libluapng.so: lib/png/png.o
 	gcc -shared -Wl,-soname,$(notdir $@) -o $@ ${QK_PNG_LIBS} $+
 
-lib/png/png.o: lib/png/png.c
+lib/png/png.o: lib/png/png.c lib/png/png.h
 	gcc -fPIC -o $@ ${QK_PNG_CFLAGS} -c $<
 
 ### SDL bindings ###
@@ -41,7 +41,7 @@ QK_SDL_LIBS:=${QKENG_LIBS} `sdl-config --libs`
 lib/sdl/libluasdl.so: lib/sdl/sdl.o lib/sdl/event.o lib/sdl/gl.o lib/sdl/surface.o lib/sdl/video.o lib/sdl/wm.o
 	gcc -shared -Wl,-soname,$(notdir $@) -o $@ ${QK_SDL_LIBS} $+
 
-lib/sdl/sdl.o: lib/sdl/sdl.c lib/sdl/name_Uint_pair.h lib/sdl/event.h lib/sdl/gl.h lib/sdl/video.h lib/sdl/wm.h
+lib/sdl/sdl.o: lib/sdl/sdl.c lib/sdl/sdl.h lib/sdl/name_Uint_pair.h lib/sdl/event.h lib/sdl/gl.h lib/sdl/video.h lib/sdl/wm.h
 	gcc -fPIC -o $@ ${QK_SDL_CFLAGS} -c $<
 lib/sdl/event.o: lib/sdl/event.c lib/sdl/event.h lib/sdl/name_Uint_pair.h
 	gcc -fPIC -o $@ ${QK_SDL_CFLAGS} -c $<
