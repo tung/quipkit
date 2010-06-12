@@ -21,7 +21,7 @@ extern "C"
 {
 #endif
 
-int DLL_EXPORT luaopen_png(lua_State *L);
+int DLL_EXPORT luaopen_luapng(lua_State *L);
 
 #ifdef __cplusplus
 }

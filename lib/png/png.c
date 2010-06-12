@@ -18,18 +18,18 @@
 typedef struct {
     const char *filename;
     lua_State *L;
-} luapng_error;
+} luapng_Error;
 
 typedef struct {
     const char *name;
     int value;
-} export_const_lua;
+} luapng_ConstExport;
 
 typedef enum {
     PF_UNKNOWN,
     PF_RGB,
     PF_RGBA
-} pixel_format;
+} luapng_PixelFormat;
 
 
 
@@ -38,8 +38,8 @@ typedef enum {
  */
 
 /* Handler for internal libpng errors. Pushes a string that the original function can then throw as a Lua error. */
-static void error_handler(png_structp png_ptr, png_const_charp message) {
-    luapng_error *error_ptr = (luapng_error *)png_get_error_ptr(png_ptr);
+static void ErrorHandler(png_structp png_ptr, png_const_charp message) {
+    luapng_Error *error_ptr = (luapng_Error *)png_get_error_ptr(png_ptr);
     lua_pushfstring(error_ptr->L, "Internal libpng error while loading %s: %s", error_ptr->filename, message);
 
     jmp_buf jmpbuf;
@@ -56,7 +56,7 @@ static void error_handler(png_structp png_ptr, png_const_charp message) {
 /* Open a PNG file. Supports 24-bit RGB and 32-bit RGBA formats. */
 /* string filename -> table image{ number width, number height, number format, userdata data } */
 static int Open(lua_State *L) {
-    luapng_error error_data;
+    luapng_Error error_data;
     error_data.L = L;
 
     const char *filename = luaL_checkstring(L, 1);
@@ -75,7 +75,7 @@ static int Open(lua_State *L) {
     }
 
     /* Create the PNG read struct, passing in the Lua state so we can push errors onto the stack. */
-    png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, (png_voidp)&error_data, (png_error_ptr)error_handler, NULL);
+    png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, (png_voidp)&error_data, (png_error_ptr)ErrorHandler, NULL);
     if (!png_ptr) {
         fclose(fp);
         return luaL_error(L, "Could not create PNG read struct");
@@ -163,16 +163,16 @@ static int Open(lua_State *L) {
  * Public API
  */
 
-static const export_const_lua png_constants[] = {
+static const luapng_ConstExport m_png_constants[] = {
     /* Pixel formats. */
     {"RGB", PF_RGB},
     {"RGBA", PF_RGBA},
     {NULL, 0}
 };
 
-static void add_png_constants(lua_State *L, int index) {
-    const export_const_lua *p;
-    for (p = png_constants; p->name; p++) {
+static void AddPngConstants(lua_State *L, int index) {
+    const luapng_ConstExport *p;
+    for (p = m_png_constants; p->name; p++) {
         lua_pushstring(L, p->name);
         lua_pushinteger(L, p->value);
         lua_settable(L, index < 0 ? index - 2 : index);
@@ -189,9 +189,9 @@ int
 #ifdef __MINGW32__
 DLL_EXPORT
 #endif
-luaopen_png(lua_State *L) {
+luaopen_luapng(lua_State *L) {
     luaL_register(L, "PNG", png_functions);
-    add_png_constants(L, -1);
+    AddPngConstants(L, -1);
     return 1;
 }
 

@@ -5,6 +5,6 @@ else
     -- Assume Linux for now.
     path = "lib/png/libluapng.so"
 end
-local entry = "luaopen_png"
+local entry = "luaopen_luapng"
 local f = assert(package.loadlib(path, entry))
 f()
