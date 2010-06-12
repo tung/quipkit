@@ -3,6 +3,7 @@
 
 /** Everything below was swiped from Code::Blocks' DLL template. */
 
+#include <lua.h>
 #include <windows.h>
 
 /*  To use this exported function of dll, include this header
@@ -21,7 +22,7 @@ extern "C"
 {
 #endif
 
-int DLL_EXPORT luaopen_sdl(lua_State *L);
+int DLL_EXPORT luaopen_luasdl(lua_State *L);
 
 #ifdef __cplusplus
 }
