@@ -37,7 +37,7 @@ static int SetAttribute(lua_State *L) {
  * Public API
  */
 
-static const luasdl_NameSdlGlAttr sdl_gl_attributes[] = {
+static const luasdl_NameSdlGlAttr m_sdl_gl_attributes[] = {
     {"DOUBLEBUFFER", SDL_GL_DOUBLEBUFFER},
     {"RED_SIZE", SDL_GL_RED_SIZE},
     {"GREEN_SIZE", SDL_GL_GREEN_SIZE},
@@ -47,9 +47,9 @@ static const luasdl_NameSdlGlAttr sdl_gl_attributes[] = {
 };
 
 /* Add SDL GL constants to SDL.GL submodule table at index. */
-static void add_sdl_gl_constants(lua_State *L, int index) {
+static void AddSdlGlConstants(lua_State *L, int index) {
     const luasdl_NameSdlGlAttr *p;
-    for (p = sdl_gl_attributes; p->name != NULL; p++) {
+    for (p = m_sdl_gl_attributes; p->name != NULL; p++) {
         lua_pushstring(L, p->name);
         lua_pushinteger(L, p->attr);    // Assume Lua integers can hold SDL_GLattrs.
         lua_settable(L, index < 0 ? index - 2 : index);
@@ -57,19 +57,19 @@ static void add_sdl_gl_constants(lua_State *L, int index) {
 }
 
 
-static const struct luaL_reg sdl_gl_functions[] = {
+static const struct luaL_reg m_sdl_gl_functions[] = {
     {"SetAttribute", SetAttribute},
     {"SwapBuffers", SwapBuffers},
     {NULL, NULL}
 };
 
 /* Load GL API into SDL module table at index. */
-void load_sdl_gl(lua_State *L, int index) {
+void LoadSdlGl(lua_State *L, int index) {
     lua_pushliteral(L, "GL");
     lua_newtable(L);
-    luaL_register(L, NULL, sdl_gl_functions);
+    luaL_register(L, NULL, m_sdl_gl_functions);
 
-    add_sdl_gl_constants(L, -1);
+    AddSdlGlConstants(L, -1);
 
     lua_settable(L, index < 0 ? index - 2 : index);
 }
