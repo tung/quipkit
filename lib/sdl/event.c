@@ -9,31 +9,31 @@
 
 
 /**
- * Exported SDL Event Functions
+ * LuaSDL Support Functions
  */
 
 /* Deflate joystick hat positions into an array. Access like event.jhat.value[SDL.HAT_CENTERED]. */
 /* Not sure how to incorporate SDL's convenience macros. */
-static void hat_position_to_table(lua_State *L, Uint8 value) {
+static void HatPositionToTable(lua_State *L, Uint8 value) {
     lua_newtable(L);
-    #define sethat(pos) \
+    #define SET_HAT(pos) \
         do { \
             lua_pushboolean(L, value & SDL_HAT_##pos); \
             lua_rawseti(L, -2, SDL_HAT_##pos); \
         } while (0)
-    sethat(CENTERED);
-    sethat(UP);
-    sethat(RIGHT);
-    sethat(DOWN);
-    sethat(LEFT);
-    #undef sethat
+    SET_HAT(CENTERED);
+    SET_HAT(UP);
+    SET_HAT(RIGHT);
+    SET_HAT(DOWN);
+    SET_HAT(LEFT);
+    #undef SET_HAT
 }
 
 
 /* Inflate Lua table at index into hat position bitmask. */
-static Uint8 table_to_hat_position(lua_State *L, int index) {
+static Uint8 TableToHatPosition(lua_State *L, int index) {
     Uint8 hat_pos = 0;
-    #define gethat(pos) \
+    #define GET_HAT(pos) \
         do { \
             lua_pushinteger(L, SDL_HAT_##pos); \
             lua_gettable(L, index < 0 ? index - 1 : index); \
@@ -42,43 +42,43 @@ static Uint8 table_to_hat_position(lua_State *L, int index) {
             } \
             lua_pop(L, 1); \
         } while (0)
-    gethat(CENTERED);
-    gethat(UP);
-    gethat(RIGHT);
-    gethat(DOWN);
-    gethat(LEFT);
-    #undef gethat
+    GET_HAT(CENTERED);
+    GET_HAT(UP);
+    GET_HAT(RIGHT);
+    GET_HAT(DOWN);
+    GET_HAT(LEFT);
+    #undef GET_HAT
     return hat_pos;
 }
 
 
 /* Deflate key mods into an array. Access like event.key.keysym.mod[SDL.LSHIFT]. */
 /* Not sure how to incorporate SDL's convenience macros. */
-static void mod_to_table(lua_State *L, SDLMod mod) {
+static void ModToTable(lua_State *L, SDLMod mod) {
     lua_newtable(L);
-    #define setmod(m) \
+    #define SET_MOD(m) \
         do { \
             lua_pushboolean(L, mod & KMOD_##m); \
             lua_rawseti(L, -2, KMOD_##m); \
         } while (0)
-    setmod(LSHIFT);
-    setmod(RSHIFT);
-    setmod(LCTRL);
-    setmod(RCTRL);
-    setmod(LALT);
-    setmod(RALT);
-    setmod(LMETA);
-    setmod(RMETA);
-    setmod(NUM);
-    setmod(CAPS);
-    setmod(MODE);
-    #undef setmod
+    SET_MOD(LSHIFT);
+    SET_MOD(RSHIFT);
+    SET_MOD(LCTRL);
+    SET_MOD(RCTRL);
+    SET_MOD(LALT);
+    SET_MOD(RALT);
+    SET_MOD(LMETA);
+    SET_MOD(RMETA);
+    SET_MOD(NUM);
+    SET_MOD(CAPS);
+    SET_MOD(MODE);
+    #undef SET_MOD
 }
 
 
-static SDLMod table_to_mod(lua_State *L, int index) {
+static SDLMod TableToMod(lua_State *L, int index) {
     SDLMod mod = 0;
-    #define getmod(m) \
+    #define GET_MOD(m) \
         do { \
             lua_pushinteger(L, KMOD_##m); \
             lua_gettable(L, index < 0 ? index - 1 : index); \
@@ -87,23 +87,23 @@ static SDLMod table_to_mod(lua_State *L, int index) {
             } \
             lua_pop(L, 1); \
         } while (0)
-    getmod(LSHIFT);
-    getmod(RSHIFT);
-    getmod(LCTRL);
-    getmod(RCTRL);
-    getmod(LALT);
-    getmod(RALT);
-    getmod(LMETA);
-    getmod(RMETA);
-    getmod(NUM);
-    getmod(CAPS);
-    getmod(MODE);
-    #undef getmod
+    GET_MOD(LSHIFT);
+    GET_MOD(RSHIFT);
+    GET_MOD(LCTRL);
+    GET_MOD(RCTRL);
+    GET_MOD(LALT);
+    GET_MOD(RALT);
+    GET_MOD(LMETA);
+    GET_MOD(RMETA);
+    GET_MOD(NUM);
+    GET_MOD(CAPS);
+    GET_MOD(MODE);
+    #undef GET_MOD
     return mod;
 }
 
 
-static void unicode_to_string(lua_State *L, Uint16 uc_char) {
+static void UnicodeToString(lua_State *L, Uint16 uc_char) {
     char buf[] = "\0\0";
     /* I don't know what to choose here, so I'm going with big endian. */
     buf[0] = (uc_char & 0xff00) << 8;
@@ -112,7 +112,7 @@ static void unicode_to_string(lua_State *L, Uint16 uc_char) {
 }
 
 
-static Uint16 string_to_unicode(lua_State *L, int index) {
+static Uint16 StringToUnicode(lua_State *L, int index) {
     size_t l;
     const char *s = lua_tolstring(L, index, &l);
     /* Go with big endian, as above. */
@@ -127,7 +127,7 @@ static Uint16 string_to_unicode(lua_State *L, int index) {
 }
 
 
-static void keysym_to_table(lua_State *L, SDL_keysym keysym) {
+static void KeysymToTable(lua_State *L, SDL_keysym keysym) {
     lua_createtable(L, 0, 4);
 
     lua_pushliteral(L, "scancode");
@@ -139,16 +139,16 @@ static void keysym_to_table(lua_State *L, SDL_keysym keysym) {
     lua_rawset(L, -3);
 
     lua_pushliteral(L, "mod");
-    mod_to_table(L, keysym.mod);
+    ModToTable(L, keysym.mod);
     lua_rawset(L, -3);
 
     lua_pushliteral(L, "unicode");
-    unicode_to_string(L, keysym.unicode);
+    UnicodeToString(L, keysym.unicode);
     lua_rawset(L, -3);
 }
 
 
-static void table_to_keysym(lua_State *L, int index, SDL_Event *event) {
+static void TableToKeysym(lua_State *L, int index, SDL_Event *event) {
     lua_pushliteral(L, "scancode");
     lua_gettable(L, index < 0 ? index - 1: index);
     event->key.keysym.scancode = lua_tointeger(L, -1);
@@ -161,7 +161,7 @@ static void table_to_keysym(lua_State *L, int index, SDL_Event *event) {
 
     lua_pushliteral(L, "mod");
     lua_gettable(L, index < 0 ? index - 1: index);
-    event->key.keysym.mod = table_to_mod(L, -1);
+    event->key.keysym.mod = TableToMod(L, -1);
     lua_pop(L, 1);
 
     lua_pushliteral(L, "unicode");
@@ -174,7 +174,7 @@ static void table_to_keysym(lua_State *L, int index, SDL_Event *event) {
             event->key.keysym.unicode = lua_tointeger(L, -1);
             break;
         case LUA_TSTRING:
-            event->key.keysym.unicode = string_to_unicode(L, -1);
+            event->key.keysym.unicode = StringToUnicode(L, -1);
             break;
         default:
             luaL_error(L, "bad unicode field type (expected nil/number/string, got %s)", lua_typename(L, -1));
@@ -184,7 +184,7 @@ static void table_to_keysym(lua_State *L, int index, SDL_Event *event) {
 
 
 /* Deflate bitmask into an array. Access like event.motion.state[1] for mouse button 1. */
-static void button_state_to_table(lua_State *L, Uint8 state) {
+static void ButtonStateToTable(lua_State *L, Uint8 state) {
     lua_createtable(L, 8, 0);
     lua_pushboolean(L, state & 0x01); lua_rawseti(L, -2, 1);
     lua_pushboolean(L, state & 0x02); lua_rawseti(L, -2, 2);
@@ -197,9 +197,9 @@ static void button_state_to_table(lua_State *L, Uint8 state) {
 }
 
 
-static Uint8 table_to_button_state(lua_State *L, int index) {
+static Uint8 TableToButtonState(lua_State *L, int index) {
     Uint8 state = 0;
-    #define getstateflag(n) \
+    #define GET_STATE_FLAG(n) \
         do { \
             lua_pushinteger(L, n); \
             lua_gettable(L, index < 0 ? index - 1 : index); \
@@ -208,24 +208,24 @@ static Uint8 table_to_button_state(lua_State *L, int index) {
             } \
             lua_pop(L, 1); \
         } while (0)
-    getstateflag(1);
-    getstateflag(2);
-    getstateflag(3);
-    getstateflag(4);
-    getstateflag(5);
-    getstateflag(6);
-    getstateflag(7);
-    getstateflag(8);
-    #undef getstateflag
+    GET_STATE_FLAG(1);
+    GET_STATE_FLAG(2);
+    GET_STATE_FLAG(3);
+    GET_STATE_FLAG(4);
+    GET_STATE_FLAG(5);
+    GET_STATE_FLAG(6);
+    GET_STATE_FLAG(7);
+    GET_STATE_FLAG(8);
+    #undef GET_STATE_FLAG
     return state;
 }
 
 
 /* Convert an SDL event into a Lua table. Helper function. */
-static void event_to_table(lua_State *L, SDL_Event event) {
+static void EventToTable(lua_State *L, SDL_Event event) {
     lua_createtable(L, 0, 2);
 
-    #define setint(t, n) \
+    #define SET_INT(t, n) \
         do { \
             lua_pushliteral(L, #n); \
             lua_pushinteger(L, event.t.n); \
@@ -242,13 +242,13 @@ static void event_to_table(lua_State *L, SDL_Event event) {
             lua_createtable(L, 0, 3);
 
             /* SDL_ACTIVEEVENT */
-            setint(active, type);
+            SET_INT(active, type);
 
             /* 0 for loss, 1 for gain */
-            setint(active, gain);
+            SET_INT(active, gain);
 
             /* SDL_APPMOUSEFOCUS, SDL_APPINPUTFOCUS or SDL_APPACTIVE */
-            setint(active, state);
+            SET_INT(active, state);
 
             lua_rawset(L, -3);
             break;
@@ -258,11 +258,11 @@ static void event_to_table(lua_State *L, SDL_Event event) {
             lua_createtable(L, 0, 4);
 
             /* SDL_JOYAXISMOTION */
-            setint(jaxis, type);
+            SET_INT(jaxis, type);
 
-            setint(jaxis, which);
-            setint(jaxis, axis);
-            setint(jaxis, value);
+            SET_INT(jaxis, which);
+            SET_INT(jaxis, axis);
+            SET_INT(jaxis, value);
 
             lua_rawset(L, -3);
             break;
@@ -272,12 +272,12 @@ static void event_to_table(lua_State *L, SDL_Event event) {
             lua_createtable(L, 0, 5);
 
             /* SDL_JOYBALLMOTION */
-            setint(jball, type);
+            SET_INT(jball, type);
 
-            setint(jball, which);
-            setint(jball, ball);
-            setint(jball, xrel);
-            setint(jball, yrel);
+            SET_INT(jball, which);
+            SET_INT(jball, ball);
+            SET_INT(jball, xrel);
+            SET_INT(jball, yrel);
 
             lua_rawset(L, -3);
             break;
@@ -288,13 +288,13 @@ static void event_to_table(lua_State *L, SDL_Event event) {
             lua_createtable(L, 0, 4);
 
             /* SDL_JOYBUTTONDOWN/UP */
-            setint(jbutton, type);
+            SET_INT(jbutton, type);
 
-            setint(jbutton, which);
-            setint(jbutton, button);
+            SET_INT(jbutton, which);
+            SET_INT(jbutton, button);
 
             /* SDL_PRESSED/RELEASED */
-            setint(jbutton, state);
+            SET_INT(jbutton, state);
 
             lua_rawset(L, -3);
             break;
@@ -304,13 +304,13 @@ static void event_to_table(lua_State *L, SDL_Event event) {
             lua_createtable(L, 0, 4);
 
             /* SDL_JOYHATMOTION */
-            setint(jhat, type);
+            SET_INT(jhat, type);
 
-            setint(jhat, which);
-            setint(jhat, hat);
+            SET_INT(jhat, which);
+            SET_INT(jhat, hat);
 
             lua_pushliteral(L, "value");
-            hat_position_to_table(L, event.jhat.value);
+            HatPositionToTable(L, event.jhat.value);
             lua_rawset(L, -3);
 
             lua_rawset(L, -3);
@@ -322,13 +322,13 @@ static void event_to_table(lua_State *L, SDL_Event event) {
             lua_createtable(L, 0, 3);
 
             /* SDL_KEYDOWN/UP */
-            setint(key, type);
+            SET_INT(key, type);
 
             /* SDL_PRESSED/RELEASED */
-            setint(key, state);
+            SET_INT(key, state);
 
             lua_pushliteral(L, "keysym");
-            keysym_to_table(L, event.key.keysym);
+            KeysymToTable(L, event.key.keysym);
             lua_rawset(L, -3);
 
             lua_rawset(L, -3);
@@ -339,16 +339,16 @@ static void event_to_table(lua_State *L, SDL_Event event) {
             lua_createtable(L, 0, 6);
 
             /* SDL_MOUSEMOTION */
-            setint(motion, type);
+            SET_INT(motion, type);
 
             lua_pushliteral(L, "state");
-            button_state_to_table(L, event.motion.state);
+            ButtonStateToTable(L, event.motion.state);
             lua_rawset(L, -3);
 
-            setint(motion, x);
-            setint(motion, y);
-            setint(motion, xrel);
-            setint(motion, yrel);
+            SET_INT(motion, x);
+            SET_INT(motion, y);
+            SET_INT(motion, xrel);
+            SET_INT(motion, yrel);
 
             lua_rawset(L, -3);
             break;
@@ -359,16 +359,16 @@ static void event_to_table(lua_State *L, SDL_Event event) {
             lua_createtable(L, 0, 5);
 
             /* SDL_MOUSEBUTTONDOWN/UP */
-            setint(button, type);
+            SET_INT(button, type);
 
             /* SDL_BUTTON_LEFT/MIDDLE/RIGHT */
-            setint(button, button);
+            SET_INT(button, button);
 
             /* SDL_PRESSED or SDL_RELEASED */
-            setint(button, state);
+            SET_INT(button, state);
 
-            setint(button, x);
-            setint(button, y);
+            SET_INT(button, x);
+            SET_INT(button, y);
 
             lua_rawset(L, -3);
             break;
@@ -378,7 +378,7 @@ static void event_to_table(lua_State *L, SDL_Event event) {
             lua_createtable(L, 0, 1);
 
             /* SDL_QUIT */
-            setint(quit, type);
+            SET_INT(quit, type);
 
             lua_rawset(L, -3);
             break;
@@ -390,7 +390,7 @@ static void event_to_table(lua_State *L, SDL_Event event) {
             lua_createtable(L, 0, 1);
 
             /* SDL_VIDEOEXPOSE */
-            setint(expose, type);
+            SET_INT(expose, type);
 
             lua_rawset(L, -3);
             break;
@@ -400,10 +400,10 @@ static void event_to_table(lua_State *L, SDL_Event event) {
             lua_createtable(L, 0, 3);
 
             /* SDL_VIDEORESIZE */
-            setint(resize, type);
+            SET_INT(resize, type);
 
-            setint(resize, w);
-            setint(resize, h);
+            SET_INT(resize, w);
+            SET_INT(resize, h);
 
             lua_rawset(L, -3);
             break;
@@ -414,9 +414,9 @@ static void event_to_table(lua_State *L, SDL_Event event) {
                 lua_createtable(L, 0, 4);
 
                 /* SDL_USEREVENT through to (SDL_NUMEVENTS - 1) */
-                setint(user, type);
+                SET_INT(user, type);
 
-                setint(user, code);
+                SET_INT(user, code);
 
                 /* Works as long as sizeof(Lua ref int) <= sizeof(void *) */
                 lua_pushliteral(L, "data1");
@@ -433,16 +433,21 @@ static void event_to_table(lua_State *L, SDL_Event event) {
                 luaL_error(L, "could not convert unrecognized event (%d)", event.type);
             }
     }
-    #undef setint
+    #undef SET_INT
 }
 
 
-static void free_userevent_data(lua_State *L, SDL_Event user_event) {
+/* This should really be in the code above. */
+static void FreeUserEventData(lua_State *L, SDL_Event user_event) {
     luaL_unref(L, LUA_REGISTRYINDEX, (int)user_event.user.data1);
     luaL_unref(L, LUA_REGISTRYINDEX, (int)user_event.user.data2);
 }
 
 
+
+/**
+ * Exported SDL Event Functions
+ */
 
 /* number key -> string key_name */
 static int GetKeyName(lua_State *L) {
@@ -458,7 +463,7 @@ static int GetMouseState(lua_State *L) {
     int x;
     int y;
     Uint8 buttons = SDL_GetMouseState(&x, &y);
-    button_state_to_table(L, buttons);
+    ButtonStateToTable(L, buttons);
     lua_pushinteger(L, x);
     lua_pushinteger(L, y);
     return 3;
@@ -469,9 +474,9 @@ static int GetMouseState(lua_State *L) {
 static int PollEvent(lua_State *L) {
     SDL_Event event;
     if (SDL_PollEvent(&event)) {
-        event_to_table(L, event);
+        EventToTable(L, event);
         if (event.type >= SDL_USEREVENT && event.type < SDL_NUMEVENTS) {
-            free_userevent_data(L, event);
+            FreeUserEventData(L, event);
         }
     } else {
         lua_pushnil(L);
@@ -499,14 +504,14 @@ static int PushEvent(lua_State *L) {
     SDL_Event event;
     event.type = type;
 
-    #define pushevent(st, n) \
+    #define PUSH_EVENT(st, n) \
         do { \
             event.n.type = type; \
             lua_pushliteral(st, #n); \
             lua_gettable(st, 1); \
         } while (0)
 
-    #define getint(t, n) \
+    #define GET_INT(t, n) \
         do { \
             lua_pushliteral(L, #n); \
             lua_gettable(L, -2); \
@@ -514,94 +519,94 @@ static int PushEvent(lua_State *L) {
             lua_pop(L, 1); \
         } while (0)
 
-    #define popevent(st) \
+    #define POP_EVENT(st) \
         do { \
             lua_pop(st, 1); \
         } while (0)
 
     switch (event.type) {
         case SDL_ACTIVEEVENT:
-            pushevent(L, active);
-            getint(active, gain);
-            getint(active, state);
-            popevent(L);
+            PUSH_EVENT(L, active);
+            GET_INT(active, gain);
+            GET_INT(active, state);
+            POP_EVENT(L);
             break;
 
         case SDL_JOYAXISMOTION:
-            pushevent(L, jaxis);
-            getint(jaxis, which);
-            getint(jaxis, axis);
-            getint(jaxis, value);
-            popevent(L);
+            PUSH_EVENT(L, jaxis);
+            GET_INT(jaxis, which);
+            GET_INT(jaxis, axis);
+            GET_INT(jaxis, value);
+            POP_EVENT(L);
             break;
 
         case SDL_JOYBALLMOTION:
-            pushevent(L, jball);
-            getint(jball, which);
-            getint(jball, ball);
-            getint(jball, xrel);
-            getint(jball, yrel);
-            popevent(L);
+            PUSH_EVENT(L, jball);
+            GET_INT(jball, which);
+            GET_INT(jball, ball);
+            GET_INT(jball, xrel);
+            GET_INT(jball, yrel);
+            POP_EVENT(L);
             break;
 
         case SDL_JOYBUTTONDOWN:
         case SDL_JOYBUTTONUP:
-            pushevent(L, jbutton);
-            getint(jbutton, which);
-            getint(jbutton, button);
-            getint(jbutton, state);
-            popevent(L);
+            PUSH_EVENT(L, jbutton);
+            GET_INT(jbutton, which);
+            GET_INT(jbutton, button);
+            GET_INT(jbutton, state);
+            POP_EVENT(L);
             break;
 
         case SDL_JOYHATMOTION:
-            pushevent(L, jhat);
-            getint(jhat, which);
-            getint(jhat, hat);
+            PUSH_EVENT(L, jhat);
+            GET_INT(jhat, which);
+            GET_INT(jhat, hat);
 
             lua_pushliteral(L, "value");
             lua_gettable(L, -2);
-            event.jhat.value = table_to_hat_position(L, -1);
+            event.jhat.value = TableToHatPosition(L, -1);
             lua_pop(L, 1);
 
-            popevent(L);
+            POP_EVENT(L);
             break;
 
         case SDL_KEYDOWN:
         case SDL_KEYUP:
-            pushevent(L, key);
-            getint(key, state);
+            PUSH_EVENT(L, key);
+            GET_INT(key, state);
 
             lua_pushliteral(L, "keysym");
             lua_gettable(L, -2);
-            table_to_keysym(L, -1, &event);
+            TableToKeysym(L, -1, &event);
             lua_pop(L, 1);
 
-            popevent(L);
+            POP_EVENT(L);
             break;
 
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP:
-            pushevent(L, button);
-            getint(button, button);
-            getint(button, state);
-            getint(button, x);
-            getint(button, y);
-            popevent(L);
+            PUSH_EVENT(L, button);
+            GET_INT(button, button);
+            GET_INT(button, state);
+            GET_INT(button, x);
+            GET_INT(button, y);
+            POP_EVENT(L);
             break;
 
         case SDL_MOUSEMOTION:
-            pushevent(L, motion);
+            PUSH_EVENT(L, motion);
 
             lua_pushliteral(L, "state");
             lua_gettable(L, -2);
-            event.motion.state = table_to_button_state(L, -1);
+            event.motion.state = TableToButtonState(L, -1);
             lua_pop(L, 1);
 
-            getint(motion, x);
-            getint(motion, y);
-            getint(motion, xrel);
-            getint(motion, yrel);
-            popevent(L);
+            GET_INT(motion, x);
+            GET_INT(motion, y);
+            GET_INT(motion, xrel);
+            GET_INT(motion, yrel);
+            POP_EVENT(L);
             break;
 
         case SDL_QUIT:
@@ -616,18 +621,18 @@ static int PushEvent(lua_State *L) {
             break;
 
         case SDL_VIDEORESIZE:
-            pushevent(L, resize);
-            getint(resize, w);
-            getint(resize, h);
-            popevent(L);
+            PUSH_EVENT(L, resize);
+            GET_INT(resize, w);
+            GET_INT(resize, h);
+            POP_EVENT(L);
             break;
 
         default:
             if (type >= SDL_USEREVENT && type < SDL_NUMEVENTS) {
-                pushevent(L, user);
-                getint(user, code);
+                PUSH_EVENT(L, user);
+                GET_INT(user, code);
 
-                /* Works as long as sizeof(Lua ref int) <= sizeof(void *). */
+                /* Ensure Lua hangs onto whatever data is here, even as it travels through SDL's event queue. */
                 lua_pushliteral(L, "data1");
                 lua_gettable(L, -2);
                 event.user.data1 = (void *)luaL_ref(L, LUA_REGISTRYINDEX);
@@ -637,16 +642,16 @@ static int PushEvent(lua_State *L) {
                 lua_gettable(L, -2);
                 event.user.data2 = (void *)luaL_ref(L, LUA_REGISTRYINDEX);
 
-                popevent(L);
+                POP_EVENT(L);
             } else {
                 luaL_error(L, "could not push unrecognized event (%d)", type);
             }
             break;
     }
 
-    #undef pushevent
-    #undef getint
-    #undef popevent
+    #undef PUSH_EVENT
+    #undef GET_INT
+    #undef POP_EVENT
 
     if (SDL_PushEvent(&event)) {
         luaL_error(L, "SDL_PushEvent failed: %s", SDL_GetError());
@@ -662,9 +667,9 @@ static int WaitEvent(lua_State *L) {
     if (SDL_WaitEvent(&event) == 0) {
         luaL_error(L, "SDL_WaitEvent failed: %s", SDL_GetError());
     }
-    event_to_table(L, event);
+    EventToTable(L, event);
     if (event.type >= SDL_USEREVENT && event.type < SDL_NUMEVENTS) {
-        free_userevent_data(L, event);
+        FreeUserEventData(L, event);
     }
     return 1;
 }
@@ -675,49 +680,49 @@ static int WaitEvent(lua_State *L) {
  * Public API
  */
 
-#define defeconst(name) {#name, SDL_##name}
-static const luasdl_NameConst8 sdl_event_constants[] = {
+#define DEF_E_CONST(name) {#name, SDL_##name}
+static const luasdl_NameConst8 m_sdl_event_constants[] = {
     /* SDL event constants */
-    defeconst(ACTIVEEVENT),
-    defeconst(JOYAXISMOTION),
-    defeconst(JOYBALLMOTION),
-    defeconst(JOYBUTTONDOWN),
-    defeconst(JOYBUTTONUP),
-    defeconst(JOYHATMOTION),
-    defeconst(KEYDOWN),
-    defeconst(KEYUP),
-    defeconst(MOUSEBUTTONDOWN),
-    defeconst(MOUSEBUTTONUP),
-    defeconst(MOUSEMOTION),
-    defeconst(QUIT),
+    DEF_E_CONST(ACTIVEEVENT),
+    DEF_E_CONST(JOYAXISMOTION),
+    DEF_E_CONST(JOYBALLMOTION),
+    DEF_E_CONST(JOYBUTTONDOWN),
+    DEF_E_CONST(JOYBUTTONUP),
+    DEF_E_CONST(JOYHATMOTION),
+    DEF_E_CONST(KEYDOWN),
+    DEF_E_CONST(KEYUP),
+    DEF_E_CONST(MOUSEBUTTONDOWN),
+    DEF_E_CONST(MOUSEBUTTONUP),
+    DEF_E_CONST(MOUSEMOTION),
+    DEF_E_CONST(QUIT),
     /* SDL_SYSWMEVENT omitted due to massive cross-platform effort needed. */
-    defeconst(USEREVENT),
-    defeconst(VIDEOEXPOSE),
-    defeconst(VIDEORESIZE),
-    defeconst(NUMEVENTS),
+    DEF_E_CONST(USEREVENT),
+    DEF_E_CONST(VIDEOEXPOSE),
+    DEF_E_CONST(VIDEORESIZE),
+    DEF_E_CONST(NUMEVENTS),
 
     /* SDL_ACTIVEEVENT state constants */
-    defeconst(APPMOUSEFOCUS),
-    defeconst(APPINPUTFOCUS),
-    defeconst(APPACTIVE),
+    DEF_E_CONST(APPMOUSEFOCUS),
+    DEF_E_CONST(APPINPUTFOCUS),
+    DEF_E_CONST(APPACTIVE),
 
     /* mouse button constants */
-    defeconst(BUTTON_LEFT),
-    defeconst(BUTTON_MIDDLE),
-    defeconst(BUTTON_RIGHT),
+    DEF_E_CONST(BUTTON_LEFT),
+    DEF_E_CONST(BUTTON_MIDDLE),
+    DEF_E_CONST(BUTTON_RIGHT),
 
     /* press state constants */
-    defeconst(PRESSED),
-    defeconst(RELEASED),
+    DEF_E_CONST(PRESSED),
+    DEF_E_CONST(RELEASED),
 
     {NULL, 0}
 };
-#undef defeconst
+#undef DEF_E_CONST
 
 /* Load SDL event constants into SDL module table at index. */
-static void load_sdl_event_constants(lua_State *L, int index) {
+static void LoadSdlEventConstants(lua_State *L, int index) {
     const luasdl_NameConst8 *p;
-    for (p = sdl_event_constants; p->name != NULL; p++) {
+    for (p = m_sdl_event_constants; p->name != NULL; p++) {
         lua_pushstring(L, p->name);
         lua_pushinteger(L, p->uint);
         lua_settable(L, index < 0 ? index - 2 : index);
@@ -725,150 +730,150 @@ static void load_sdl_event_constants(lua_State *L, int index) {
 }
 
 
-#define defkey(name) {#name, SDLK_##name}
-static const luasdl_NameSdlKey sdl_key_constants[] = {
-    defkey(BACKSPACE),
-    defkey(TAB),
-    defkey(CLEAR),
-    defkey(RETURN),
-    defkey(PAUSE),
-    defkey(ESCAPE),
-    defkey(SPACE),
-    defkey(EXCLAIM),
-    defkey(QUOTEDBL),
-    defkey(HASH),
-    defkey(DOLLAR),
-    defkey(AMPERSAND),
-    defkey(QUOTE),
-    defkey(LEFTPAREN),
-    defkey(RIGHTPAREN),
-    defkey(ASTERISK),
-    defkey(PLUS),
-    defkey(COMMA),
-    defkey(MINUS),
-    defkey(PERIOD),
-    defkey(SLASH),
-    defkey(0),
-    defkey(1),
-    defkey(2),
-    defkey(3),
-    defkey(4),
-    defkey(5),
-    defkey(6),
-    defkey(7),
-    defkey(8),
-    defkey(9),
-    defkey(COLON),
-    defkey(SEMICOLON),
-    defkey(LESS),
-    defkey(EQUALS),
-    defkey(GREATER),
-    defkey(QUESTION),
-    defkey(AT),
-    defkey(LEFTBRACKET),
-    defkey(BACKSLASH),
-    defkey(RIGHTBRACKET),
-    defkey(CARET),
-    defkey(UNDERSCORE),
-    defkey(BACKQUOTE),
-    defkey(a),
-    defkey(b),
-    defkey(c),
-    defkey(d),
-    defkey(e),
-    defkey(f),
-    defkey(g),
-    defkey(h),
-    defkey(i),
-    defkey(j),
-    defkey(k),
-    defkey(l),
-    defkey(m),
-    defkey(n),
-    defkey(o),
-    defkey(p),
-    defkey(q),
-    defkey(r),
-    defkey(s),
-    defkey(t),
-    defkey(u),
-    defkey(v),
-    defkey(w),
-    defkey(x),
-    defkey(y),
-    defkey(z),
-    defkey(DELETE),
-    defkey(KP0),
-    defkey(KP1),
-    defkey(KP2),
-    defkey(KP3),
-    defkey(KP4),
-    defkey(KP5),
-    defkey(KP6),
-    defkey(KP7),
-    defkey(KP8),
-    defkey(KP9),
-    defkey(KP_PERIOD),
-    defkey(KP_DIVIDE),
-    defkey(KP_MULTIPLY),
-    defkey(KP_MINUS),
-    defkey(KP_PLUS),
-    defkey(KP_ENTER),
-    defkey(KP_EQUALS),
-    defkey(UP),
-    defkey(DOWN),
-    defkey(RIGHT),
-    defkey(LEFT),
-    defkey(INSERT),
-    defkey(HOME),
-    defkey(END),
-    defkey(PAGEUP),
-    defkey(PAGEDOWN),
-    defkey(F1),
-    defkey(F2),
-    defkey(F3),
-    defkey(F4),
-    defkey(F5),
-    defkey(F6),
-    defkey(F7),
-    defkey(F8),
-    defkey(F9),
-    defkey(F10),
-    defkey(F11),
-    defkey(F12),
-    defkey(F13),
-    defkey(F14),
-    defkey(F15),
-    defkey(NUMLOCK),
-    defkey(CAPSLOCK),
-    defkey(SCROLLOCK),
-    defkey(RSHIFT),
-    defkey(LSHIFT),
-    defkey(RCTRL),
-    defkey(LCTRL),
-    defkey(RALT),
-    defkey(LALT),
-    defkey(RMETA),
-    defkey(LMETA),
-    defkey(LSUPER),
-    defkey(RSUPER),
-    defkey(MODE),
-    defkey(HELP),
-    defkey(PRINT),
-    defkey(SYSREQ),
-    defkey(BREAK),
-    defkey(MENU),
-    defkey(POWER),
-    defkey(EURO),
+#define DEF_KEY(name) {#name, SDLK_##name}
+static const luasdl_NameSdlKey m_sdl_key_constants[] = {
+    DEF_KEY(BACKSPACE),
+    DEF_KEY(TAB),
+    DEF_KEY(CLEAR),
+    DEF_KEY(RETURN),
+    DEF_KEY(PAUSE),
+    DEF_KEY(ESCAPE),
+    DEF_KEY(SPACE),
+    DEF_KEY(EXCLAIM),
+    DEF_KEY(QUOTEDBL),
+    DEF_KEY(HASH),
+    DEF_KEY(DOLLAR),
+    DEF_KEY(AMPERSAND),
+    DEF_KEY(QUOTE),
+    DEF_KEY(LEFTPAREN),
+    DEF_KEY(RIGHTPAREN),
+    DEF_KEY(ASTERISK),
+    DEF_KEY(PLUS),
+    DEF_KEY(COMMA),
+    DEF_KEY(MINUS),
+    DEF_KEY(PERIOD),
+    DEF_KEY(SLASH),
+    DEF_KEY(0),
+    DEF_KEY(1),
+    DEF_KEY(2),
+    DEF_KEY(3),
+    DEF_KEY(4),
+    DEF_KEY(5),
+    DEF_KEY(6),
+    DEF_KEY(7),
+    DEF_KEY(8),
+    DEF_KEY(9),
+    DEF_KEY(COLON),
+    DEF_KEY(SEMICOLON),
+    DEF_KEY(LESS),
+    DEF_KEY(EQUALS),
+    DEF_KEY(GREATER),
+    DEF_KEY(QUESTION),
+    DEF_KEY(AT),
+    DEF_KEY(LEFTBRACKET),
+    DEF_KEY(BACKSLASH),
+    DEF_KEY(RIGHTBRACKET),
+    DEF_KEY(CARET),
+    DEF_KEY(UNDERSCORE),
+    DEF_KEY(BACKQUOTE),
+    DEF_KEY(a),
+    DEF_KEY(b),
+    DEF_KEY(c),
+    DEF_KEY(d),
+    DEF_KEY(e),
+    DEF_KEY(f),
+    DEF_KEY(g),
+    DEF_KEY(h),
+    DEF_KEY(i),
+    DEF_KEY(j),
+    DEF_KEY(k),
+    DEF_KEY(l),
+    DEF_KEY(m),
+    DEF_KEY(n),
+    DEF_KEY(o),
+    DEF_KEY(p),
+    DEF_KEY(q),
+    DEF_KEY(r),
+    DEF_KEY(s),
+    DEF_KEY(t),
+    DEF_KEY(u),
+    DEF_KEY(v),
+    DEF_KEY(w),
+    DEF_KEY(x),
+    DEF_KEY(y),
+    DEF_KEY(z),
+    DEF_KEY(DELETE),
+    DEF_KEY(KP0),
+    DEF_KEY(KP1),
+    DEF_KEY(KP2),
+    DEF_KEY(KP3),
+    DEF_KEY(KP4),
+    DEF_KEY(KP5),
+    DEF_KEY(KP6),
+    DEF_KEY(KP7),
+    DEF_KEY(KP8),
+    DEF_KEY(KP9),
+    DEF_KEY(KP_PERIOD),
+    DEF_KEY(KP_DIVIDE),
+    DEF_KEY(KP_MULTIPLY),
+    DEF_KEY(KP_MINUS),
+    DEF_KEY(KP_PLUS),
+    DEF_KEY(KP_ENTER),
+    DEF_KEY(KP_EQUALS),
+    DEF_KEY(UP),
+    DEF_KEY(DOWN),
+    DEF_KEY(RIGHT),
+    DEF_KEY(LEFT),
+    DEF_KEY(INSERT),
+    DEF_KEY(HOME),
+    DEF_KEY(END),
+    DEF_KEY(PAGEUP),
+    DEF_KEY(PAGEDOWN),
+    DEF_KEY(F1),
+    DEF_KEY(F2),
+    DEF_KEY(F3),
+    DEF_KEY(F4),
+    DEF_KEY(F5),
+    DEF_KEY(F6),
+    DEF_KEY(F7),
+    DEF_KEY(F8),
+    DEF_KEY(F9),
+    DEF_KEY(F10),
+    DEF_KEY(F11),
+    DEF_KEY(F12),
+    DEF_KEY(F13),
+    DEF_KEY(F14),
+    DEF_KEY(F15),
+    DEF_KEY(NUMLOCK),
+    DEF_KEY(CAPSLOCK),
+    DEF_KEY(SCROLLOCK),
+    DEF_KEY(RSHIFT),
+    DEF_KEY(LSHIFT),
+    DEF_KEY(RCTRL),
+    DEF_KEY(LCTRL),
+    DEF_KEY(RALT),
+    DEF_KEY(LALT),
+    DEF_KEY(RMETA),
+    DEF_KEY(LMETA),
+    DEF_KEY(LSUPER),
+    DEF_KEY(RSUPER),
+    DEF_KEY(MODE),
+    DEF_KEY(HELP),
+    DEF_KEY(PRINT),
+    DEF_KEY(SYSREQ),
+    DEF_KEY(BREAK),
+    DEF_KEY(MENU),
+    DEF_KEY(POWER),
+    DEF_KEY(EURO),
     {NULL, 0}
 };
-#undef defkey
+#undef DEF_KEY
 
 /* Load SDL key constants into SDL module table at index. */
-static void load_sdlk_constants(lua_State *L, int index) {
+static void LoadSdlKeyConstants(lua_State *L, int index) {
     const luasdl_NameSdlKey *p;
-    lua_createtable(L, 0, sizeof(sdl_key_constants) / sizeof(luasdl_NameSdlKey));
-    for (p = sdl_key_constants; p->name != NULL; p++) {
+    lua_createtable(L, 0, sizeof(m_sdl_key_constants) / sizeof(luasdl_NameSdlKey));
+    for (p = m_sdl_key_constants; p->name != NULL; p++) {
         lua_pushstring(L, p->name);
         lua_pushinteger(L, p->key);
         lua_rawset(L, index < 0 ? index - 2 : index);
@@ -877,28 +882,28 @@ static void load_sdlk_constants(lua_State *L, int index) {
 }
 
 
-#define defkmod(name) {#name, KMOD_##name}
-static const luasdl_NameSdlMod sdl_kmod_constants[] = {
-    defkmod(LSHIFT),
-    defkmod(RSHIFT),
-    defkmod(LCTRL),
-    defkmod(RCTRL),
-    defkmod(LALT),
-    defkmod(RALT),
-    defkmod(LMETA),
-    defkmod(RMETA),
-    defkmod(NUM),
-    defkmod(CAPS),
-    defkmod(MODE),
+#define DEF_KMOD(name) {#name, KMOD_##name}
+static const luasdl_NameSdlMod m_sdl_kmod_constants[] = {
+    DEF_KMOD(LSHIFT),
+    DEF_KMOD(RSHIFT),
+    DEF_KMOD(LCTRL),
+    DEF_KMOD(RCTRL),
+    DEF_KMOD(LALT),
+    DEF_KMOD(RALT),
+    DEF_KMOD(LMETA),
+    DEF_KMOD(RMETA),
+    DEF_KMOD(NUM),
+    DEF_KMOD(CAPS),
+    DEF_KMOD(MODE),
     {NULL, 0}
 };
-#undef defkmod
+#undef DEF_KMOD
 
 /* Load SDL key modifier constants into SDL module table at index. */
-static void load_kmod_constants(lua_State *L, int index) {
+static void LoadSdlKmodConstants(lua_State *L, int index) {
     const luasdl_NameSdlMod *p;
-    lua_createtable(L, 0, sizeof(sdl_kmod_constants) / sizeof(luasdl_NameSdlMod));
-    for (p = sdl_kmod_constants; p->name != NULL; p++) {
+    lua_createtable(L, 0, sizeof(m_sdl_kmod_constants) / sizeof(luasdl_NameSdlMod));
+    for (p = m_sdl_kmod_constants; p->name != NULL; p++) {
         lua_pushstring(L, p->name);
         lua_pushinteger(L, p->mod);
         lua_rawset(L, index < 0 ? index - 2 : index);
@@ -907,7 +912,7 @@ static void load_kmod_constants(lua_State *L, int index) {
 }
 
 
-static const luaL_reg sdl_event_functions [] = {
+static const luaL_reg m_sdl_event_functions [] = {
     {"GetKeyName", GetKeyName},
     {"GetMouseState", GetMouseState},
     {"PollEvent", PollEvent},
@@ -918,9 +923,9 @@ static const luaL_reg sdl_event_functions [] = {
 };
 
 /* Load event API into SDL module table at index. */
-void load_sdl_event(lua_State *L, int index) {
-    luaL_register(L, NULL, sdl_event_functions);
-    load_sdl_event_constants(L, index);
-    load_sdlk_constants(L, index);
-    load_kmod_constants(L, index);
+void LoadSdlEvent(lua_State *L, int index) {
+    luaL_register(L, NULL, m_sdl_event_functions);
+    LoadSdlEventConstants(L, index);
+    LoadSdlKeyConstants(L, index);
+    LoadSdlKmodConstants(L, index);
 }

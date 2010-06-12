@@ -148,7 +148,7 @@ luaopen_luasdl(lua_State *L) {
     add_sdl_constants(L, -1);
 
     /* Add sub-modules. */
-    load_sdl_event(L, -1);
+    LoadSdlEvent(L, -1);
     load_sdl_gl(L, -1);
     load_sdl_video(L, -1);
     load_sdl_wm(L, -1);
