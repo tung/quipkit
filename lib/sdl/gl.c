@@ -1,19 +1,10 @@
 #include "gl.h"
 
-#include <SDL.h>
 #include <lua.h>
 #include <lauxlib.h>
+#include <SDL.h>
 
-
-
-/**
- * Declarations
- */
-
-typedef struct {
-    const char *name;
-    SDL_GLattr attr;
-} name_SDL_GLattr_pair;
+#include "types.h"
 
 
 
@@ -46,7 +37,7 @@ static int SetAttribute(lua_State *L) {
  * Public API
  */
 
-static const name_SDL_GLattr_pair sdl_gl_attributes[] = {
+static const luasdl_NameSdlGlAttr sdl_gl_attributes[] = {
     {"DOUBLEBUFFER", SDL_GL_DOUBLEBUFFER},
     {"RED_SIZE", SDL_GL_RED_SIZE},
     {"GREEN_SIZE", SDL_GL_GREEN_SIZE},
@@ -57,7 +48,7 @@ static const name_SDL_GLattr_pair sdl_gl_attributes[] = {
 
 /* Add SDL GL constants to SDL.GL submodule table at index. */
 static void add_sdl_gl_constants(lua_State *L, int index) {
-    const name_SDL_GLattr_pair *p;
+    const luasdl_NameSdlGlAttr *p;
     for (p = sdl_gl_attributes; p->name != NULL; p++) {
         lua_pushstring(L, p->name);
         lua_pushinteger(L, p->attr);    // Assume Lua integers can hold SDL_GLattrs.

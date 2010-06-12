@@ -1,25 +1,10 @@
-#include <SDL.h>
+#include "event.h"
+
 #include <lua.h>
 #include <lauxlib.h>
+#include <SDL.h>
 
-#include "event.h"
-#include "name_Uint_pair.h"
-
-
-
-/**
- * Declarations
- */
-
-typedef struct {
-    const char *name;
-    SDLKey key;
-} name_SDLKey_pair;
-
-typedef struct {
-    const char *name;
-    SDLMod mod;
-} name_SDLMod_pair;
+#include "types.h"
 
 
 
@@ -691,7 +676,7 @@ static int WaitEvent(lua_State *L) {
  */
 
 #define defeconst(name) {#name, SDL_##name}
-static const name_Uint8_pair sdl_event_constants[] = {
+static const luasdl_NameConst8 sdl_event_constants[] = {
     /* SDL event constants */
     defeconst(ACTIVEEVENT),
     defeconst(JOYAXISMOTION),
@@ -731,7 +716,7 @@ static const name_Uint8_pair sdl_event_constants[] = {
 
 /* Load SDL event constants into SDL module table at index. */
 static void load_sdl_event_constants(lua_State *L, int index) {
-    const name_Uint8_pair *p;
+    const luasdl_NameConst8 *p;
     for (p = sdl_event_constants; p->name != NULL; p++) {
         lua_pushstring(L, p->name);
         lua_pushinteger(L, p->uint);
@@ -741,7 +726,7 @@ static void load_sdl_event_constants(lua_State *L, int index) {
 
 
 #define defkey(name) {#name, SDLK_##name}
-static const name_SDLKey_pair sdl_key_constants[] = {
+static const luasdl_NameSdlKey sdl_key_constants[] = {
     defkey(BACKSPACE),
     defkey(TAB),
     defkey(CLEAR),
@@ -881,8 +866,8 @@ static const name_SDLKey_pair sdl_key_constants[] = {
 
 /* Load SDL key constants into SDL module table at index. */
 static void load_sdlk_constants(lua_State *L, int index) {
-    const name_SDLKey_pair *p;
-    lua_createtable(L, 0, sizeof(sdl_key_constants) / sizeof(name_SDLKey_pair));
+    const luasdl_NameSdlKey *p;
+    lua_createtable(L, 0, sizeof(sdl_key_constants) / sizeof(luasdl_NameSdlKey));
     for (p = sdl_key_constants; p->name != NULL; p++) {
         lua_pushstring(L, p->name);
         lua_pushinteger(L, p->key);
@@ -893,7 +878,7 @@ static void load_sdlk_constants(lua_State *L, int index) {
 
 
 #define defkmod(name) {#name, KMOD_##name}
-static const name_SDLMod_pair sdl_kmod_constants[] = {
+static const luasdl_NameSdlMod sdl_kmod_constants[] = {
     defkmod(LSHIFT),
     defkmod(RSHIFT),
     defkmod(LCTRL),
@@ -911,8 +896,8 @@ static const name_SDLMod_pair sdl_kmod_constants[] = {
 
 /* Load SDL key modifier constants into SDL module table at index. */
 static void load_kmod_constants(lua_State *L, int index) {
-    const name_SDLMod_pair *p;
-    lua_createtable(L, 0, sizeof(sdl_kmod_constants) / sizeof(name_SDLMod_pair));
+    const luasdl_NameSdlMod *p;
+    lua_createtable(L, 0, sizeof(sdl_kmod_constants) / sizeof(luasdl_NameSdlMod));
     for (p = sdl_kmod_constants; p->name != NULL; p++) {
         lua_pushstring(L, p->name);
         lua_pushinteger(L, p->mod);

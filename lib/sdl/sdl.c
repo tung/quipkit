@@ -1,17 +1,16 @@
-#include <SDL.h>
-#include <lua.h>
-#include <lauxlib.h>
-
-#include "event.h"
-#include "gl.h"
-#include "wm.h"
-#include "video.h"
-
-#include "name_Uint_pair.h"
-
 #ifdef __MINGW32__
 #   include "sdl.h"
 #endif
+
+#include <lua.h>
+#include <lauxlib.h>
+#include <SDL.h>
+
+#include "event.h"
+#include "gl.h"
+#include "types.h"
+#include "wm.h"
+#include "video.h"
 
 
 
@@ -108,7 +107,7 @@ static int Quit(lua_State *L) {
  * Public API
  */
 
-static const name_Uint32_pair sdl_init_flags[] = {
+static const luasdl_NameConst32 sdl_init_flags[] = {
     {"INIT_TIMER", SDL_INIT_TIMER},
     {"INIT_AUDIO", SDL_INIT_AUDIO},
     {"INIT_VIDEO", SDL_INIT_VIDEO},
@@ -122,7 +121,7 @@ static const name_Uint32_pair sdl_init_flags[] = {
 
 /* Load base SDL constants into SDL module table at index. */
 static void add_sdl_constants(lua_State *L, int index) {
-    const name_Uint32_pair *p;
+    const luasdl_NameConst32 *p;
     for (p = sdl_init_flags; p->name != NULL; p++) {
         lua_pushstring(L, p->name);
         lua_pushinteger(L, p->uint);    // Assume Lua integers can hold SDL_INIT_* flags.
@@ -144,7 +143,7 @@ int
 #ifdef __MINGW32__
 DLL_EXPORT
 #endif
-luaopen_sdl(lua_State *L) {
+luaopen_luasdl(lua_State *L) {
     luaL_register(L, "SDL", sdl_functions);
     add_sdl_constants(L, -1);
 

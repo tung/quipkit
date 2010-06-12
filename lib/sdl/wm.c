@@ -1,8 +1,8 @@
-#include <SDL.h>
+#include "wm.h"
+
 #include <lua.h>
 #include <lauxlib.h>
-
-#include "wm.h"
+#include <SDL.h>
 
 
 

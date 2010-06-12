@@ -1,10 +1,11 @@
-#include <SDL.h>
+#include "video.h"
+
 #include <lua.h>
 #include <lauxlib.h>
+#include <SDL.h>
 
-#include "video.h"
-#include "name_Uint_pair.h"
 #include "surface.h"
+#include "types.h"
 
 
 
@@ -67,7 +68,7 @@ static int SetVideoMode(lua_State *L) {
  * Public API
  */
 
-static const name_Uint32_pair sdl_SetVideoMode_constants[] = {
+static const luasdl_NameConst32 sdl_SetVideoMode_constants[] = {
     {"SWSURFACE", SDL_SWSURFACE},
     {"HWSURFACE", SDL_HWSURFACE},
     {"ASYNCBLIT", SDL_ASYNCBLIT},
@@ -84,7 +85,7 @@ static const name_Uint32_pair sdl_SetVideoMode_constants[] = {
 
 /* Load SDL video constants into SDL module table at index. */
 static void load_sdl_video_constants(lua_State *L, int index) {
-    const name_Uint32_pair *p;
+    const luasdl_NameConst32 *p;
     for (p = sdl_SetVideoMode_constants; p->name != NULL; p++) {
         lua_pushstring(L, p->name);
         lua_pushinteger(L, p->uint);    // Assume Lua numbers can hold SDL video constants.
