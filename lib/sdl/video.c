@@ -68,7 +68,7 @@ static int SetVideoMode(lua_State *L) {
  * Public API
  */
 
-static const luasdl_NameConst32 sdl_SetVideoMode_constants[] = {
+static const luasdl_NameConst32 m_sdl_video_mode_constants[] = {
     {"SWSURFACE", SDL_SWSURFACE},
     {"HWSURFACE", SDL_HWSURFACE},
     {"ASYNCBLIT", SDL_ASYNCBLIT},
@@ -84,9 +84,9 @@ static const luasdl_NameConst32 sdl_SetVideoMode_constants[] = {
 };
 
 /* Load SDL video constants into SDL module table at index. */
-static void load_sdl_video_constants(lua_State *L, int index) {
+static void LoadSdlVideoConstants(lua_State *L, int index) {
     const luasdl_NameConst32 *p;
-    for (p = sdl_SetVideoMode_constants; p->name != NULL; p++) {
+    for (p = m_sdl_video_mode_constants; p->name != NULL; p++) {
         lua_pushstring(L, p->name);
         lua_pushinteger(L, p->uint);    // Assume Lua numbers can hold SDL video constants.
         lua_settable(L, index < 0 ? index - 2 : index);
@@ -94,16 +94,16 @@ static void load_sdl_video_constants(lua_State *L, int index) {
 }
 
 
-static const luaL_reg sdl_video_functions[] = {
+static const luaL_reg m_sdl_video_functions[] = {
     {"Flip", Flip},
     {"SetVideoMode", SetVideoMode},
     {NULL, NULL}
 };
 
 /* Load SDL video functions into SDL module table at index. */
-static void load_sdl_video_functions(lua_State *L, int index) {
+static void LoadSdlVideoFunctions(lua_State *L, int index) {
     const luaL_Reg *reg;
-    for (reg = sdl_video_functions; reg->name != NULL; reg++) {
+    for (reg = m_sdl_video_functions; reg->name != NULL; reg++) {
         lua_pushstring(L, reg->name);
         lua_pushcfunction(L, reg->func);
         lua_rawset(L, index < 0 ? index - 2 : index);
@@ -112,8 +112,8 @@ static void load_sdl_video_functions(lua_State *L, int index) {
 
 
 /* Load video API into SDL module table at index. */
-void load_sdl_video(lua_State *L, int index) {
+void LoadSdlVideo(lua_State *L, int index) {
     setup_lua_sdl_surface(L, index);
-    load_sdl_video_functions(L, index);
-    load_sdl_video_constants(L, index);
+    LoadSdlVideoFunctions(L, index);
+    LoadSdlVideoConstants(L, index);
 }
