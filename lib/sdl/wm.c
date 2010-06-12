@@ -24,15 +24,15 @@ static int SetCaption(lua_State *L) {
  * Public API
  */
 
-static const luaL_reg sdl_wm_functions[] = {
+static const luaL_reg m_sdl_wm_functions[] = {
     {"SetCaption", SetCaption},
     {NULL, NULL}
 };
 
 /* Load window manager API into SDL module table at index. */
-void load_sdl_wm(lua_State *L, int index) {
+void LoadSdlWm(lua_State *L, int index) {
     lua_pushliteral(L, "WM");
     lua_newtable(L);
-    luaL_register(L, NULL, sdl_wm_functions);
+    luaL_register(L, NULL, m_sdl_wm_functions);
     lua_settable(L, index < 0 ? index - 2 : index);
 }

@@ -3,6 +3,6 @@
 
 #include <lua.h>
 
-void load_sdl_wm(lua_State *L, int index);
+void LoadSdlWm(lua_State *L, int index);
 
 #endif
