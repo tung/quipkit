@@ -15,7 +15,7 @@
 
 /* userdatum<Lua SDL Surface> screen -> */
 static int Flip(lua_State *L) {
-    lua_sdl_surface *s = check_lua_sdl_surface(L, 1);
+    luasdl_Surface *s = luasdl_CheckSurface(L, 1);
     if (SDL_Flip(s->surface) != 0) {
         return luaL_error(L, "SDL_Flip failed: %s", SDL_GetError());
     }
@@ -58,7 +58,7 @@ static int SetVideoMode(lua_State *L) {
     }
 
     /* Screen surface should not be freed: SDL_Quit does it for us. */
-    push_lua_sdl_surface(L, surface, 0, LUA_NOREF);
+    luasdl_PushSurface(L, surface, 0, LUA_NOREF);
     return 1;
 }
 
@@ -113,7 +113,7 @@ static void LoadSdlVideoFunctions(lua_State *L, int index) {
 
 /* Load video API into SDL module table at index. */
 void LoadSdlVideo(lua_State *L, int index) {
-    setup_lua_sdl_surface(L, index);
+    luasdl_SetupSurface(L, index);
     LoadSdlVideoFunctions(L, index);
     LoadSdlVideoConstants(L, index);
 }

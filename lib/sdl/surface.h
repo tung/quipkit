@@ -8,10 +8,10 @@ typedef struct {
     SDL_Surface *surface;
     int can_free;   // Whether this surface should be freed.
     int pixel_ref;  // Lua reference to pixel data, if it is userdata. If not, put LUA_NOREF here.
-} lua_sdl_surface;
+} luasdl_Surface;
 
-lua_sdl_surface *check_lua_sdl_surface(lua_State *L, int index);
-void push_lua_sdl_surface(lua_State *L, SDL_Surface *surface, int can_free, int pixel_ref);
-void setup_lua_sdl_surface(lua_State *L, int index);
+luasdl_Surface *luasdl_CheckSurface(lua_State *L, int index);
+void luasdl_PushSurface(lua_State *L, SDL_Surface *surface, int can_free, int pixel_ref);
+void luasdl_SetupSurface(lua_State *L, int index);
 
 #endif
