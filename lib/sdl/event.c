@@ -911,9 +911,20 @@ static const luaL_reg m_sdl_event_functions [] = {
     {NULL, NULL}
 };
 
+/* Load SDL event function into SDL module table at index. */
+static void LoadSdlEventFunctions(lua_State *L, int index) {
+    const luaL_Reg *reg;
+    for (reg = m_sdl_event_functions; reg->name != NULL; reg++) {
+        lua_pushstring(L, reg->name);
+        lua_pushcfunction(L, reg->func);
+        lua_rawset(L, index < 0 ? index - 2 : index);
+    }
+}
+
+
 /* Load event API into SDL module table at index. */
 void LoadSdlEvent(lua_State *L, int index) {
-    luaL_register(L, NULL, m_sdl_event_functions);
+    LoadSdlEventFunctions(L, index);
     LoadSdlEventConstants(L, index);
     LoadSdlKeyConstants(L, index);
     LoadSdlKmodConstants(L, index);
