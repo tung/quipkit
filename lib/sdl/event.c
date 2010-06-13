@@ -418,15 +418,17 @@ static void EventToTable(lua_State *L, SDL_Event event) {
 
                 SET_INT(user, code);
 
-                /* Works as long as sizeof(Lua ref int) <= sizeof(void *) */
+                /* Back to Lua-land, so the ref is no longer needed. */
                 lua_pushliteral(L, "data1");
                 lua_rawgeti(L, LUA_REGISTRYINDEX, (int)event.user.data1);
                 lua_rawset(L, -3);
+                luaL_unref(L, LUA_REGISTRYINDEX, (int)event.user.data1);
 
                 /* ^ ditto */
                 lua_pushliteral(L, "data2");
                 lua_rawgeti(L, LUA_REGISTRYINDEX, (int)event.user.data2);
                 lua_rawset(L, -3);
+                luaL_unref(L, LUA_REGISTRYINDEX, (int)event.user.data2);
 
                 lua_rawset(L, -3);
             } else {
@@ -434,13 +436,6 @@ static void EventToTable(lua_State *L, SDL_Event event) {
             }
     }
     #undef SET_INT
-}
-
-
-/* This should really be in the code above. */
-static void FreeUserEventData(lua_State *L, SDL_Event user_event) {
-    luaL_unref(L, LUA_REGISTRYINDEX, (int)user_event.user.data1);
-    luaL_unref(L, LUA_REGISTRYINDEX, (int)user_event.user.data2);
 }
 
 
@@ -475,9 +470,6 @@ static int PollEvent(lua_State *L) {
     SDL_Event event;
     if (SDL_PollEvent(&event)) {
         EventToTable(L, event);
-        if (event.type >= SDL_USEREVENT && event.type < SDL_NUMEVENTS) {
-            FreeUserEventData(L, event);
-        }
     } else {
         lua_pushnil(L);
     }
@@ -668,9 +660,6 @@ static int WaitEvent(lua_State *L) {
         luaL_error(L, "SDL_WaitEvent failed: %s", SDL_GetError());
     }
     EventToTable(L, event);
-    if (event.type >= SDL_USEREVENT && event.type < SDL_NUMEVENTS) {
-        FreeUserEventData(L, event);
-    }
     return 1;
 }
 
