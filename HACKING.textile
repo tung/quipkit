@@ -1,0 +1,43 @@
+h1. Quipkit Code Conventions
+
+This is mostly for C code.
+
+h2. Names
+
+* Functions - CaptialCase
+** Convert acronyms too, e.g. Sdl instead of SDL
+* Macros - ALL_CAPS
+* Constants - ALL_CAPS
+* Typedefs - CapitalCase
+* Variables - underscore_separated
+** Global variables - g_prefixed
+** Module variables - m_prefixed
+* Scoping/namespacing - prefixed_
+
+h2. Spacing
+
+* Indentation - 4 spaces
+* Line spacing
+** 3 lines between logical sections in a file
+** 2 lines between functions
+** 1 line between a function and its data
+** 1 line within functions when needed
+* Commas - 1 space after, but not before, like in English prose
+* Operators
+** Binary - 1 space before and after, e.g. 1 + 2, not 1+2
+** Unary - no space, e.g. ++i
+* Braces
+** Always use them
+** Opening brace on the same line
+** Closing brace flush with indentation immediately outside
+
+h2. Headers
+
+* "main" header first
+** e.g. blah.c should include blah.h before anything else
+* 1 blank line
+* System/library headers in alphabetical order
+* 1 blank line
+* Any other headers in alphabetical order
+
+The order of headers can be different if it's needed for compilation or features.
