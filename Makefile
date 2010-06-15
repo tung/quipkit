@@ -1,15 +1,19 @@
 CFLAGS:=-std=c99 -W -Wall -Wextra
 
+
+
 ### Tasks ###
 
 .PHONY: all clean
 
-all: game lib/png/libluapng.so lib/sdl/libluasdl.so
+all: game edit lib/png/libluapng.so lib/sdl/libluasdl.so
 
 clean:
-	-rm -f game *.o
+	-rm -f game edit *.o
 	-rm -f lib/png/libluapng.so lib/png/*.o
 	-rm -f lib/sdl/libluasdl.so lib/sdl/*.o
+
+
 
 ### Quipkit Engine ###
 
@@ -53,3 +57,16 @@ lib/sdl/video.o: lib/sdl/video.c lib/sdl/video.h lib/sdl/surface.h lib/sdl/types
 	gcc -fPIC -o $@ ${QK_SDL_CFLAGS} -c $<
 lib/sdl/wm.o: lib/sdl/wm.c lib/sdl/wm.h
 	gcc -fPIC -o $@ ${QK_SDL_CFLAGS} -c $<
+
+
+
+### Quipkit Editor ###
+
+QKED_CFLAGS:=${CFLAGS} `pkg-config --cflags lua5.1`
+QKED_LIBS:=`pkg-config --libs lua5.1`
+
+edit: edit.o
+	gcc -o $@ ${QKED_LIBS} $^
+
+edit.o: edit.c
+	gcc -o $@ ${QKED_CFLAGS} -c $^
