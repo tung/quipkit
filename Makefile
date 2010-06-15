@@ -6,12 +6,13 @@ CFLAGS:=-std=c99 -W -Wall -Wextra
 
 .PHONY: all clean
 
-all: game edit lib/png/libluapng.so lib/sdl/libluasdl.so
+all: game lib/png/libluapng.so lib/sdl/libluasdl.so edit dev/lib/tcltk/ltcltk-0.9-1/ltcl.so
 
 clean:
 	-rm -f game edit *.o
 	-rm -f lib/png/libluapng.so lib/png/*.o
 	-rm -f lib/sdl/libluasdl.so lib/sdl/*.o
+	-rm -f dev/lib/tcltk/ltcltk-0.9-1/ltcl.so dev/lib/tcltk/ltcltk-0.9-1/*.o
 
 
 
@@ -70,3 +71,14 @@ edit: edit.o
 
 edit.o: edit.c
 	gcc -o $@ ${QKED_CFLAGS} -c $^
+
+### Tcl bindings (and thus Tk too) ###
+
+TCLTK_CFLAGS:=${QKED_CFLAGS} -I/usr/include/tcl8.5
+TCLTK_LIBS:=${QKED_LIBS} -ltcl8.5
+
+dev/lib/tcltk/ltcltk-0.9-1/ltcl.so: dev/lib/tcltk/ltcltk-0.9-1/ltcl.o
+	gcc -shared -Wl,-soname,$(notdir $@) -o $@ ${TCLTK_LIBS} $+
+
+dev/lib/tcltk/ltcltk-0.9-1/ltcl.o: dev/lib/tcltk/ltcltk-0.9-1/ltcl.c
+	gcc -fPIC -o $@ ${TCLTK_CFLAGS} -c $<
