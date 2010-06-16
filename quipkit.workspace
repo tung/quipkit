@@ -7,5 +7,6 @@
 		</Project>
 		<Project filename="lib/sdl/sdl.cbp" />
 		<Project filename="lib/png/png.cbp" />
+		<Project filename="edit.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
