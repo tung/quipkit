@@ -43,6 +43,12 @@
 		<Unit filename="dev\init.lua">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
+		<Unit filename="dev\lib\ltcl.lua">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="dev\lib\ltk.lua">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="dev\main.lua">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>

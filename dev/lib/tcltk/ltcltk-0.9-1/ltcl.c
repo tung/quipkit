@@ -18,6 +18,10 @@
 
 #include "tcl.h"
 
+#ifdef __MINGW32__
+#   include "ltcl.h"
+#endif
+
 /*** basic tcl interpreter stuff ***/
 
 /* name of the metatable to use for the userdata and also for the type */
@@ -102,10 +106,10 @@ static void _ltcl_ptrlistpush(lTclPtrList *l, void *obj)
 }
 
 /* _ltcl_ptrlistcheck
- * 
+ *
  * check wether obj is already present in the list. If so, returns 0, if not,
  * pushes obj at the end of the lTclPtrList and returns 1.
- * 
+ *
  * Arguments:
  *	l	pointer list
  *	obj	pointer to check and push
@@ -143,7 +147,7 @@ static Tcl_Obj* ltcl_toTclObj(lua_State *L, int index, lTclPtrList *lst_in);
 /* ltcl_toTclInterp
  *
  * If the value at the given acceptable index is a full userdata, returns its block address.
- * Otherwise, returns NULL. 
+ * Otherwise, returns NULL.
  *
  * Arguments:
  * 	L	Lua State
@@ -330,7 +334,7 @@ static int ltcl_vals(lua_State *L)
 /* ltcl_toTclVals
  *
  * If the value at the given acceptable index is a full userdata of type LTCL_VALS, returns
- * its block address. Otherwise, returns NULL. 
+ * its block address. Otherwise, returns NULL.
  *
  * Arguments:
  * 	L	Lua State
@@ -444,14 +448,14 @@ static const luaL_reg LTCL_VALSmeta[] = {
 /*** interaction lua -> tcl ***/
 
 /* probablyutf8seq
- * 
+ *
  * checks wether a sequence of bytes is a reasonably(*) valid utf8 character
  * sequence. Returns 1 if the sequence is valid utf8, 0 otherwise.
- * 
+ *
  * Reasonably valid means that it contains only valid utf8 byte sequences. No
  * attempt is made to check wether these sequences actually represent valid
  * characters.
- * 
+ *
  * These patterns from rfc2279 are used:
  * 0000 0000-0000 007F   0xxxxxxx
  * 0000 0080-0000 07FF   110xxxxx 10xxxxxx
@@ -459,7 +463,7 @@ static const luaL_reg LTCL_VALSmeta[] = {
  * 0001 0000-001F FFFF   11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
  * 0020 0000-03FF FFFF   111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
  * 0400 0000-7FFF FFFF   1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx
- * 
+ *
  * Arguments:
  * 	seq	sequence of bytes
  *  len	length of sequence to check. If seq is a \0 terminated string,
@@ -801,7 +805,7 @@ static int ltcl_call(lua_State *L)
 	/* have tcl free all of our objects and then dispose */
 	for (i = 0; i < args->objc; ++i)
 		Tcl_DecrRefCount((Tcl_Obj*)args->objv[i]);
-	
+
 	_ltcl_ptrlistfree(args);
 
 	/* then return */
@@ -880,7 +884,7 @@ static int ltcl_callt(lua_State *L)
 	for (i = 0; i < args->objc; ++i)
 		Tcl_DecrRefCount((Tcl_Obj*)args->objv[i]);
 	_ltcl_ptrlistfree(args);
-		
+
 	if (res != TCL_OK)
 		return luaL_error(L, Tcl_GetStringResult(tcli));
 
@@ -888,21 +892,21 @@ static int ltcl_callt(lua_State *L)
 }
 
 /* ltcl_makearglist
- * 
+ *
  * make a tcl argument list from the table passed as an argument. First the
  * table members from 1 to #table are inserted into the result table, then all
  * the key/value pairs, where key is not numeric, are inserted with the key
  * prefixed by a '-' first and then the value. So {1, opt=2} would be converted
  * to {1, '-opt', 2}
  * This is explicitely intended to be used for ltk!
- * 
+ *
  * Arguments:
  * 	L	lua State
- * 
+ *
  * Lua Stack:
  * 	1	tcl interpreter
  * 	2	argument table
- * 
+ *
  * Lua Returns:
  * 	+1	result table
  */
@@ -911,7 +915,7 @@ static int ltcl_makearglist(lua_State *L)
 	lTcl *interp = ltcl_checkTclInterp(L, 1);
 	int top = lua_gettop(L);
 	int tlen, i;
-	int sbufs = 100;
+	unsigned int sbufs = 100;
 	char *sbuf = NULL;
 	const char *tmps;
 	size_t tmpl;
@@ -934,7 +938,7 @@ static int ltcl_makearglist(lua_State *L)
 		lua_pushnil(L);  /* first key */
 		while (lua_next(L, 2) != 0) {
 			if (!lua_isnumber(L, -2)) { /* skip numerical indices */
-				
+
 				/* key */
 				luaL_checktype(L, -2, LUA_TSTRING);
 				tmps = lua_tolstring(L, -2, &tmpl);
@@ -1097,7 +1101,7 @@ static int ltcl_setvar(lua_State *L)
 }
 
 /* ltcl_unsetarray
- * 
+ *
  * get value of a variable and push it onto the lua stack.
  *
  * Arguments:
@@ -1129,7 +1133,7 @@ static int ltcl_unsetarray(lua_State *L)
 }
 
 /* ltcl_unsetvar
- * 
+ *
  *
  * Arguments:
  *	L	Lua State
@@ -1355,10 +1359,10 @@ static int ltcl_unregister(lua_State *L)
 }
 
 /* ltcl_tracewrapper
- * 
+ *
  * a wrapper around lua function calls for use by ltcl_tracevar. Returns 0 if
  * the lua trace function returned null, a string with the error message otherwise.
- * 
+ *
  * Arguments:
  * 	cdata	the clientdata stuff we passed when registering the trace function
  * 	tcli	tcl interpreter
@@ -1380,7 +1384,7 @@ static char *ltcl_tracewrapper(ClientData cdata, Tcl_Interp *tcli, const char *n
 
 	if (flags & TCL_INTERP_DESTROYED)
 		return NULL;
-		
+
 	/* else if the variable and thus the trace is destroyed, we just re-establish the trace.
 	 */
 	if (flags & TCL_TRACE_DESTROYED) {
@@ -1434,23 +1438,23 @@ static char *ltcl_tracewrapper(ClientData cdata, Tcl_Interp *tcli, const char *n
 }
 
 /* ltcl_tracevar
- * 
+ *
  *
  * Adds a function to call whenever an array index is accessed
- * 
+ *
  * Arguments:
  * 	L	Lua State
- * 
+ *
  * Lua Stack:
  * 	1	tcl interpreter
  * 	2	name of variable to trace
  * 	3	index into array to trace, may be nil
  * 	4	flags for the trace func
  * 	5	function to call for the trace
- * 
+ *
  * Lua Returns:
  * 	-
- * 
+ *
  * Note:
  * 	the construction of the function name ensures that any function is registered only once.
  */
@@ -1617,18 +1621,18 @@ static int ltcl_getEncodings(lua_State *L)
 }
 
 /* ltcl_checkflags
- * 
+ *
  * returns all flags that are set in flags (first argument) from the list of
  * flags starting at the third argument.
- * 
+ *
  * Arguments:
  * 	L	lua State
- * 
+ *
  * Lua Stack:
  * 	1	tcl interpreter
  * 	2	flags value to check against
  * 	...	flags to test against flags
- * 
+ *
  * Lua Returns:
  * 	the value of any flag from argument 3 onwards that is set in flags, nil for
  * 	any flag that is not set in flags
@@ -1691,7 +1695,11 @@ static const luaL_reg ltcl_lib[] = {
  * Lua Returns:
  *	+1	tcl module table
  */
-int luaopen_ltcl(lua_State *L)
+int
+#ifdef __MINGW32__
+DLL_EXPORT
+#endif
+luaopen_ltcl(lua_State *L)
 {
 	int major, minor;
 	char buf[16];
@@ -1755,12 +1763,12 @@ int luaopen_ltcl(lua_State *L)
 	lua_pushliteral(L, "LIST_ELEMENT");
 	lua_pushnumber(L, TCL_LIST_ELEMENT);
 	lua_rawset(L, -3);
-	
+
 	/* trace* flags */
 	lua_pushliteral(L, "TRACE_READS");
 	lua_pushnumber(L, TCL_TRACE_READS);
 	lua_rawset(L, -3);
-	
+
 	lua_pushliteral(L, "TRACE_WRITES");
 	lua_pushnumber(L, TCL_TRACE_WRITES);
 	lua_rawset(L, -3);
@@ -1776,3 +1784,11 @@ int luaopen_ltcl(lua_State *L)
 	return 1;
 }
 
+#ifdef __MINGW32__
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
+    (void)hinstDLL;
+    (void)fdwReason;
+    (void)lpvReserved;
+    return TRUE;
+}
+#endif
