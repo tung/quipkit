@@ -207,7 +207,7 @@ static int ltcl_new(lua_State *L)
 {
 	Tcl_Interp *tclinterp = Tcl_CreateInterp();
 	if (Tcl_Init(tclinterp) == TCL_ERROR) {
-		return luaL_error(L, "tcl initialisation failed.");
+		return luaL_error(L, "tcl initialisation failed: %s", Tcl_GetStringResult(tclinterp));
 	}
 	lTcl *interp = ltcl_pushTclInterp(L);
 	interp->interp = tclinterp;
