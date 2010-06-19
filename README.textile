@@ -9,7 +9,9 @@ h2. Status
 
 *Quipkit is in its early days. It's not in any releasable state.*
 
-Right now, Quipkit builds as a basic game engine with some SDL, OpenGL and libpng bindings. It can build on Linux and Windows. Running it should show a yellow smiley face that bounces around until you close the window.
+Right now, Quipkit builds a basic game engine with some SDL, OpenGL and libpng bindings. It can build on Linux and Windows. Running it should show a yellow smiley face that bounces around until you close the window.
+
+Quipkit also builds a demo GUI using Tcl and Tk bindings to Lua, also on Linux and Windows. Running it shows a small hello world button that closes when clicked.
 
 If you're still here, chances are you know me and want to see my code, or you're interested in helping me work on it. In either case, welcome!
 
@@ -39,29 +41,41 @@ Quipkit aims to help you make that "more everything" in your quest to make the n
 
 The *game engine* runs on "Lua":http://www.lua.org/, a simple, powerful, gets-out-of-your-way scripting language to help keep your code under control. With Lua's power, handling all that state and those mini-game systems should be a snap!
 
-The Quipkit *editor*, also (to be) Lua-powered, gives you the power to make and tweak RPG content faster than ever with _tools_. You can script your own and use others'. Writing, drawing and directing your RPG can be streamlined, by yourself or with the help of your computer programming buddies.
+The Quipkit *editor*, also Lua-powered, gives you the power to make and tweak RPG content faster than ever with _tools_. You can script your own and use others'. Writing, drawing and directing your RPG can be streamlined, by yourself or with the help of your computer programming buddies.
 
 
 h2. Building Quipkit
 
-Right now only the engine is available.
+The engine and editor can be built on Linux and Windows.
 
 h3. On Linux
 
-Install the development libs for:
+To build the engine, install the development libs for:
 
 * Lua 5.1
 * OpenGL
 * SDL
 * libpng
 
-Then type @make@. Enter @./game@ to try it out.
+Then type @make game@. Type @./game@ to try it out.
+
+To build the editor, install the development libs for:
+
+* Lua 5.1
+* Tcl 8.5
+* Tk 8.5
+
+Then type @make edit@. Type @./edit@ to try it out.
 
 h3. On Windows
 
 Install the Code::Blocks + MinGW combo from the Code::Blocks website.
 
 Open @quipkit.workspace@ and build the "Quipkit Engine" project, which should build the "sdl" and "png" libraries as well. Run it from the IDE to try it out.
+
+To build the editor, activate the "Quipkit Editor" project in Code::Blocks and build it, which should build the "ltcl" library as well. It can also be run from the IDE.
+
+There is a known bug in Quipkit where only the "Debug" version of libraries are used. For now, it can be worked around by only building the "Debug" targets, which can be switched to near the build and run buttons on the Code::Blocks IDE toolbar.
 
 
 h2. For More Info
