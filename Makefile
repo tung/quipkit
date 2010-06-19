@@ -24,15 +24,11 @@ LTCLTK_DIR:=dev/lib/tcltk/ltcltk-0.9-1/
 
 ### Tasks ###
 
-.PHONY: all clean
-
+.PHONY: all
 all: game ${LUAPNG_DIR}libluapng.so ${LUASDL_DIR}libluasdl.so edit ${LTCLTK_DIR}ltcl.so
 
-clean:
-	-rm -f game edit *.o
-	-rm -f ${LUAPNG_DIR}libluapng.so ${LUAPNG_DIR}*.o
-	-rm -f ${LUASDL_DIR}libluasdl.so ${LUASDL_DIR}*.o
-	-rm -f ${LTCLTK_DIR}ltcl.so ${LTCLTK_DIR}*.o
+.PHONY: clean
+clean: clean_game clean_luapng clean_luasdl clean_edit clean_ltcltk
 
 
 
@@ -47,6 +43,11 @@ game: game.o
 game.o: game.c
 	gcc -o $@ ${QKENG_CFLAGS} -c $^
 
+.PHONY: clean_game
+clean_game:
+	-rm -f game
+	-rm -f game.o
+
 ### libpng bindings ###
 
 QK_PNG_CFLAGS:=${QKENG_CFLAGS} ${LIBPNG_CFLAGS}
@@ -57,6 +58,11 @@ ${LUAPNG_DIR}libluapng.so: ${LUAPNG_DIR}png.o
 
 ${LUAPNG_DIR}png.o: ${LUAPNG_DIR}png.c ${LUAPNG_DIR}png.h
 	gcc -fPIC -o $@ ${QK_PNG_CFLAGS} -c $<
+
+.PHONY: clean_luapng
+clean_luapng:
+	-rm -f ${LUAPNG_DIR}libluapng.so
+	-rm -f ${LUAPNG_DIR}*.o
 
 ### SDL bindings ###
 
@@ -79,6 +85,11 @@ ${LUASDL_DIR}video.o: ${LUASDL_DIR}video.c ${LUASDL_DIR}video.h ${LUASDL_DIR}sur
 ${LUASDL_DIR}wm.o: ${LUASDL_DIR}wm.c ${LUASDL_DIR}wm.h
 	gcc -fPIC -o $@ ${QK_SDL_CFLAGS} -c $<
 
+.PHONY: clean_luasdl
+clean_luasdl:
+	-rm -f ${LUASDL_DIR}libluasdl.so
+	-rm -f ${LUASDL_DIR}*.o
+
 
 
 ### Quipkit Editor ###
@@ -92,6 +103,11 @@ edit: edit.o
 edit.o: edit.c
 	gcc -o $@ ${QKED_CFLAGS} -c $^
 
+.PHONY: clean_edit
+clean_edit:
+	-rm -f edit
+	-rm -f edit.o
+
 ### Tcl bindings (and thus Tk too) ###
 
 LTCLTK_CFLAGS:=${QKED_CFLAGS} ${TCLTK_CFLAGS}
@@ -102,3 +118,8 @@ ${LTCLTK_DIR}ltcl.so: ${LTCLTK_DIR}ltcl.o
 
 ${LTCLTK_DIR}ltcl.o: ${LTCLTK_DIR}ltcl.c
 	gcc -fPIC -o $@ ${LTCLTK_CFLAGS} -c $<
+
+.PHONY: clean_ltcltk
+clean_ltcltk:
+	-rm -f ${LTCLTK_DIR}ltcl.so
+	-rm -f ${LTCLTK_DIR}*.o
