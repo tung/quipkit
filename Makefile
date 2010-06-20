@@ -16,19 +16,21 @@ TCLTK_LIBS:=-ltcl8.5
 
 
 
-LUAPNG_DIR:=lib/png/
-LUASDL_DIR:=lib/sdl/
 LTCLTK_DIR:=dev/lib/tcltk/ltcltk-0.9-1/
+LUAPNG_DIR:=lib/png/
+LUASDL_DIR:=lib/sdl/luaSDL/
+OLDLUASDL_DIR:=lib/sdl/
+TOLUAPP_DIR:=contrib/tolua++/
 
 
 
 ### Tasks ###
 
 .PHONY: all
-all: game ${LUAPNG_DIR}libluapng.so ${LUASDL_DIR}libluasdl.so edit ${LTCLTK_DIR}ltcl.so
+all: game ${LUAPNG_DIR}libluapng.so ${OLDLUASDL_DIR}libluasdl.so ${LUASDL_DIR}libluasdl.so all_toluapp edit ${LTCLTK_DIR}ltcl.so
 
 .PHONY: clean
-clean: clean_game clean_luapng clean_luasdl clean_edit clean_ltcltk
+clean: clean_game clean_luapng clean_oldluasdl clean_luasdl clean_toluapp clean_edit clean_ltcltk
 
 
 
@@ -64,31 +66,123 @@ clean_luapng:
 	-rm -f ${LUAPNG_DIR}libluapng.so
 	-rm -f ${LUAPNG_DIR}*.o
 
-### SDL bindings ###
+### Old SDL bindings ###
 
 QK_SDL_CFLAGS:=${QKENG_CFLAGS} ${SDL_CFLAGS}
 QK_SDL_LIBS:=${QKENG_LIBS} ${SDL_LIBS}
 
-${LUASDL_DIR}libluasdl.so: ${LUASDL_DIR}sdl.o ${LUASDL_DIR}event.o ${LUASDL_DIR}gl.o ${LUASDL_DIR}surface.o ${LUASDL_DIR}video.o ${LUASDL_DIR}wm.o
+${OLDLUASDL_DIR}libluasdl.so: ${OLDLUASDL_DIR}sdl.o ${OLDLUASDL_DIR}event.o ${OLDLUASDL_DIR}gl.o ${OLDLUASDL_DIR}surface.o ${OLDLUASDL_DIR}video.o ${OLDLUASDL_DIR}wm.o
 	gcc -shared -Wl,-soname,$(notdir $@) -o $@ ${QK_SDL_LIBS} $+
 
-${LUASDL_DIR}sdl.o: ${LUASDL_DIR}sdl.c ${LUASDL_DIR}sdl.h ${LUASDL_DIR}event.h ${LUASDL_DIR}gl.h ${LUASDL_DIR}types.h ${LUASDL_DIR}video.h ${LUASDL_DIR}wm.h
+${OLDLUASDL_DIR}sdl.o: ${OLDLUASDL_DIR}sdl.c ${OLDLUASDL_DIR}sdl.h ${OLDLUASDL_DIR}event.h ${OLDLUASDL_DIR}gl.h ${OLDLUASDL_DIR}types.h ${OLDLUASDL_DIR}video.h ${OLDLUASDL_DIR}wm.h
 	gcc -fPIC -o $@ ${QK_SDL_CFLAGS} -c $<
-${LUASDL_DIR}event.o: ${LUASDL_DIR}event.c ${LUASDL_DIR}event.h ${LUASDL_DIR}types.h
+${OLDLUASDL_DIR}event.o: ${OLDLUASDL_DIR}event.c ${OLDLUASDL_DIR}event.h ${OLDLUASDL_DIR}types.h
 	gcc -fPIC -o $@ ${QK_SDL_CFLAGS} -c $<
-${LUASDL_DIR}gl.o: ${LUASDL_DIR}gl.c ${LUASDL_DIR}gl.h ${LUASDL_DIR}types.h
+${OLDLUASDL_DIR}gl.o: ${OLDLUASDL_DIR}gl.c ${OLDLUASDL_DIR}gl.h ${OLDLUASDL_DIR}types.h
 	gcc -fPIC -o $@ ${QK_SDL_CFLAGS} -c $<
-${LUASDL_DIR}surface.o: ${LUASDL_DIR}surface.c ${LUASDL_DIR}surface.h
+${OLDLUASDL_DIR}surface.o: ${OLDLUASDL_DIR}surface.c ${OLDLUASDL_DIR}surface.h
 	gcc -fPIC -o $@ ${QK_SDL_CFLAGS} -c $<
-${LUASDL_DIR}video.o: ${LUASDL_DIR}video.c ${LUASDL_DIR}video.h ${LUASDL_DIR}surface.h ${LUASDL_DIR}types.h
+${OLDLUASDL_DIR}video.o: ${OLDLUASDL_DIR}video.c ${OLDLUASDL_DIR}video.h ${OLDLUASDL_DIR}surface.h ${OLDLUASDL_DIR}types.h
 	gcc -fPIC -o $@ ${QK_SDL_CFLAGS} -c $<
-${LUASDL_DIR}wm.o: ${LUASDL_DIR}wm.c ${LUASDL_DIR}wm.h
+${OLDLUASDL_DIR}wm.o: ${OLDLUASDL_DIR}wm.c ${OLDLUASDL_DIR}wm.h
 	gcc -fPIC -o $@ ${QK_SDL_CFLAGS} -c $<
+
+.PHONY: clean_oldluasdl
+clean_oldluasdl:
+	-rm -f ${OLDLUASDL_DIR}libluasdl.so
+	-rm -f ${OLDLUASDL_DIR}*.o
+
+### luaSDL bindings (needs tolua++) ###
+
+LUASDL_CFLAGS:=-O2 -Wall -ansi ${LUA_CFLAGS} ${SDL_CFLAGS}
+LUASDL_LIBS:=${LUA_LIBS} ${SDL_LIBS}
+
+# Link tolua++ statically, otherwise distribution will be a nightmare.
+${LUASDL_DIR}libluasdl.so: ${LUASDL_DIR}SDL.o ${TOLUAPP_DIR}lib/libtolua++_static.a
+	gcc -shared -Wl,-soname,$(notdir $@) -o $@ ${LUASDL_LIBS} $^
+
+${LUASDL_DIR}SDL.o: ${LUASDL_DIR}SDL.c ${TOLUAPP_DIR}include/tolua++.h
+	gcc -fPIC -o $@ ${LUASDL_CFLAGS} -I${TOLUAPP_DIR}include -c $<
+
+${LUASDL_DIR}SDL.c: ${LUASDL_DIR}SDL.pkg ${TOLUAPP_DIR}bin/tolua++
+	${TOLUAPP_DIR}bin/tolua++ -o $@ $<
 
 .PHONY: clean_luasdl
 clean_luasdl:
 	-rm -f ${LUASDL_DIR}libluasdl.so
-	-rm -f ${LUASDL_DIR}*.o
+	-rm -f ${LUASDL_DIR}SDL.o
+	-rm -f ${LUASDL_DIR}SDL.c
+
+### tolua++ utility ###
+
+# All of this was based on me watching scons doing its thing.
+.PHONY: all_toluapp
+all_toluapp: ${TOLUAPP_DIR}lib/libtolua++.a ${TOLUAPP_DIR}lib/libtolua++_static.a ${TOLUAPP_DIR}bin/tolua++
+
+# The steps in this feel wrong, i.e. it's how static libs are made, but scons did it, so here it is.
+${TOLUAPP_DIR}lib/libtolua++.a: ${TOLUAPP_DIR}src/lib/tolua_event.o ${TOLUAPP_DIR}src/lib/tolua_is.o ${TOLUAPP_DIR}src/lib/tolua_map.o ${TOLUAPP_DIR}src/lib/tolua_push.o ${TOLUAPP_DIR}src/lib/tolua_to.o
+	mkdir -p ${TOLUAPP_DIR}lib
+	ar rc $@ $+
+	ranlib $@
+
+# Yeah, this and the above were identical in scons' processing.
+${TOLUAPP_DIR}lib/libtolua++_static.a: ${TOLUAPP_DIR}src/lib/tolua_event.o ${TOLUAPP_DIR}src/lib/tolua_is.o ${TOLUAPP_DIR}src/lib/tolua_map.o ${TOLUAPP_DIR}src/lib/tolua_push.o ${TOLUAPP_DIR}src/lib/tolua_to.o
+	mkdir -p ${TOLUAPP_DIR}lib
+	ar rc $@ $+
+	ranlib $@
+
+${TOLUAPP_DIR}src/lib/tolua_event.o: ${TOLUAPP_DIR}src/lib/tolua_event.c
+	gcc -o $@ -c ${LUA_CFLAGS} -O2 -ansi -Wall -I${TOLUAPP_DIR}include $<
+${TOLUAPP_DIR}src/lib/tolua_is.o: ${TOLUAPP_DIR}src/lib/tolua_is.c
+	gcc -o $@ -c ${LUA_CFLAGS} -O2 -ansi -Wall -I${TOLUAPP_DIR}include $<
+${TOLUAPP_DIR}src/lib/tolua_map.o: ${TOLUAPP_DIR}src/lib/tolua_map.c
+	gcc -o $@ -c ${LUA_CFLAGS} -O2 -ansi -Wall -I${TOLUAPP_DIR}include $<
+${TOLUAPP_DIR}src/lib/tolua_push.o: ${TOLUAPP_DIR}src/lib/tolua_push.c
+	gcc -o $@ -c ${LUA_CFLAGS} -O2 -ansi -Wall -I${TOLUAPP_DIR}include $<
+${TOLUAPP_DIR}src/lib/tolua_to.o: ${TOLUAPP_DIR}src/lib/tolua_to.c
+	gcc -o $@ -c ${LUA_CFLAGS} -O2 -ansi -Wall -I${TOLUAPP_DIR}include $<
+
+# The tolua++ utility itself, which turns a cleaned C header into a Lua binding.
+# This binding can then be compiled and used as normal, but with the tolua++ lib and headers.
+${TOLUAPP_DIR}bin/tolua++: ${TOLUAPP_DIR}src/bin/tolua.o ${TOLUAPP_DIR}src/bin/toluabind.o ${TOLUAPP_DIR}lib/libtolua++.a
+	mkdir -p ${TOLUAPP_DIR}bin
+	gcc -o $@ ${TOLUAPP_DIR}src/bin/tolua.o ${TOLUAPP_DIR}src/bin/toluabind.o -L${TOLUAPP_DIR}lib -ltolua++ ${LUA_LIBS}
+
+${TOLUAPP_DIR}src/bin/tolua.o: ${TOLUAPP_DIR}src/bin/tolua.c ${TOLUAPP_DIR}include/tolua++.h
+	gcc -o $@ -c ${LUA_CFLAGS} -O2 -ansi -Wall -I${TOLUAPP_DIR}include $<
+
+${TOLUAPP_DIR}src/bin/toluabind.o: ${TOLUAPP_DIR}src/bin/toluabind.c ${TOLUAPP_DIR}include/tolua++.h
+	gcc -o $@ -c ${LUA_CFLAGS} -O2 -ansi -Wall -I${TOLUAPP_DIR}include $<
+
+# tolua++_bootstrap creates both toluabind.c AND toluabind.h.
+# AFAIK there's no way to tell Make that making one makes the other too.
+${TOLUAPP_DIR}src/bin/toluabind.c: ${TOLUAPP_DIR}src/bin/tolua_scons.pkg ${TOLUAPP_DIR}bin/tolua++_bootstrap ${TOLUAPP_DIR}src/bin/lua/*.lua
+	cd ${TOLUAPP_DIR} && bin/tolua++_bootstrap -C -H src/bin/toluabind.h -o src/bin/toluabind.c -n tolua src/bin/tolua_scons.pkg && cd -
+${TOLUAPP_DIR}src/bin/toluabind.h: ${TOLUAPP_DIR}src/bin/tolua_scons.pkg ${TOLUAPP_DIR}bin/tolua++_bootstrap ${TOLUAPP_DIR}src/bin/lua/*.lua
+	cd ${TOLUAPP_DIR} && bin/tolua++_bootstrap -C -H src/bin/toluabind.h -o src/bin/toluabind.c -n tolua src/bin/tolua_scons.pkg && cd -
+
+${TOLUAPP_DIR}bin/tolua++_bootstrap: ${TOLUAPP_DIR}src/bin/tolua.o ${TOLUAPP_DIR}src/bin/toluabind_default.o ${TOLUAPP_DIR}lib/libtolua++_static.a
+	mkdir -p ${TOLUAPP_DIR}bin
+	gcc -o $@ $^ -L${TOLUAPP_DIR}lib $(LUA_LIBS)
+
+# Like toluabind.c, this looks like a generated file, but I can't find its .pkg anywhere.
+# It's a shame, because it's 500 KB large in this form...
+${TOLUAPP_DIR}src/bin/toluabind_default.o: ${TOLUAPP_DIR}src/bin/toluabind_default.c ${TOLUAPP_DIR}include/tolua++.h
+	gcc -o $@ -c ${LUA_CFLAGS} -O2 -Wall -ansi -I${TOLUAPP_DIR}include $<
+
+.PHONY: clean_toluapp
+clean_toluapp:
+	-rm -f ${TOLUAPP_DIR}lib/libtolua++.a ${TOLUAPP_DIR}lib/libtolua++_static.a
+	-rm -f ${TOLUAPP_DIR}src/lib/tolua_*.o
+	-rm -f ${TOLUAPP_DIR}bin/tolua++
+	-rm -f ${TOLUAPP_DIR}src/bin/tolua.o
+	-rm -f ${TOLUAPP_DIR}src/bin/toluabind.o
+	-rm -f ${TOLUAPP_DIR}src/bin/toluabind.c
+	-rm -f ${TOLUAPP_DIR}src/bin/toluabind.h
+	-rm -f ${TOLUAPP_DIR}bin/tolua++_bootstrap
+	-rm -f ${TOLUAPP_DIR}src/bin/toluabind_default.o
+	-rmdir ${TOLUAPP_DIR}bin
+	-rmdir ${TOLUAPP_DIR}lib
 
 
 

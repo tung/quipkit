@@ -5,11 +5,11 @@ local smile
 local x, y, dx, dy = 0, 0, 1, 1
 
 function game.Init()
-    SDL.WM.SetCaption("Quipkit", "Demo")
+    SDL.SDL_WM_SetCaption("Quipkit", "Demo")
     smile = game.Sprite:new("test/smile.png")
 end
 
-game.Events[SDL.QUIT] = function ()
+game.Events[SDL.SDL_QUIT] = function ()
     -- Returning false in any event ends the game loop.
     return false
 end

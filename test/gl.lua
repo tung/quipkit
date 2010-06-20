@@ -1,19 +1,19 @@
 require "sdl"
 require "gl"
-print("good")
 
-assert(SDL.Init(SDL.INIT_EVERYTHING))
-print("better")
+if SDL.SDL_Init(SDL.SDL_INIT_EVERYTHING) == -1 then
+    error("SDL_Init failed: " .. SDL.SDL_GetError())
+end
 
 local function main()
     -- Create OpenGL rendering context.
-    SDL.GL.SetAttribute(SDL.GL.DOUBLEBUFFER, 1)
-    SDL.GL.SetAttribute(SDL.GL.RED_SIZE, 8)
-    SDL.GL.SetAttribute(SDL.GL.GREEN_SIZE, 8)
-    SDL.GL.SetAttribute(SDL.GL.BLUE_SIZE, 8)
-    SDL.SetVideoMode(640, 480, 32, SDL.OPENGL)
+    SDL.SDL_GL_SetAttribute(SDL.SDL_GL_DOUBLEBUFFER, 1)
+    SDL.SDL_GL_SetAttribute(SDL.SDL_GL_RED_SIZE, 8)
+    SDL.SDL_GL_SetAttribute(SDL.SDL_GL_GREEN_SIZE, 8)
+    SDL.SDL_GL_SetAttribute(SDL.SDL_GL_BLUE_SIZE, 8)
+    SDL.SDL_SetVideoMode(640, 480, 32, SDL.SDL_OPENGL)
 
-    SDL.WM.SetCaption("OpenGL with SDL", "OpenGL")
+    SDL.SDL_WM_SetCaption("OpenGL with SDL", "OpenGL")
 
     -- Tell OpenGL where to draw in the window.
     gl.Viewport(80, 0, 480, 480)
@@ -46,12 +46,13 @@ local function main()
     gl.End()
     gl.Flush()
 
-    SDL.GL.SwapBuffers()
+    SDL.SDL_GL_SwapBuffers()
 
-    SDL.Delay(5000)
+    SDL.SDL_Delay(5000)
 end
 
-SDL.Assert(pcall(main))
-
-SDL.Quit()
-print("best")
+local success, error_message = pcall(main)
+SDL.SDL_Quit()
+if not success then
+    error(error_message)
+end

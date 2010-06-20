@@ -1,10 +1,10 @@
 require "game"
 
 function game.Init()
-    SDL.WM.SetCaption("Colored Triangle", "OpenGL")
+    SDL.SDL_WM_SetCaption("Colored Triangle", "OpenGL")
 end
 
-game.Events[SDL.QUIT] = function ()
+game.Events[SDL.SDL_QUIT] = function ()
     return false
 end
 

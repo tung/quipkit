@@ -29,25 +29,24 @@ end
 
 -- Returns 'false' if any handler returns it.
 -- This lets the user end the game loop.
+local event
 local function handle_events()
-    local event = SDL.PollEvent()
-    while event do
+    while SDL.SDL_PollEvent(event) == 1 do
         local handler = Events[event.type]
         if type(handler) == "function" then
             if handler() == false then
                 return false
             end
         end
-        event = SDL.PollEvent()
     end
     return true
 end
 
 local function loop()
     local last, this
-    last = SDL.GetTicks()
+    last = SDL.SDL_GetTicks()
     while handle_events() do
-        this = SDL.GetTicks()
+        this = SDL.SDL_GetTicks()
         if Update(this - last) == false then
             -- Allow Update() to end the game loop.
             return
@@ -58,20 +57,22 @@ local function loop()
         gl.LoadIdentity()
         Draw()
         gl.Flush()
-        SDL.GL.SwapBuffers()
+        SDL.SDL_GL_SwapBuffers()
     end
 end
 
 Run = function ()
     -- Is this a good way of going about things?
-    assert(SDL.Init(SDL.INIT_EVERYTHING))
+    if SDL.SDL_Init(SDL.SDL_INIT_EVERYTHING) == -1 then
+        error("Failed to initialize SDL: " .. SDL.SDL_GetError(), 2)
+    end
 
     -- TODO: Allow customisation of these.
-    SDL.GL.SetAttribute(SDL.GL.DOUBLEBUFFER, 1)
-    SDL.GL.SetAttribute(SDL.GL.RED_SIZE, 8)
-    SDL.GL.SetAttribute(SDL.GL.GREEN_SIZE, 8)
-    SDL.GL.SetAttribute(SDL.GL.BLUE_SIZE, 8)
-    SDL.SetVideoMode(Screen.w, Screen.h, 32, SDL.OPENGL)
+    SDL.SDL_GL_SetAttribute(SDL.SDL_GL_DOUBLEBUFFER, 1)
+    SDL.SDL_GL_SetAttribute(SDL.SDL_GL_RED_SIZE, 8)
+    SDL.SDL_GL_SetAttribute(SDL.SDL_GL_GREEN_SIZE, 8)
+    SDL.SDL_GL_SetAttribute(SDL.SDL_GL_BLUE_SIZE, 8)
+    SDL.SDL_SetVideoMode(Screen.w, Screen.h, 32, SDL.SDL_OPENGL)
 
     -- Accept byte-aligned textures.
     gl.PixelStore(gl.UNPACK_ALIGNMENT, 1)
@@ -87,10 +88,17 @@ Run = function ()
 
     Init()
 
-    SDL.Assert(pcall(loop))
+    event = SDL.SDL_Event_new()
+
+    local success, error_message
+    success, error_message = pcall(loop)
+    if not success then
+        SDL.SDL_Quit()
+        error("Error in game loop: " .. error_message, 2)
+    end
 
     Exit()
-    SDL.Quit()
+    SDL.SDL_Quit()
 end
 
 

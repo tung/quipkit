@@ -152,6 +152,10 @@ static int Open(lua_State *L) {
     }
     lua_rawset(L, -3);
 
+    lua_pushliteral(L, "data_ptr");
+    lua_pushlightuserdata(L, (void *)image_data);
+    lua_rawset(L, -3);
+
     png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 
     return 1;

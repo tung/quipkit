@@ -6,8 +6,8 @@ require "sdl"
 
 local smile
 
-function game.init()
-    SDL.WM.SetCaption("OpenGL with SDL", "OpenGL")
+function game.Init()
+    SDL.SDL_WM_SetCaption("OpenGL with SDL", "OpenGL")
 
     gl.PixelStore(gl.UNPACK_ALIGNMENT, 1)
 
@@ -21,17 +21,17 @@ function game.init()
     gl.TexImage2D(0, gl_format, smile_image.width, smile_image.height, 0, data_format, gl.UNSIGNED_BYTE, smile_image.data)
 end
 
-game.events[SDL.QUIT] = function ()
+game.Events[SDL.SDL_QUIT] = function ()
     return false
 end
 
 local milliseconds = 0
-function game.update(delta)
+function game.Update(delta)
     milliseconds = milliseconds + delta
     return milliseconds < 5000
 end
 
-function game.draw()
+function game.Draw()
     gl.Viewport(80, 0, 480, 480)
 
     gl.MatrixMode(gl.PROJECTION)
@@ -61,4 +61,4 @@ function game.draw()
     gl.Disable(gl.TEXTURE_2D)
 end
 
-game.run()
+game.Run()
