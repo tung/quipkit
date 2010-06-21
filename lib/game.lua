@@ -11,7 +11,7 @@ module(..., package.seeall)
 -- Main Framework Stuff
 Events = {}
 
-Screen = {w = 640, h = 480}
+Screen = {w = 640, h = 480, title = "Quipkit"}
 
 -- Called after SDL.Init().
 Init = function ()
@@ -66,6 +66,8 @@ Run = function ()
     if SDL.SDL_Init(SDL.SDL_INIT_EVERYTHING) == -1 then
         error("Failed to initialize SDL: " .. SDL.SDL_GetError(), 2)
     end
+
+    SDL.SDL_WM_SetCaption(Screen.title, "")
 
     -- TODO: Allow customisation of these.
     SDL.SDL_GL_SetAttribute(SDL.SDL_GL_DOUBLEBUFFER, 1)

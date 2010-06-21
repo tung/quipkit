@@ -1,11 +1,9 @@
 require "game"
-require "sdl"
 
 local smile
 local x, y, dx, dy = 0, 0, 1, 1
 
 function game.Init()
-    SDL.SDL_WM_SetCaption("Quipkit", "Demo")
     smile = game.Sprite:new("test/smile.png")
 end
 
@@ -39,8 +37,9 @@ function game.Draw()
     smile:Draw(x, y)
 end
 
--- Set the screen resolution.
-game.Screen = {w = 640, h = 480}
+-- Set screen properties.
+game.Screen.w, game.Screen.h = 640, 480
+game.Screen.title = "Quipkit Engine Demo"
 
 -- Launch our game.
 game.Run()

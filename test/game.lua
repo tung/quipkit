@@ -1,9 +1,5 @@
 require "game"
 
-function game.Init()
-    SDL.SDL_WM_SetCaption("Colored Triangle", "OpenGL")
-end
-
 game.Events[SDL.SDL_QUIT] = function ()
     return false
 end
@@ -27,6 +23,7 @@ function game.Draw()
     gl.End()
 end
 
-game.Screen = {w = 640, h = 480}
+game.Screen.w, game.Screen.h = 640, 480
+game.Screen.title = "Colored Triangle"
 
 game.Run()
