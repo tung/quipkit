@@ -1,7 +1,7 @@
 local path, entry
 if WIN32 then
-    path = "lib/sdl/bin/Debug/luasdl.dll"
-    entry = "luaopen_luasdl"
+    path = "lib/sdl/luaSDL/luaSDL.dll"
+    entry = "luaopen_SDL"
 else
     -- Assume Linux for now.
     path = "lib/sdl/luaSDL/libluasdl.so"
