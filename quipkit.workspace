@@ -2,10 +2,8 @@
 <CodeBlocks_workspace_file>
 	<Workspace title="Workspace">
 		<Project filename="game.cbp" active="1">
-			<Depends filename="lib/sdl/sdl.cbp" />
 			<Depends filename="lib/png/png.cbp" />
 		</Project>
-		<Project filename="lib/sdl/sdl.cbp" />
 		<Project filename="lib/png/png.cbp" />
 		<Project filename="edit.cbp">
 			<Depends filename="dev/lib/tcltk/ltcltk-0.9-1/ltcl.cbp" />
