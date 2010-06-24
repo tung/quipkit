@@ -19,7 +19,6 @@ TCLTK_LIBS:=-ltcl8.5
 LTCLTK_DIR:=dev/lib/tcltk/ltcltk-0.9-1/
 LUAPNG_DIR:=lib/png/
 LUASDL_DIR:=lib/sdl/luaSDL/
-OLDLUASDL_DIR:=lib/sdl/
 TOLUAPP_DIR:=contrib/tolua++/
 
 
@@ -27,10 +26,10 @@ TOLUAPP_DIR:=contrib/tolua++/
 ### Tasks ###
 
 .PHONY: all
-all: game ${LUAPNG_DIR}libluapng.so ${OLDLUASDL_DIR}libluasdl.so ${LUASDL_DIR}libluasdl.so all_toluapp edit ${LTCLTK_DIR}ltcl.so
+all: game ${LUAPNG_DIR}libluapng.so ${LUASDL_DIR}libluasdl.so all_toluapp edit ${LTCLTK_DIR}ltcl.so
 
 .PHONY: clean
-clean: clean_game clean_luapng clean_oldluasdl clean_luasdl clean_toluapp clean_edit clean_ltcltk
+clean: clean_game clean_luapng clean_luasdl clean_toluapp clean_edit clean_ltcltk
 
 
 
@@ -65,32 +64,6 @@ ${LUAPNG_DIR}png.o: ${LUAPNG_DIR}png.c ${LUAPNG_DIR}png.h
 clean_luapng:
 	-rm -f ${LUAPNG_DIR}libluapng.so
 	-rm -f ${LUAPNG_DIR}*.o
-
-### Old SDL bindings ###
-
-QK_SDL_CFLAGS:=${QKENG_CFLAGS} ${SDL_CFLAGS}
-QK_SDL_LIBS:=${QKENG_LIBS} ${SDL_LIBS}
-
-${OLDLUASDL_DIR}libluasdl.so: ${OLDLUASDL_DIR}sdl.o ${OLDLUASDL_DIR}event.o ${OLDLUASDL_DIR}gl.o ${OLDLUASDL_DIR}surface.o ${OLDLUASDL_DIR}video.o ${OLDLUASDL_DIR}wm.o
-	gcc -shared -Wl,-soname,$(notdir $@) -o $@ ${QK_SDL_LIBS} $+
-
-${OLDLUASDL_DIR}sdl.o: ${OLDLUASDL_DIR}sdl.c ${OLDLUASDL_DIR}sdl.h ${OLDLUASDL_DIR}event.h ${OLDLUASDL_DIR}gl.h ${OLDLUASDL_DIR}types.h ${OLDLUASDL_DIR}video.h ${OLDLUASDL_DIR}wm.h
-	gcc -fPIC -o $@ ${QK_SDL_CFLAGS} -c $<
-${OLDLUASDL_DIR}event.o: ${OLDLUASDL_DIR}event.c ${OLDLUASDL_DIR}event.h ${OLDLUASDL_DIR}types.h
-	gcc -fPIC -o $@ ${QK_SDL_CFLAGS} -c $<
-${OLDLUASDL_DIR}gl.o: ${OLDLUASDL_DIR}gl.c ${OLDLUASDL_DIR}gl.h ${OLDLUASDL_DIR}types.h
-	gcc -fPIC -o $@ ${QK_SDL_CFLAGS} -c $<
-${OLDLUASDL_DIR}surface.o: ${OLDLUASDL_DIR}surface.c ${OLDLUASDL_DIR}surface.h
-	gcc -fPIC -o $@ ${QK_SDL_CFLAGS} -c $<
-${OLDLUASDL_DIR}video.o: ${OLDLUASDL_DIR}video.c ${OLDLUASDL_DIR}video.h ${OLDLUASDL_DIR}surface.h ${OLDLUASDL_DIR}types.h
-	gcc -fPIC -o $@ ${QK_SDL_CFLAGS} -c $<
-${OLDLUASDL_DIR}wm.o: ${OLDLUASDL_DIR}wm.c ${OLDLUASDL_DIR}wm.h
-	gcc -fPIC -o $@ ${QK_SDL_CFLAGS} -c $<
-
-.PHONY: clean_oldluasdl
-clean_oldluasdl:
-	-rm -f ${OLDLUASDL_DIR}libluasdl.so
-	-rm -f ${OLDLUASDL_DIR}*.o
 
 ### luaSDL bindings (needs tolua++) ###
 
