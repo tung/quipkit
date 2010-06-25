@@ -1,17 +1,17 @@
 require "game"
 
-game.Events[SDL.SDL_QUIT] = function ()
+game.events[SDL.SDL_QUIT] = function ()
     return false
 end
 
 local milliseconds = 0
-function game.Update(delta)
+function game.update(delta)
     milliseconds = milliseconds + delta
     return milliseconds < 5000
 end
 
-function game.Draw()
-    game.ClearScreen()
+function game.draw()
+    game.clearScreen()
 
     gl.Begin(gl.TRIANGLES)
         gl.Color(1, 0, 0)
@@ -23,7 +23,7 @@ function game.Draw()
     gl.End()
 end
 
-game.Screen.w, game.Screen.h = 640, 480
-game.Screen.title = "Colored Triangle"
+game.screen.w, game.screen.h = 640, 480
+game.screen.title = "Colored Triangle"
 
-game.Run()
+game.run()

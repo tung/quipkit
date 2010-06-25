@@ -9,30 +9,30 @@ module(..., package.seeall)
 
 
 -- Main Framework Stuff
-Events = {}
+events = {}
 
-Screen = {w = 640, h = 480, title = "Quipkit"}
+screen = {w = 640, h = 480, title = "Quipkit"}
 
--- Called after SDL.Init().
-Init = function ()
+-- Called after SDL.SDL_Init().
+init = function ()
 end
 
--- Called before SDL.Exit().
-Exit = function ()
+-- Called before SDL.SDL_Exit().
+exit = function ()
 end
 
-Update = function (delta)
+update = function (delta)
 end
 
-Draw = function ()
+draw = function ()
 end
 
 -- Returns 'false' if any handler returns it.
 -- This lets the user end the game loop.
-local event
-local function handle_events()
-    while SDL.SDL_PollEvent(event) == 1 do
-        local handler = Events[event.type]
+local _event
+local function _handle_events()
+    while SDL.SDL_PollEvent(_event) == 1 do
+        local handler = events[_event.type]
         if type(handler) == "function" then
             if handler() == false then
                 return false
@@ -42,12 +42,12 @@ local function handle_events()
     return true
 end
 
-local function loop()
+local function _loop()
     local last, this
     last = SDL.SDL_GetTicks()
-    while handle_events() do
+    while _handle_events() do
         this = SDL.SDL_GetTicks()
-        if Update(this - last) == false then
+        if update(this - last) == false then
             -- Allow Update() to end the game loop.
             return
         end
@@ -55,66 +55,64 @@ local function loop()
 
         gl.MatrixMode(gl.MODELVIEW)
         gl.LoadIdentity()
-        Draw()
+        draw()
         gl.Flush()
         SDL.SDL_GL_SwapBuffers()
     end
 end
 
-Run = function ()
-    -- Is this a good way of going about things?
+run = function ()
     if SDL.SDL_Init(SDL.SDL_INIT_EVERYTHING) == -1 then
         error("Failed to initialize SDL: " .. SDL.SDL_GetError(), 2)
     end
 
-    SDL.SDL_WM_SetCaption(Screen.title, "")
-
-    -- TODO: Allow customisation of these.
     SDL.SDL_GL_SetAttribute(SDL.SDL_GL_DOUBLEBUFFER, 1)
     SDL.SDL_GL_SetAttribute(SDL.SDL_GL_RED_SIZE, 8)
     SDL.SDL_GL_SetAttribute(SDL.SDL_GL_GREEN_SIZE, 8)
     SDL.SDL_GL_SetAttribute(SDL.SDL_GL_BLUE_SIZE, 8)
-    SDL.SDL_SetVideoMode(Screen.w, Screen.h, 32, SDL.SDL_OPENGL)
+    SDL.SDL_SetVideoMode(screen.w, screen.h, 32, SDL.SDL_OPENGL)
+
+    SDL.SDL_WM_SetCaption(screen.title, "")
 
     -- Accept byte-aligned textures.
     gl.PixelStore(gl.UNPACK_ALIGNMENT, 1)
 
     -- Tell OpenGL where to render in our window.
-    gl.Viewport(0, 0, Screen.w, Screen.h)
+    gl.Viewport(0, 0, screen.w, screen.h)
 
     -- Project the scenes-to-be orthographically, like in blue-prints.
     -- Also, switch bottom and top so (0, 0) is top-left and y extends down.
     gl.MatrixMode(gl.PROJECTION)
     gl.LoadIdentity()
-    gl.Ortho(0, Screen.w, Screen.h, 0, -1, 1)
+    gl.Ortho(0, screen.w, screen.h, 0, -1, 1)
 
-    Init()
+    init()
 
-    event = SDL.SDL_Event_new()
+    _event = SDL.SDL_Event_new()
 
     local success, error_message
-    success, error_message = pcall(loop)
+    success, error_message = pcall(_loop)
     if not success then
         SDL.SDL_Quit()
         error("Error in game loop: " .. error_message, 2)
     end
 
-    Exit()
+    exit()
     SDL.SDL_Quit()
 end
 
 
 --- Utility Functions
-ClearScreen = function ()
+clearScreen = function ()
     gl.ClearColor(0, 0, 0, 0)
     gl.Clear(gl.COLOR_BUFFER_BIT)
 end
 
 
 --- Sprite Class
-Sprite = {}
+sprite = {}
 
-function Sprite:new(image_file, tile_w, tile_h)
+function sprite:new(image_file, tile_w, tile_h)
     -- Load image into OpenGL texture.
     local image = PNG.Open(image_file)
     local texture_id = gl.GenTextures(1)[1]
@@ -157,12 +155,12 @@ function Sprite:new(image_file, tile_w, tile_h)
     return s
 end
 
-function Sprite:SetTile(tile_x, tile_y)
+function sprite:setTile(tile_x, tile_y)
     self.tile_x = tile_x
     self.tile_y = tile_y
 end
 
-function Sprite:Draw(x, y)
+function sprite:draw(x, y)
     -- Replace/draw over existing fragments (pixels).
     gl.TexEnv(gl.TEXTURE_ENV, gl.TEXTURE_ENV_MODE, gl.REPLACE)
 
