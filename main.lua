@@ -1,1 +1,1 @@
-require "test/gametest"
+assert(loadfile("test/animate.lua"))()

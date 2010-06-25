@@ -68,6 +68,9 @@
 		<Unit filename="main.lua">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
+		<Unit filename="test\animate.lua">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="test\blit.lua">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
@@ -81,6 +84,9 @@
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Unit filename="test\gl.lua">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="test\glob.png">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Unit filename="test\key.lua">
