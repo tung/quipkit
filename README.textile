@@ -9,7 +9,7 @@ h2. Status
 
 *Quipkit is in its early days. It's not in any releasable state.*
 
-Right now, Quipkit builds a basic game engine with some SDL, OpenGL and libpng bindings. It can build on Linux and Windows. Running it should show a yellow smiley face that bounces around until you close the window.
+Right now, Quipkit builds a basic game engine with some SDL, OpenGL and libpng bindings. It can build on Linux and Windows. Running it should show a yellow character that continually walks down the screen.
 
 Quipkit also builds a demo GUI using Tcl and Tk bindings to Lua, also on Linux and Windows. Running it shows a small hello world button that closes when clicked.
 
