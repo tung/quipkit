@@ -1,0 +1,8 @@
+Changes to RtAudio for Quipkit
+==============================
+
+June 28 2010 by Tung Nguyen
+
+In order to get this to compile, some missing declarations were added.
+
+For the Linux ALSA back-end, the "hw" ALSA plugin was replaced with "default", to still play sound if the device is taken by e.g. the Chromium web browser or Adobe's Flash plugin.

@@ -2,6 +2,9 @@ CFLAGS:=-std=c99 -W -Wall -Wextra
 
 
 
+ALSA_CFLAGS:=
+ALSA_LIBS:=-lasound
+
 LIBPNG_CFLAGS:=`pkg-config --cflags libpng`
 LIBPNG_LIBS:=`pkg-config --libs libpng`
 
@@ -19,6 +22,7 @@ TCLTK_LIBS:=-ltcl8.5
 LTCLTK_DIR:=dev/lib/tcltk/ltcltk-0.9-1/
 LUAPNG_DIR:=lib/png/
 LUASDL_DIR:=lib/sdl/luaSDL/
+PROTEAAUDIO_DIR:=lib/proteaAudio/
 TOLUAPP_DIR:=contrib/tolua++/
 
 
@@ -26,10 +30,10 @@ TOLUAPP_DIR:=contrib/tolua++/
 ### Tasks ###
 
 .PHONY: all
-all: game ${LUAPNG_DIR}libluapng.so ${LUASDL_DIR}libluasdl.so all_toluapp edit ${LTCLTK_DIR}ltcl.so
+all: game ${LUAPNG_DIR}libluapng.so ${LUASDL_DIR}libluasdl.so all_toluapp ${PROTEAAUDIO_DIR}libproaudio.so edit ${LTCLTK_DIR}ltcl.so
 
 .PHONY: clean
-clean: clean_game clean_luapng clean_luasdl clean_toluapp clean_edit clean_ltcltk
+clean: clean_game clean_luapng clean_luasdl clean_toluapp clean_proteaaudio clean_edit clean_ltcltk
 
 
 
@@ -85,6 +89,39 @@ clean_luasdl:
 	-rm -f ${LUASDL_DIR}libluasdl.so
 	-rm -f ${LUASDL_DIR}SDL.o
 	-rm -f ${LUASDL_DIR}SDL.c
+
+### proteaAudio bindings ###
+
+PROTEAAUDIO_CFLAGS:=-O2 -Wall -I${PROTEAAUDIO_DIR}rtaudio
+PROTEAAUDIO_LIBS:=-lpthread ${ALSA_LIBS} ${LUA_LIBS}
+
+${PROTEAAUDIO_DIR}libproaudio.so: ${PROTEAAUDIO_DIR}proAudioRt_lua.o ${PROTEAAUDIO_DIR}libproaudio.a
+	g++ -shared -Wl,-soname,$(notdir $@) -o $@ ${PROTEAAUDIO_LIBS} $^
+
+${PROTEAAUDIO_DIR}proAudioRt_lua.o: ${PROTEAAUDIO_DIR}proAudioRt_lua.cpp ${PROTEAAUDIO_DIR}proAudioRt.h
+	g++ -fPIC -o $@ ${PROTEAAUDIO_CFLAGS} -c $<
+
+${PROTEAAUDIO_DIR}libproaudio.a: ${PROTEAAUDIO_DIR}proAudio.o ${PROTEAAUDIO_DIR}proAudioRt.o ${PROTEAAUDIO_DIR}stb_vorbis.o ${PROTEAAUDIO_DIR}rtaudio/RtAudio.o
+	ar -rcs $@ $+
+
+${PROTEAAUDIO_DIR}rtaudio/RtAudio.o: ${PROTEAAUDIO_DIR}rtaudio/RtAudio.cpp ${PROTEAAUDIO_DIR}rtaudio/RtAudio.h ${PROTEAAUDIO_DIR}rtaudio/RtError.h
+	g++ -fPIC -o $@ ${PROTEAAUDIO_CFLAGS} -DHAVE_GETTIMEOFDAY -D__LINUX_ALSA__ -c $<
+
+${PROTEAAUDIO_DIR}stb_vorbis.o: ${PROTEAAUDIO_DIR}stb_vorbis.c
+	gcc -fPIC -o $@ ${PROTEAAUDIO_CFLAGS} -c $<
+
+${PROTEAAUDIO_DIR}proAudioRt.o: ${PROTEAAUDIO_DIR}proAudioRt.cpp ${PROTEAAUDIO_DIR}proAudioRt.h ${PROTEAAUDIO_DIR}rtaudio/RtAudio.h ${PROTEAAUDIO_DIR}rtaudio/RtError.h
+	g++ -fPIC -o $@ ${PROTEAAUDIO_CFLAGS} -c $<
+
+${PROTEAAUDIO_DIR}proAudio.o: ${PROTEAAUDIO_DIR}proAudio.cpp ${PROTEAAUDIO_DIR}proAudio.h
+	g++ -fPIC -o $@ ${PROTEAAUDIO_CFLAGS} -c $<
+
+.PHONY: clean_proteaaudio
+clean_proteaaudio:
+	-rm -f ${PROTEAAUDIO_DIR}libproaudio.so
+	-rm -f ${PROTEAAUDIO_DIR}libproaudio.a
+	-rm -f ${PROTEAAUDIO_DIR}*.o
+	-rm -f ${PROTEAAUDIO_DIR}rtaudio/RtAudio.o
 
 ### tolua++ utility ###
 
