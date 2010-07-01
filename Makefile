@@ -99,7 +99,7 @@ ${PROTEAAUDIO_DIR}libproaudio.so: ${PROTEAAUDIO_DIR}proAudioRt_lua.o ${PROTEAAUD
 	g++ -shared -Wl,-soname,$(notdir $@) -o $@ ${PROTEAAUDIO_LIBS} $^
 
 ${PROTEAAUDIO_DIR}proAudioRt_lua.o: ${PROTEAAUDIO_DIR}proAudioRt_lua.cpp ${PROTEAAUDIO_DIR}proAudioRt.h
-	g++ -fPIC -o $@ ${PROTEAAUDIO_CFLAGS} -c $<
+	g++ -fPIC -o $@ ${PROTEAAUDIO_CFLAGS} ${LUA_CFLAGS} -c $<
 
 ${PROTEAAUDIO_DIR}libproaudio.a: ${PROTEAAUDIO_DIR}proAudio.o ${PROTEAAUDIO_DIR}proAudioRt.o ${PROTEAAUDIO_DIR}stb_vorbis.o ${PROTEAAUDIO_DIR}rtaudio/RtAudio.o
 	ar -rcs $@ $+
