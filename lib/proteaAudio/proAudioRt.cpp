@@ -49,6 +49,18 @@ DeviceAudioRt::DeviceAudioRt(unsigned int nTracks, unsigned int frequency, unsig
 	oParams.nChannels = 2; // stereo
 	oParams.firstChannel = 0;
 
+	/**
+	 * TUNG NOTE:
+	 * This code used to be after that try-catch block below, causing startStream() to attempt
+	 * to use ma_sound before it had been allocated, leading to a segfault. Tip: If you're going
+	 * to use data in a thread, initialize it _before_ you spawn it!
+	 */
+	// initialize tracks:
+	m_nSound=nTracks;
+	ma_sound=new _AudioTrack[m_nSound];
+	memset(ma_sound,0,m_nSound*sizeof(_AudioTrack));
+	m_freqOut = frequency;
+
 	try {
 		m_dac.openStream( &oParams, NULL, RTAUDIO_SINT16, frequency, &chunkSize, &cbMix, (void *)this );
 		m_dac.startStream();
@@ -58,12 +70,6 @@ DeviceAudioRt::DeviceAudioRt(unsigned int nTracks, unsigned int frequency, unsig
 		if(m_dac.isStreamOpen()) m_dac.closeStream();
 		return;
 	}
-
-    // initialize tracks:
-    m_nSound=nTracks;
-    ma_sound=new _AudioTrack[m_nSound];
-	memset(ma_sound,0,m_nSound*sizeof(_AudioTrack));
-	m_freqOut = frequency;
 }
 
 DeviceAudioRt::~DeviceAudioRt() {

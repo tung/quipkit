@@ -5050,6 +5050,15 @@ static char* getErrorString( int code )
 
 #if defined(__LINUX_ALSA__)
 
+/**
+ * BIG TUNG NOTE:
+ * The methods here have been fudged MASSIVELY to use an ALSA plugin
+ * instead of direct hardware access, so sound can play even when
+ * the device is being managed by other programs. If this library is
+ * going to be used for anything other than proteaAudio, it will
+ * probably break magnificently. You have been warned.
+ */
+
 #include <alsa/asoundlib.h>
 #include <unistd.h>
 
@@ -5079,6 +5088,9 @@ RtApiAlsa :: ~RtApiAlsa()
 
 unsigned int RtApiAlsa :: getDeviceCount( void )
 {
+  // Tung: No such thing as devices when looking at ALSA plugins.
+  return 1;
+/*
   unsigned nDevices = 0;
   int result, subdevice, card;
   char name[64];
@@ -5115,6 +5127,7 @@ unsigned int RtApiAlsa :: getDeviceCount( void )
   }
 
   return nDevices;
+*/
 }
 
 RtAudio::DeviceInfo RtApiAlsa :: getDeviceInfo( unsigned int device )
@@ -5122,6 +5135,18 @@ RtAudio::DeviceInfo RtApiAlsa :: getDeviceInfo( unsigned int device )
   RtAudio::DeviceInfo info;
   info.probed = false;
 
+  // Tung: Skip all that ALSA hw nonsense.
+  int result;
+  char name[64];
+  snd_ctl_t *chandle;
+  sprintf(name, "default");
+  result = snd_ctl_open(&chandle, name, SND_CTL_NONBLOCK);
+  if (result < 0) {
+    errorStream_ << "RtApiAlsa::getDeviceInfo: control open, " << snd_strerror(result) << ".";
+    errorText_ = errorStream_.str();
+    error(RtError::WARNING);
+  }
+/*
   unsigned nDevices = 0;
   int result, subdevice, card;
   char name[64];
@@ -5183,6 +5208,7 @@ RtAudio::DeviceInfo RtApiAlsa :: getDeviceInfo( unsigned int device )
     }
     return devices_[ device ];
   }
+*/
 
   int openMode = SND_PCM_ASYNC;
   snd_pcm_stream_t stream;
@@ -5194,8 +5220,11 @@ RtAudio::DeviceInfo RtApiAlsa :: getDeviceInfo( unsigned int device )
 
   // First try for playback
   stream = SND_PCM_STREAM_PLAYBACK;
+  // Tung: ALSA plugins don't have devices or subdevices.
+  /*
   snd_pcm_info_set_device( pcminfo, subdevice );
   snd_pcm_info_set_subdevice( pcminfo, 0 );
+  */
   snd_pcm_info_set_stream( pcminfo, stream );
 
   result = snd_ctl_pcm_info( chandle, pcminfo );
@@ -5366,10 +5395,14 @@ RtAudio::DeviceInfo RtApiAlsa :: getDeviceInfo( unsigned int device )
   }
 
   // Get the device name
+  // Tung: ALSA plugins don't have devices.
+  /*
   char *cardname;
   result = snd_card_get_name( card, &cardname );
   if ( result >= 0 )
     sprintf( name, "default" );
+  info.name = name;
+  */
   info.name = name;
 
   // That's all ... close the device and return
@@ -5400,7 +5433,12 @@ bool RtApiAlsa :: probeDeviceOpen( unsigned int device, StreamMode mode, unsigne
 #endif
 
   // I'm not using the "plug" interface ... too much inconsistent behavior.
+  // Tung: Welcome to the 21st century.
 
+  int result;
+  char name[64];
+  sprintf(name, "default");
+/*
   unsigned nDevices = 0;
   int result, subdevice, card;
   char name[64];
@@ -5444,8 +5482,8 @@ bool RtApiAlsa :: probeDeviceOpen( unsigned int device, StreamMode mode, unsigne
     errorText_ = "RtApiAlsa::probeDeviceOpen: device ID is invalid!";
     return FAILURE;
   }
-
  foundDevice:
+*/
 
   // The getDeviceInfo() function will not work for a device that is
   // already open.  Thus, we'll probe the system before opening a
