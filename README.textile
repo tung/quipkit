@@ -15,7 +15,7 @@ Split your RPG's code into modules with the **game state framework**. Save, load
 
 h2. Building Quipkit
 
-Visit the GitHub project page and click "Download Source" at the top-right.
+First visit the GitHub project page and click "Download Source" at the top-right.
 
 h3. For Windows
 
