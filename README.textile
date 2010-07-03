@@ -82,11 +82,11 @@ No unified API yet, but all the low-level core libs are there, super-stable and 
 
 h2. More Info
 
-Quipkit's source is on GitHub: "http://github.com/tung/quipkit":http://github.com/tung/quipkit
+View and download Quipkit's source on GitHub: "http://github.com/tung/quipkit":http://github.com/tung/quipkit
 
 Report and watch for issues here: "http://github.com/tung/quipkit/issues":http://github.com/tung/quipkit/issues
 
-Tips, design notes and ideas are on the wiki: "http://wiki.github.com/tung/quipkit/":http://wiki.github.com/tung/quipkit/
+Read tips, design notes and ideas on the wiki: "http://wiki.github.com/tung/quipkit/":http://wiki.github.com/tung/quipkit/
 
 Follow announcements on the Spherical forums thread: "http://www.spheredev.org/smforums/index.php/topic,4129.0.html":http://www.spheredev.org/smforums/index.php/topic,4129.0.html
 
