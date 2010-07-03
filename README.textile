@@ -1,88 +1,82 @@
 h1. Quipkit
 
-Hi, I'm Tung, and I'm making this new game engine/editor combo called *Quipkit*.
+Hi, I'm Tung, and this is Quipkit.
 
-Quipkit is a computer role-playing game dev kit for the little guy. It was born as a newer alternative to the aging "Sphere RPG Engine":http://www.spheredev.org/, which provides tools and a programming platform to help create SNES-era RPGs.
+Quipkit is the _programmer's RPG kit_. With it, you can make 2D SNES-era role-playing games.
+
+Making RPGs is harder than making other kinds of games:
+
+* more _code_ needs to be written
+* more _state_ needs to be kept
+* more _content_ needs to be made
+
+Split your RPG's code into modules with the **game state framework**. Save, load and tidy up your state with the **persistence framework**. Make and use **custom tools** that help you and your team make an RPG that stands out from the rest.
 
 
 h2. Status
 
-*Quipkit is in its early days. It's not in any releasable state.*
+Sorry, but those awesome things I just told you about aren't done just yet.
 
-Right now, Quipkit builds a basic game engine with some SDL, OpenGL and libpng bindings. It can build on Linux and Windows. Running it should show a yellow character that continually walks down the screen.
+Here's what is:
 
-Quipkit also builds a demo GUI using Tcl and Tk bindings to Lua, also on Linux and Windows. Running it shows a small hello world button that closes when clicked.
+* Lua-powered game engine core
+** Input handling with SDL
+** Graphics with OpenGL
+** PNG images
+** Audio with proteaAudio
 
-If you're still here, chances are you know me and want to see my code, or you're interested in helping me work on it. In either case, welcome!
+* Lua-powered editor core
+** GUI support via Tcl and Tk 8.5
 
+Running the engine shows a yellow animated character that constantly walks down the screen.
 
-h2. The Indie RPG Problem
+Running the editor shows a small "hello world" dialog box.
 
-RPGs are notorious in indie game dev circles for being rare to find, hard to make and of dubious quality if they're ever finished.
-
-Making RPGs differs from making other kinds of games:
-
-* Much more *content* is needed.
-** Players go through it much quicker.
-** Players expect the game to be long.
-* Much more *state* needs maintaining.
-** Players expect many branching paths.
-** Testing takes a lot longer.
-* RPGs are like *several games* influencing each other.
-** Map exploration meets combat meets money/stat management meets puzzle meets etc.
-** And they _all_ have to be fun if the RPG is not to suck!
-
-In short, RPGs are much bigger than other games, so stock tools won't cut it.
-
-
-h2. The Quipkit Answer
-
-Quipkit aims to help you make that "more everything" in your quest to make the next indie RPG.
-
-The *game engine* runs on "Lua":http://www.lua.org/, a simple, powerful, gets-out-of-your-way scripting language to help keep your code under control. With Lua's power, handling all that state and those mini-game systems should be a snap!
-
-The Quipkit *editor*, also Lua-powered, gives you the power to make and tweak RPG content faster than ever with _tools_. You can script your own and use others'. Writing, drawing and directing your RPG can be streamlined, by yourself or with the help of your computer programming buddies.
+No unified API yet, but all the low-level core libs are there, super-stable and ready for use by anyone.
 
 
 h2. Building Quipkit
 
-The engine and editor can be built on Linux and Windows.
+After you build the engine, try out some of the funky demos in the @test/@ directory.
 
-h3. On Linux
+h3. For Windows
 
-To build the engine, install the development libs for:
+Grab the Code::Blocks + MinGW combo from the Code::Blocks website.
 
+Open @quipkit.workspace@. Build the "Quipkit Engine" project for the engine, and "Quipkit Editor" for the editor. Both can be run within the IDE.
+
+h3. For Linux
+
+Grab these development libs for the engine:
+
+* ALSA
+* libpng
 * Lua 5.1
 * OpenGL
 * SDL
-* libpng
-* ALSA
 
-Then type @make game@. Type @./game@ to try it out.
-
-To build the editor, install the development libs for:
+Grab these development libs for the editor:
 
 * Lua 5.1
 * Tcl 8.5
 * Tk 8.5
 
-Then type @make edit@. Type @./edit@ to try it out.
-
-h3. On Windows
-
-Install the Code::Blocks + MinGW combo from the Code::Blocks website.
-
-Open @quipkit.workspace@ and build the "Quipkit Engine" project, which should build the "sdl" and "png" libraries as well. Run it from the IDE to try it out.
-
-To build the editor, activate the "Quipkit Editor" project in Code::Blocks and build it, which should build the "ltcl" library as well. It can also be run from the IDE.
-
-There is a known bug in Quipkit where only the "Debug" version of libraries are used. For now, it can be worked around by only building the "Debug" targets, which can be switched to near the build and run buttons on the Code::Blocks IDE toolbar.
+Type @make@, then try running the engine with @./game@ and the editor with @./edit@.
 
 
-h2. For More Info
+h2. More Info
 
-Quipkit's source is available on GitHub: "http://github.com/tung/quipkit":http://github.com/tung/quipkit
+Quipkit's source is on GitHub: "http://github.com/tung/quipkit":http://github.com/tung/quipkit
 
-The issues page gives a good idea of Quipkit's direction: "http://github.com/tung/quipkit/issues":http://github.com/tung/quipkit/issues
+Report and watch for issues here: "http://github.com/tung/quipkit/issues":http://github.com/tung/quipkit/issues
 
-The wiki with design notes and ideas: "http://wiki.github.com/tung/quipkit/":http://wiki.github.com/tung/quipkit/
+Tips, design notes and ideas are on the wiki: "http://wiki.github.com/tung/quipkit/":http://wiki.github.com/tung/quipkit/
+
+Follow announcements on the Spherical forums thread: "http://www.spheredev.org/smforums/index.php/topic,4129.0.html":http://www.spheredev.org/smforums/index.php/topic,4129.0.html
+
+
+h2. License
+
+Quipkit comes under the GNU LGPL Version 3. See COPYING for details. If you change it and share it, be awesome and share the source too!
+
+Quipkit other libraries, some in source, some pre-compiled. See their respective directories for their license terms.
