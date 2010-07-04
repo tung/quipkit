@@ -1,1 +1,1 @@
-assert(loadfile("test/animate.lua"))()
+dofile("test/animate.lua")
