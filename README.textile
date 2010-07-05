@@ -95,4 +95,4 @@ h2. License
 
 Quipkit comes under the GNU LGPL Version 3. See COPYING for details. If you change it and share it, be awesome and share the source too!
 
-Quipkit other libraries, some in source, some pre-compiled. See their respective directories for their license terms.
+Quipkit uses many other libraries, some in source, some pre-compiled. See their respective directories for their license terms.
