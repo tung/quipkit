@@ -41,41 +41,22 @@ local function _handle_events()
     return true
 end
 
--- Call update() this many times per second.
-local updates_per_s = 60
-
--- Subtract this from game loop delay so we don't oversleep.
--- If this is smaller than the OS's actual resolution, we'll get lag.
-local timer_res_ms = 15
-
 local function _loop()
-    local last_time, current_time, update_time
-    local base_delay, delay
-
-    base_delay = 1000 / updates_per_s
-
-    last_time = SDL.SDL_GetTicks()
+    local last, this
+    last = SDL.SDL_GetTicks()
     while _handle_events() do
-        current_time = SDL.SDL_GetTicks()
-        if update(current_time - last_time) == false then
-            -- Allow update() to end the game loop.
+        this = SDL.SDL_GetTicks()
+        if update(this - last) == false then
+            -- Allow Update() to end the game loop.
             return
         end
-        update_time = SDL.SDL_GetTicks()
+        last = this
 
         gl.MatrixMode(gl.MODELVIEW)
         gl.LoadIdentity()
         draw()
         gl.Flush()
         SDL.SDL_GL_SwapBuffers()
-
-        -- Delay until we need to call update again.
-        delay = base_delay - (update_time - current_time) - timer_res_ms
-        if delay > 0 then
-            SDL.SDL_Delay(delay)
-        end
-
-        last_time = current_time
     end
 end
 
