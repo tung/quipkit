@@ -1,10 +1,11 @@
 require "game"
+require "sprite"
 
 local smile
 local x, y, dx, dy = 0, 0, 1, 1
 
 function game.init()
-    smile = game.sprite:new("test/smile.png")
+    smile = sprite.sprite:new("test/smile.png")
 end
 
 game.events[SDL.SDL_QUIT] = function ()

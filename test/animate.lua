@@ -1,4 +1,5 @@
 require "game"
+require "sprite"
 
 local glob
 -- tile_advance is frames per second
@@ -9,7 +10,7 @@ local x, y, y_speed = 320, 0, 128
 
 function game.init()
     math.randomseed(os.time())
-    glob = game.sprite:new("test/glob.png", 32, 32)
+    glob = sprite.sprite:new("test/glob.png", 32, 32)
 end
 
 game.events[SDL.SDL_QUIT] = function ()
