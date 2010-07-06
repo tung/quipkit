@@ -10,7 +10,7 @@ Making RPGs is harder than making other kinds of games:
 * more _state_ needs to be kept
 * more _content_ needs to be made
 
-Split your RPG's code into modules with the **game state framework**. Save, load and tidy up your state with the **persistence framework**. Make and use **custom tools** that help you and your team make an RPG that stands out from the rest.
+Split your RPG's code into modules with the **gamelet framework**. Save, load and tidy up your state with the **persistence framework**. Make and use **custom tools** that help you and your team make an RPG that stands out from the rest.
 
 
 h2. Building Quipkit
