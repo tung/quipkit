@@ -7,10 +7,8 @@ require "png"
 module(..., package.seeall)
 
 
---- Sprite Class
-sprite = {}
 
-function sprite:new(image_file, tile_w, tile_h)
+function new(self, image_file, tile_w, tile_h)
     -- Load image into OpenGL texture.
     local image = PNG.Open(image_file)
     local texture_id = gl.GenTextures(1)[1]
@@ -48,17 +46,17 @@ function sprite:new(image_file, tile_w, tile_h)
         tile_x = 0,
         tile_y = 0
     }
-    setmetatable(s, self)
+    setmetatable(s, {__index = self})
     self.__index = self
     return s
 end
 
-function sprite:setTile(tile_x, tile_y)
+function setTile(self, tile_x, tile_y)
     self.tile_x = tile_x
     self.tile_y = tile_y
 end
 
-function sprite:draw(x, y)
+function draw(self, x, y)
     -- Replace/draw over existing fragments (pixels).
     gl.TexEnv(gl.TEXTURE_ENV, gl.TEXTURE_ENV_MODE, gl.REPLACE)
 
