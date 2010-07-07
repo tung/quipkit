@@ -109,3 +109,13 @@ function clearScreen()
     gl.ClearColor(0, 0, 0, 0)
     gl.Clear(gl.COLOR_BUFFER_BIT)
 end
+
+
+-- Wait for an event to occur and return it.
+-- TODO: Probably won't work so well until that event crap above is removed.
+function waitEvent()
+    if SDL.SDL_WaitEvent(_event) == 0 then
+        error("SDL_WaitEvent failed: " .. SDL.SDL_GetError())
+    end
+    return _event
+end
