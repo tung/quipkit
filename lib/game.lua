@@ -60,7 +60,7 @@ local function _loop()
     end
 end
 
-run = function ()
+function run()
     if SDL.SDL_Init(SDL.SDL_INIT_EVERYTHING) == -1 then
         error("Failed to initialize SDL: " .. SDL.SDL_GetError(), 2)
     end
@@ -101,8 +101,11 @@ run = function ()
 end
 
 
+
 --- Utility Functions
-clearScreen = function ()
+
+-- Clear the display to black.
+function clearScreen()
     gl.ClearColor(0, 0, 0, 0)
     gl.Clear(gl.COLOR_BUFFER_BIT)
 end
