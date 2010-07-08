@@ -1,11 +1,14 @@
 require "game"
-
-game.events[SDL.SDL_QUIT] = function ()
-    return false
-end
+require "gl"
+require "sdl"
 
 local milliseconds = 0
 function game.update(delta)
+    local e = game.pollEvent()
+    if e and e.type == SDL.SDL_QUIT then
+        return false
+    end
+
     milliseconds = milliseconds + delta
     return milliseconds < 5000
 end

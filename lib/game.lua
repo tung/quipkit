@@ -1,12 +1,15 @@
 -- Quipkit game engine framework.
 -- Loads SDL and OpenGL, and drives the game loop.
 
-require "sdl"
 require "gl"
 require "png"
+require "sdl"
 
 module(..., package.seeall)
 
+
+
+--- game.lua public hooks. Assign to these to change how your game runs.
 
 events = {}
 
@@ -26,40 +29,33 @@ end
 draw = function ()
 end
 
--- Returns 'false' if any handler returns it.
--- This lets the user end the game loop.
-local _event
-local function _handle_events()
-    while SDL.SDL_PollEvent(_event) == 1 do
-        local handler = events[_event.type]
-        if type(handler) == "function" then
-            if handler() == false then
-                return false
-            end
-        end
-    end
-    return true
-end
 
+
+--- Game loop and execution.
+
+-- Main game loop. Called by game.run().
 local function _loop()
-    local last, this
-    last = SDL.SDL_GetTicks()
-    while _handle_events() do
-        this = SDL.SDL_GetTicks()
-        if update(this - last) == false then
-            -- Allow Update() to end the game loop.
-            return
-        end
-        last = this
+    local current_time, last_time
+    current_time = SDL.SDL_GetTicks()
+    repeat
+        last_time = current_time
 
         gl.MatrixMode(gl.MODELVIEW)
         gl.LoadIdentity()
         draw()
         gl.Flush()
         SDL.SDL_GL_SwapBuffers()
-    end
+
+        current_time = SDL.SDL_GetTicks()
+    until update(current_time - last_time) == false
 end
 
+
+-- Cached SDL event struct. Allocated once in game.run(),
+-- then returned by game.waitEvent() and game.pollEvent().
+local _event
+
+-- Set up game environment, launch the game loop and clean up afterwards.
 function run()
     if SDL.SDL_Init(SDL.SDL_INIT_EVERYTHING) == -1 then
         error("Failed to initialize SDL: " .. SDL.SDL_GetError(), 2)
@@ -111,8 +107,16 @@ function clearScreen()
 end
 
 
+-- Check if there are any events in the queue, and return the next one if there is.
+function pollEvent()
+    if SDL.SDL_PollEvent(_event) == 1 then
+        return _event
+    end
+    return nil
+end
+
+
 -- Wait for an event to occur and return it.
--- TODO: Probably won't work so well until that event crap above is removed.
 function waitEvent()
     if SDL.SDL_WaitEvent(_event) == 0 then
         error("SDL_WaitEvent failed: " .. SDL.SDL_GetError())

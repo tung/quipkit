@@ -1,4 +1,5 @@
 require "game"
+require "sdl"
 require "sprite"
 
 local smile
@@ -8,12 +9,13 @@ function game.init()
     smile = sprite.sprite:new("test/smile.png")
 end
 
-game.events[SDL.SDL_QUIT] = function ()
-    -- Returning false in any event ends the game loop.
-    return false
-end
-
 function game.update(delta)
+    local e = game.pollEvent()
+    if e and e.type == SDL.SDL_QUIT then
+        -- Returning false ends the game loop.
+        return false
+    end
+
     x = x + dx
     y = y + dy
     if x < 0 then

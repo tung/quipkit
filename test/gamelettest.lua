@@ -21,9 +21,7 @@ require "gamelet"
 print([[
 Press a key to go from the smile to the globs.
 Press UP and DOWN at the globs to move, RETURN to go back to the smile.
-Press ESCAPE at the globs to exit.
-
-NOTE: The smile won't show at first. Press a key to go to the globs.]])
+Press ESCAPE at the globs to exit.]])
 
 function gamelet.init()
     gamelet.stack:push(gamelet.load("center_image").init{
