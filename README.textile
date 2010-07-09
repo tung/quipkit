@@ -60,24 +60,20 @@ The easiest way to try these demos on Windows is by editing @main.lua@.
 
 h2. Status
 
-Sorry, but those awesome things I told you about before aren't done yet.
+Running the engine shows a yellow animated character that constantly walks down the screen. Running the editor shows a small "hello world" dialog box.
 
-Here's what is:
+The basic game and sprite libs are done. The gamelet framework is nearly done. Persistence and tool support are still to come.
 
-* Lua-powered game engine core
+These low-level libs are integrated and stable:
+
+* Engine
 ** Input handling with SDL
 ** Graphics with OpenGL
 ** PNG images
 ** Audio with proteaAudio
 
-* Lua-powered editor core
+* Editor
 ** GUI support via Tcl and Tk 8.5
-
-Running the engine shows a yellow animated character that constantly walks down the screen.
-
-Running the editor shows a small "hello world" dialog box.
-
-No unified API yet, but all the low-level core libs are there, super-stable and ready for use by anyone.
 
 
 h2. More Info
