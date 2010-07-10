@@ -31,7 +31,7 @@ stack = {
 -- Retrieve a gamelet (table).
 function load(gamelet_name)
     if not loaded[gamelet_name] then
-        local code = loadfile("gamelets/" .. gamelet_name .. ".lua")
+        local code = loadfile("gamedata/gamelets/" .. gamelet_name .. ".lua")
         if not code then
             error("Could not load gamelet '" .. gamelet_name .. "'", 2)
         end
