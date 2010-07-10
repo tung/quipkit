@@ -23,9 +23,22 @@ end
 exit = function ()
 end
 
+-- Valid return values for event()/update().
+GAME_QUIT = 1       -- Stop the game loop.
+GAME_REDRAW = 2     -- Call the draw() function.
+
+-- User-defined event hook. Closes on quit by default.
+event = function (e)
+    if e.type == SDL.SDL_QUIT then
+        return GAME_QUIT
+    end
+end
+
+-- User-defined game logic update hook. Should usually return GAME_REDRAW.
 update = function (delta)
 end
 
+-- User-defined rendering hook.
 draw = function ()
 end
 
@@ -33,27 +46,40 @@ end
 
 --- Game loop and execution.
 
--- Main game loop. Called by game.run().
+-- Cached SDL event struct. Allocated once in game.run(),
+-- then used in the game loop.
+local _event
+
+-- Main game loop. Called by game.run()
 local function _loop()
-    local current_time, last_time
-    current_time = SDL.SDL_GetTicks()
-    repeat
-        last_time = current_time
+    local e_result = GAME_REDRAW
+    local u_result = GAME_REDRAW
+    local current_time
+    local last_time = SDL.SDL_GetTicks()
+    while true do
+        -- Draw.
+        if e_result == GAME_REDRAW or u_result == GAME_REDRAW then
+            gl.MatrixMode(gl.MODELVIEW)
+            gl.LoadIdentity()
+            draw()
+            gl.Flush()
+            SDL.SDL_GL_SwapBuffers()
+        end
 
-        gl.MatrixMode(gl.MODELVIEW)
-        gl.LoadIdentity()
-        draw()
-        gl.Flush()
-        SDL.SDL_GL_SwapBuffers()
+        -- Handle events.
+        while SDL.SDL_PollEvent(_event) == 1 do
+            e_result = event(_event)
+        end
+        if e_result == GAME_QUIT then return end
 
+        -- Update.
         current_time = SDL.SDL_GetTicks()
-    until update(current_time - last_time) == false
+        u_result = update(current_time - last_time)
+        last_time = current_time
+        if u_result == GAME_QUIT then return end
+    end
 end
 
-
--- Cached SDL event struct. Allocated once in game.run(),
--- then returned by game.waitEvent() and game.pollEvent().
-local _event
 
 -- Set up game environment, launch the game loop and clean up afterwards.
 function run()
@@ -104,22 +130,4 @@ end
 function clearScreen()
     gl.ClearColor(0, 0, 0, 0)
     gl.Clear(gl.COLOR_BUFFER_BIT)
-end
-
-
--- Check if there are any events in the queue, and return the next one if there is.
-function pollEvent()
-    if SDL.SDL_PollEvent(_event) == 1 then
-        return _event
-    end
-    return nil
-end
-
-
--- Wait for an event to occur and return it.
-function waitEvent()
-    if SDL.SDL_WaitEvent(_event) == 0 then
-        error("SDL_WaitEvent failed: " .. SDL.SDL_GetError())
-    end
-    return _event
 end

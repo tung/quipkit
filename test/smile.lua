@@ -20,15 +20,18 @@ function game.init()
     gl.TexImage2D(0, gl_format, smile_image.width, smile_image.height, 0, data_format, gl.UNSIGNED_BYTE, smile_image.data)
 end
 
+function game.event(e)
+    if e.type == SDL.SDL_QUIT then
+        return game.GAME_QUIT
+    end
+end
+
 local milliseconds = 0
 function game.update(delta)
-    local e = game.pollEvent()
-    if e and e.type == SDL.SDL_QUIT then
-        return false
-    end
-
     milliseconds = milliseconds + delta
-    return milliseconds < 5000
+    if milliseconds >= 5000 then
+        return game.GAME_QUIT
+    end
 end
 
 function game.draw()

@@ -9,13 +9,13 @@ function game.init()
     smile = sprite.sprite:new("test/smile.png")
 end
 
-function game.update(delta)
-    local e = game.pollEvent()
-    if e and e.type == SDL.SDL_QUIT then
-        -- Returning false ends the game loop.
-        return false
+function game.event(e)
+    if e.type == SDL.SDL_QUIT then
+        return game.GAME_QUIT
     end
+end
 
+function game.update(delta)
     x = x + dx
     y = y + dy
     if x < 0 then
@@ -32,7 +32,8 @@ function game.update(delta)
         y = game.screen.h - 1 - smile.h
         dy = -dy
     end
-    return true
+
+    return game.GAME_REDRAW
 end
 
 function game.draw()

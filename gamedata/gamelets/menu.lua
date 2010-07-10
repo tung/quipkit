@@ -37,25 +37,19 @@ function init(opts)
     return self
 end
 
-function update(self, delta)
-    local e = game.waitEvent()
-
-    --if e.type == game.EVENT_KEYDOWN then
+function event(self, e)
     if e.type == SDL.SDL_KEYDOWN then
         local key = e.key.keysym.sym
-        --if key == game.KEY_DOWN then
         if key == SDL.SDLK_DOWN then
             self.selection = self.selection + 1
             if self.selection > #(self.items) then
                 self.selection = 1
             end
-        --elseif key == game.KEY_UP then
         elseif key == SDL.SDLK_UP then
             self.selection = self.selection - 1
             if self.selection < 1 then
                 self.selection = #(self.items)
             end
-        --elseif key == game.KEY_RETURN then
         elseif key == SDL.SDLK_RETURN then
             gamelet.stack:pop()
             gamelet.stack:push(gamelet.load("center_image").init{
@@ -63,16 +57,19 @@ function update(self, delta)
                 scale = 8.0
             })
         elseif key == SDL.SDLK_ESCAPE then
-            --return game.UPDATE_EXIT
-            return false
-        --[[else
-            return game.UPDATE_NONE --]]
+            return gamelet.GAMELET_QUIT
+        else
+            return
         end
-        --return game.UPDATE_REDRAW
-    end
+        return gamelet.GAMELET_REDRAW
 
-    --return game.UPDATE_NONE
-    return true
+    elseif e.type == SDL.SDL_QUIT then
+        return gamelet.GAMELET_QUIT
+    end
+end
+
+function update(self, delta)
+    -- No update needed.
 end
 
 function draw(self)

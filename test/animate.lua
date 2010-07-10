@@ -13,12 +13,13 @@ function game.init()
     glob = sprite.sprite:new("test/glob.png", 32, 32)
 end
 
-function game.update(ms_delta)
-    local e = game.pollEvent()
-    if e and e.type == SDL.SDL_QUIT then
-        return false
+function game.event(e)
+    if e.type == SDL.SDL_QUIT then
+        return game.GAME_QUIT
     end
+end
 
+function game.update(ms_delta)
     -- Move Glob down the screen.
     local s_delta = ms_delta / 1000
     y = y + y_speed * s_delta
@@ -35,7 +36,7 @@ function game.update(ms_delta)
         tile_tick = tile_tick - tile_advance
     end
 
-    return true
+    return game.GAME_REDRAW
 end
 
 function game.draw()

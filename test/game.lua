@@ -2,15 +2,18 @@ require "game"
 require "gl"
 require "sdl"
 
+function game.event(e)
+    if e.type == SDL.SDL_QUIT then
+        return game.GAME_QUIT
+    end
+end
+
 local milliseconds = 0
 function game.update(delta)
-    local e = game.pollEvent()
-    if e and e.type == SDL.SDL_QUIT then
-        return false
-    end
-
     milliseconds = milliseconds + delta
-    return milliseconds < 5000
+    if milliseconds >= 5000 then
+        return game.GAME_QUIT
+    end
 end
 
 function game.draw()
