@@ -21,7 +21,9 @@ TCLTK_LIBS:=-ltcl8.5
 
 LTCLTK_DIR:=dev/lib/tcltk/ltcltk-0.9-1/
 LUAPNG_DIR:=lib/png/
-LUASDL_DIR:=lib/sdl/luaSDL/
+LUASDL_DIR:=lib/sdl/LuaSDL_new/
+LUASDL_DIR_BACK:=../../../
+OLDLUASDL_DIR:=lib/sdl/luaSDL/
 PROTEAAUDIO_DIR:=lib/proteaAudio/
 TOLUAPP_DIR:=contrib/tolua++/
 
@@ -30,10 +32,10 @@ TOLUAPP_DIR:=contrib/tolua++/
 ### Tasks ###
 
 .PHONY: all
-all: game ${LUAPNG_DIR}libluapng.so ${LUASDL_DIR}libluasdl.so all_toluapp ${PROTEAAUDIO_DIR}libproaudio.so edit ${LTCLTK_DIR}ltcl.so
+all: game ${LUAPNG_DIR}libluapng.so ${LUASDL_DIR}libluasdl.so ${OLDLUASDL_DIR}libluasdl.so all_toluapp ${PROTEAAUDIO_DIR}libproaudio.so edit ${LTCLTK_DIR}ltcl.so
 
 .PHONY: clean
-clean: clean_game clean_luapng clean_luasdl clean_toluapp clean_proteaaudio clean_edit clean_ltcltk
+clean: clean_game clean_luapng clean_luasdl clean_oldluasdl clean_toluapp clean_proteaaudio clean_edit clean_ltcltk
 
 
 
@@ -69,26 +71,55 @@ clean_luapng:
 	-rm -f ${LUAPNG_DIR}libluapng.so
 	-rm -f ${LUAPNG_DIR}*.o
 
-### luaSDL bindings (needs tolua++) ###
+### New LuaSDL bindings from Kein-Hong Man (needs tolua++) ###
 
-LUASDL_CFLAGS:=-O2 -Wall -ansi ${LUA_CFLAGS} ${SDL_CFLAGS}
-LUASDL_LIBS:=${LUA_LIBS} ${SDL_LIBS}
+LUASDL_CFLAGS:=${QKENG_CFLAGS} ${SDL_CFLAGS}
+LUASDL_LIBS:=${QKENG_LIBS} ${SDL_LIBS} -lSDL_image -lSDL_net -lSDL_ttf
 
 # Link tolua++ statically, otherwise distribution will be a nightmare.
-${LUASDL_DIR}libluasdl.so: ${LUASDL_DIR}SDL.o ${TOLUAPP_DIR}lib/libtolua++_static.a
+${LUASDL_DIR}libluasdl.so: ${LUASDL_DIR}sdllib.o ${LUASDL_DIR}SDL_bind.o ${TOLUAPP_DIR}lib/libtolua++_static.a
 	gcc -shared -Wl,-soname,$(notdir $@) -o $@ ${LUASDL_LIBS} $^
 
-${LUASDL_DIR}SDL.o: ${LUASDL_DIR}SDL.c ${TOLUAPP_DIR}include/tolua++.h
+${LUASDL_DIR}sdllib.o: ${LUASDL_DIR}sdllib.c ${LUASDL_DIR}sdllib.h ${LUASDL_DIR}SDL_bind.h ${TOLUAPP_DIR}include/tolua++.h
 	gcc -fPIC -o $@ ${LUASDL_CFLAGS} -I${TOLUAPP_DIR}include -c $<
 
-${LUASDL_DIR}SDL.c: ${LUASDL_DIR}SDL.pkg ${TOLUAPP_DIR}bin/tolua++
-	${TOLUAPP_DIR}bin/tolua++ -o $@ $<
+${LUASDL_DIR}SDL_bind.o: ${LUASDL_DIR}SDL_bind.c ${LUASDL_DIR}SDL_bind.h ${TOLUAPP_DIR}include/tolua++.h
+	gcc -fPIC -o $@ ${LUASDL_CFLAGS} -I${TOLUAPP_DIR}include -c $<
+
+# These commands produce both outputs, but I'm not sure how to "combine" them in Make.
+# Also, this cd's because tolua++ doesn't accept search directories.
+${LUASDL_DIR}SDL_bind.c: ${LUASDL_DIR}pkg/*.pkg
+	cd ${LUASDL_DIR}pkg/ && ${LUASDL_DIR_BACK}../${TOLUAPP_DIR}bin/tolua++ -o ../SDL_bind.c -H ../SDL_bind.h SDL.pkg && cd -
+${LUASDL_DIR}SDL_bind.h: ${LUASDL_DIR}pkg/*.pkg
+	cd ${LUASDL_DIR}pkg/ && ${LUASDL_DIR_BACK}../${TOLUAPP_DIR}bin/tolua++ -o ../SDL_bind.c -H ../SDL_bind.h SDL.pkg && cd -
 
 .PHONY: clean_luasdl
 clean_luasdl:
 	-rm -f ${LUASDL_DIR}libluasdl.so
-	-rm -f ${LUASDL_DIR}SDL.o
-	-rm -f ${LUASDL_DIR}SDL.c
+	-rm -f ${LUASDL_DIR}sdllib.o
+	-rm -f ${LUASDL_DIR}SDL_bind.o
+	-rm -f ${LUASDL_DIR}SDL_bind.c ${LUASDL_DIR}SDL_bind.h
+
+### Old luaSDL bindings from Thatcher Ulrich (needs tolua++) ###
+
+OLDLUASDL_CFLAGS:=-O2 -Wall -ansi ${LUA_CFLAGS} ${SDL_CFLAGS}
+OLDLUASDL_LIBS:=${LUA_LIBS} ${SDL_LIBS}
+
+# Link tolua++ statically, otherwise distribution will be a nightmare.
+${OLDLUASDL_DIR}libluasdl.so: ${OLDLUASDL_DIR}SDL.o ${TOLUAPP_DIR}lib/libtolua++_static.a
+	gcc -shared -Wl,-soname,$(notdir $@) -o $@ ${OLDLUASDL_LIBS} $^
+
+${OLDLUASDL_DIR}SDL.o: ${OLDLUASDL_DIR}SDL.c ${TOLUAPP_DIR}include/tolua++.h
+	gcc -fPIC -o $@ ${OLDLUASDL_CFLAGS} -I${TOLUAPP_DIR}include -c $<
+
+${OLDLUASDL_DIR}SDL.c: ${OLDLUASDL_DIR}SDL.pkg ${TOLUAPP_DIR}bin/tolua++
+	${TOLUAPP_DIR}bin/tolua++ -o $@ $<
+
+.PHONY: clean_oldluasdl
+clean_oldluasdl:
+	-rm -f ${OLDLUASDL_DIR}libluasdl.so
+	-rm -f ${OLDLUASDL_DIR}SDL.o
+	-rm -f ${OLDLUASDL_DIR}SDL.c
 
 ### proteaAudio bindings ###
 

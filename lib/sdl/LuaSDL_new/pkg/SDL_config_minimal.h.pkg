@@ -1,0 +1,110 @@
+/* ================================================================== */
+/*
+ * tolua++ bindings for LuaSDL, adapted from SDL header files.
+ * This file is part of LuaSDL.
+ *
+ * Author: Tung Nguyen <tunginobi@gmail.com> 2010
+ */
+/* ================================================================== */
+
+/*
+    SDL - Simple DirectMedia Layer
+    Copyright (C) 1997-2006 Sam Lantinga
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 2.1 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+    Sam Lantinga
+    slouken@libsdl.org
+*/
+
+typedef signed char int8_t;
+typedef unsigned char uint8_t;
+typedef signed short int16_t;
+typedef unsigned short uint16_t;
+typedef signed int int32_t;
+typedef unsigned int uint32_t;
+// NOTE int64_t and uint64_t already defined in stdint.h.
+typedef unsigned int size_t;
+typedef unsigned long uintptr_t;
+
+// NOTE: Resolution of primitive types. Platform independent but tolua++
+//       needs to resolve them so that the functions below can use them.
+//       From: SDL_stdinc.h, To: SDL_config_*.h
+typedef int8_t		Sint8;
+typedef uint8_t		Uint8;
+typedef int16_t		Sint16;
+typedef uint16_t	Uint16;
+typedef int32_t		Sint32;
+typedef uint32_t	Uint32;
+typedef int64_t	        Sint64;
+typedef uint64_t	Uint64;
+
+// NOTE: Only constants relevant to SDL (SDL_*) are exposed.
+//       Mostly swiped from Ubuntu 9.04's SDL_config.h.
+
+#define SDL_HAS_64BIT_TYPE 1
+
+/* Enable various audio drivers */
+#define SDL_AUDIO_DRIVER_ALSA 1
+#define SDL_AUDIO_DRIVER_DISK 1
+#define SDL_AUDIO_DRIVER_DUMMY 1
+#define SDL_AUDIO_DRIVER_PULSE 1
+#define SDL_AUDIO_DRIVER_ESD 1
+#define SDL_AUDIO_DRIVER_NAS 1
+#define SDL_AUDIO_DRIVER_OSS 1
+/* Enable various cdrom drivers */
+#define SDL_CDROM_LINUX 1
+/* Enable various input drivers */
+#define SDL_INPUT_LINUXEV 1
+#define SDL_JOYSTICK_LINUX 1
+/* Enable various shared object loading systems */
+#define SDL_LOADSO_DLOPEN 1
+/* Enable various threading systems */
+#define SDL_THREAD_PTHREAD 1
+#define SDL_THREAD_PTHREAD_RECURSIVE_MUTEX 1
+/* Enable various timer systems */
+#define SDL_TIMER_UNIX 1
+/* Enable various video drivers */
+#define SDL_VIDEO_DRIVER_AALIB 1
+#define SDL_VIDEO_DRIVER_CACA 1
+#define SDL_VIDEO_DRIVER_DGA 1
+#define SDL_VIDEO_DRIVER_DIRECTFB 1
+#define SDL_VIDEO_DRIVER_DUMMY 1
+#define SDL_VIDEO_DRIVER_FBCON 1
+#define SDL_VIDEO_DRIVER_X11 1
+#define SDL_VIDEO_DRIVER_X11_DGAMOUSE 1
+#define SDL_VIDEO_DRIVER_X11_DPMS 1
+// tolua++ doesn't convert these properly.
+//#define SDL_VIDEO_DRIVER_X11_DYNAMIC "libX11.so.6"
+//#define SDL_VIDEO_DRIVER_X11_DYNAMIC_XEXT "libXext.so.6"
+$[
+SDL.SDL_VIDEO_DRIVER_X11_DYNAMIC = "libX11.so.6"
+SDL.SDL_VIDEO_DRIVER_X11_DYNAMIC_XEXT = "libXext.so.6"
+$]
+#define SDL_VIDEO_DRIVER_X11_VIDMODE 1
+#define SDL_VIDEO_DRIVER_X11_XINERAMA 1
+#define SDL_VIDEO_DRIVER_X11_XME 1
+#define SDL_VIDEO_DRIVER_X11_XV 1
+/* Enable OpenGL support */
+#define SDL_VIDEO_OPENGL 1
+#define SDL_VIDEO_OPENGL_GLX 1
+/* Enable assembly routines */
+#define SDL_ASSEMBLY_ROUTINES 1
+#define SDL_HERMES_BLITTERS 1
+
+// NOTE: Platform-dependent definitions for SDL_BYTEORDER
+//       From: SDL_endian.h, To: SDL_config_*.h
+
+#define SDL_BYTEORDER	SDL_LIL_ENDIAN

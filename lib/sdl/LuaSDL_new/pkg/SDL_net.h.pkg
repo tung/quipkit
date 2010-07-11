@@ -1,0 +1,170 @@
+/* ================================================================== */
+/*
+ * tolua++ bindings for LuaSDL, adapted from SDL header files.
+ * This file is part of LuaSDL.
+ *
+ * Author: Kein-Hong Man <khman@users.sf.net> 2007
+ */
+/* ================================================================== */
+
+/*
+    SDL_net:  An example cross-platform network library for use with SDL
+    Copyright (C) 1997-2004 Sam Lantinga
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Library General Public
+    License as published by the Free Software Foundation; either
+    version 2 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Library General Public License for more details.
+
+    You should have received a copy of the GNU Library General Public
+    License along with this library; if not, write to the Free
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+    Sam Lantinga
+    slouken@libsdl.org
+*/
+
+#define SDL_NET_MAJOR_VERSION	1
+#define SDL_NET_MINOR_VERSION	2
+#define SDL_NET_PATCHLEVEL	7
+
+// interface for macros
+
+void SDL_NET_VERSION (SDL_version *ver_info);
+
+extern int  SDLNet_Init(void);
+extern void SDLNet_Quit(void);
+
+typedef struct {
+	Uint32 host;
+	Uint16 port;
+} IPaddress;
+
+#define INADDR_ANY		0x00000000
+#define INADDR_NONE		0xFFFFFFFF
+#define INADDR_BROADCAST	0xFFFFFFFF
+
+extern int SDLNet_ResolveHost(IPaddress *address, const char *host, Uint16 port);
+extern const char * SDLNet_ResolveIP(IPaddress *ip);
+
+// NOTE: * in typedef not supported by tolua++ 1.0.92
+// typedef struct _TCPsocket *TCPsocket;
+// NOTE: dummy struct identifier for userdata type
+struct _TCPsocket {};
+
+extern struct _TCPsocket * SDLNet_TCP_Open(IPaddress *ip);
+extern struct _TCPsocket * SDLNet_TCP_Accept(struct _TCPsocket * server);
+extern IPaddress * SDLNet_TCP_GetPeerAddress(struct _TCPsocket * sock);
+extern int SDLNet_TCP_Send(struct _TCPsocket * sock, const void *data, int len);
+extern int SDLNet_TCP_Recv(struct _TCPsocket * sock, void *data, int maxlen);
+extern void SDLNet_TCP_Close(struct _TCPsocket * sock);
+
+#define SDLNET_MAX_UDPCHANNELS	32
+#define SDLNET_MAX_UDPADDRESSES	4
+
+// NOTE: * in typedef not supported by tolua++ 1.0.92
+// typedef struct _UDPsocket *UDPsocket;
+// NOTE: dummy struct identifier for userdata type
+struct _UDPsocket {};
+
+typedef struct {
+	int channel;
+	void* data; // Uint8 *
+	int len;
+	int maxlen;
+	int status;
+	IPaddress address;
+} UDPpacket;
+
+extern UDPpacket * SDLNet_AllocPacket(int size);
+extern int SDLNet_ResizePacket(UDPpacket *packet, int newsize);
+extern void SDLNet_FreePacket(UDPpacket *packet);
+// TODO: vector
+// extern UDPpacket ** SDLNet_AllocPacketV(int howmany, int size);
+// extern void SDLNet_FreePacketV(UDPpacket **packetV);
+extern struct _UDPsocket * SDLNet_UDP_Open(Uint16 port);
+extern int SDLNet_UDP_Bind(struct _UDPsocket * sock, int channel, IPaddress *address);
+extern void SDLNet_UDP_Unbind(struct _UDPsocket * sock, int channel);
+extern IPaddress * SDLNet_UDP_GetPeerAddress(struct _UDPsocket * sock, int channel);
+extern int SDLNet_UDP_Send(struct _UDPsocket * sock, int channel, UDPpacket *packet);
+extern int SDLNet_UDP_Recv(struct _UDPsocket * sock, UDPpacket *packet);
+// TODO: vector
+// extern int SDLNet_UDP_SendV(struct _UDPsocket * sock, UDPpacket **packets, int npackets);
+// extern int SDLNet_UDP_RecvV(struct _UDPsocket * sock, UDPpacket **packets);
+extern void SDLNet_UDP_Close(struct _UDPsocket * sock);
+
+// NOTE: * in typedef not supported by tolua++ 1.0.92
+// typedef struct _SDLNet_SocketSet *SDLNet_SocketSet;
+// NOTE: dummy struct identifier for userdata type
+struct _SDLNet_SocketSet {};
+
+// NOTE: was *SDLNet_GenericSocket but tolua++ has a problem with the *
+typedef struct {
+	int ready;
+} _SDLNet_GenericSocket;
+
+$       typedef struct {
+$       	int ready;
+$       } _SDLNet_GenericSocket;
+
+extern struct _SDLNet_SocketSet * SDLNet_AllocSocketSet(int maxsockets);
+extern int SDLNet_AddSocket(struct _SDLNet_SocketSet * set, struct _SDLNet_GenericSocket *sock);
+extern int SDLNet_DelSocket(struct _SDLNet_SocketSet * set, struct _SDLNet_GenericSocket *sock);
+extern int SDLNet_CheckSockets(struct _SDLNet_SocketSet * set, Uint32 timeout);
+extern void SDLNet_FreeSocketSet(struct _SDLNet_SocketSet * set);
+
+// interface for macros
+
+int SDLNet_TCP_AddSocket(struct _SDLNet_SocketSet * set, struct _TCPsocket *sock);
+int SDLNet_UDP_AddSocket(struct _SDLNet_SocketSet * set, struct _UDPsocket *sock);
+int SDLNet_TCP_DelSocket(struct _SDLNet_SocketSet * set, struct _TCPsocket *sock);
+int SDLNet_UDP_DelSocket(struct _SDLNet_SocketSet * set, struct _UDPsocket *sock);
+
+// NOTE: overloaded, was macro SDLNet_SocketReady(sock)
+SDL_bool _SDLNet_SocketReady @ SDLNet_SocketReady(struct _SDLNet_GenericSocket *sock);
+SDL_bool _SDLNet_TCP_SocketReady @ SDLNet_SocketReady(struct _TCPsocket *sock);
+SDL_bool _SDLNet_UDP_SocketReady @ SDLNet_SocketReady(struct _UDPsocket *sock);
+
+// NOTE: overloaded, was macro SDLNet_SocketReady(sock)
+$       inline SDL_bool _SDLNet_SocketReady(SDLNet_GenericSocket sock)
+$       {
+$           return SDLNet_SocketReady(sock);
+$       }
+$       inline SDL_bool _SDLNet_TCP_SocketReady(TCPsocket sock)
+$       {
+$           return SDLNet_SocketReady(sock);
+$       }
+$       inline SDL_bool _SDLNet_UDP_SocketReady(UDPsocket sock)
+$       {
+$           return SDLNet_SocketReady(sock);
+$       }
+
+// interface for functions/macros
+
+void SDLNet_Write16(Uint16 value, void *area);
+void SDLNet_Write32(Uint32 value, void *area);
+
+Uint16 SDLNet_Read16(void *area);
+Uint32 SDLNet_Read32(void *area);
+
+// NOTE: Only this constant is platform-dependent, so select the
+//       appropriate implementation, but note that the function
+//       calls are platform-independent, so don't bother with this
+//       if you are just calling the read/write functions. For
+//       completeness only.
+
+// #define SDL_DATA_ALIGNED	1
+#define SDL_DATA_ALIGNED	0
+
+$[
+
+local SDL = SDL
+SDL.SDLNet_SetError = SDL.SDL_SetError
+SDL.SDLNet_GetError = SDL.SDL_GetError
+
+$]

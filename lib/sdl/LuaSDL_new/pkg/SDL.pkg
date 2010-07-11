@@ -1,0 +1,97 @@
+/* ================================================================== */
+/*
+ * tolua++ bindings for LuaSDL, adapted from SDL header files.
+ * This file is part of LuaSDL.
+ *
+ * Author: Kein-Hong Man <khman@users.sf.net> 2007
+ */
+/* ================================================================== */
+
+/* wrapper for tolua++ */
+
+/* SDL and SDL_* headers */
+
+$#include "SDL.h"
+//$#include "SDL_opengl.h"
+$#include "SDL_image.h"
+//$#include "SDL_mixer.h"
+$#include "SDL_net.h"
+$#include "SDL_ttf.h"
+
+/* additional functionality */
+
+$#include "sdllib.h"
+
+/* actual interface definitions */
+
+module SDL
+{
+
+$pfile "SDL.h.pkg"
+//$pfile "SDL_opengl.h.pkg"
+$pfile "SDL_image.h.pkg"
+//$pfile "SDL_mixer.h.pkg"
+$pfile "SDL_net.h.pkg"
+$pfile "SDL_ttf.h.pkg"
+
+/* additional functionality */
+
+// NOTE: for functions where a sdllib.c function replaces an SDL
+//       function, the it is either entirely in sdllib.c, or the
+//       interface is defined in the relevant package file
+
+/* additional useful functions, implemented in sdllib.c */
+
+Uint32 SDL_GetPixel(SDL_Surface *surface, int x, int y);
+void SDL_PutPixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
+
+void LuaSDL_AudioCh1(void *audio_buf, Uint32 audio_len, int loop = 0,
+    int volume = SDL_MIX_MAXVOLUME);
+void LuaSDL_AudioCh2(void *audio_buf, Uint32 audio_len, int loop = 0,
+    int volume = SDL_MIX_MAXVOLUME);
+
+/* constructors/destructors; local constructors are in sdllib.c */
+
+SDL_AudioSpec* SDL_AudioSpec_new(void);         /* SDL_audio.h */
+void SDL_AudioSpec_delete(SDL_AudioSpec *obj);
+SDL_AudioCVT* SDL_AudioCVT_new(void);
+void SDL_AudioCVT_delete(SDL_AudioCVT *obj);
+
+SDL_CDtrack* SDL_CDtrack_new(void);             /* SDL_cdrom.h */
+void SDL_CDtrack_delete(SDL_CDtrack *obj);
+SDL_CD* SDL_CD_new(void);
+void SDL_CD_delete(SDL_CD *obj);
+
+SDL_Event* SDL_Event_new(void);                 /* SDL_events.h */
+void SDL_Event_delete(SDL_Event *obj);
+
+SDL_keysym* SDL_keysym_new(void);               /* SDL_keyboard.h */
+void SDL_keysym_delete(SDL_keysym *obj);
+
+SDL_Cursor* SDL_Cursor_new(void);               /* SDL_mouse.h */
+void SDL_Cursor_delete(SDL_Cursor *obj);
+
+IPaddress* IPaddress_new(void);                 /* SDL_net.h */
+void IPaddress_delete(IPaddress *obj);
+
+SDL_version* SDL_version_new(void);             /* SDL_version.h */
+void SDL_version_delete(SDL_version *obj);
+
+SDL_Rect* SDL_Rect_new(void);                   /* SDL_video.h */
+void SDL_Rect_delete(SDL_Rect *obj);
+SDL_Color* SDL_Color_new(void);
+void SDL_Color_delete(SDL_Color *obj);
+SDL_PixelFormat* SDL_PixelFormat_new(void);
+void SDL_PixelFormat_delete(SDL_PixelFormat *obj);
+/* NOTE: not required, user never needs to set one up directly */
+/* SDL_Surface* SDL_Surface_new(void); */
+/* void SDL_Surface_delete(SDL_Surface *obj); */
+SDL_VideoInfo* SDL_VideoInfo_new(void);
+void SDL_VideoInfo_delete(SDL_VideoInfo *obj);
+
+/* additional useful resources (see also sdllib.c) */
+
+}
+
+/* ================================================================== */
+/* (end of package file) */
