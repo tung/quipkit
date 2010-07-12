@@ -6,17 +6,17 @@ end
 
 local function mod_to_string(sdlmod)
     local str = {}
-    if SDL.bit_and(sdlmod, SDL.KMOD_LSHIFT) ~= 0 then str[#str + 1] = "LSHIFT"
-    elseif SDL.bit_and(sdlmod, SDL.KMOD_RSHIFT) ~= 0 then str[#str + 1] = "RSHIFT"
-    elseif SDL.bit_and(sdlmod, SDL.KMOD_LCTRL) ~= 0 then str[#str + 1] = "LCTRL"
-    elseif SDL.bit_and(sdlmod, SDL.KMOD_RCTRL) ~= 0 then str[#str + 1] = "RCTRL"
-    elseif SDL.bit_and(sdlmod, SDL.KMOD_LALT) ~= 0 then str[#str + 1] = "LALT"
-    elseif SDL.bit_and(sdlmod, SDL.KMOD_RALT) ~= 0 then str[#str + 1] = "RALT"
-    elseif SDL.bit_and(sdlmod, SDL.KMOD_LMETA) ~= 0 then str[#str + 1] = "LMETA"
-    elseif SDL.bit_and(sdlmod, SDL.KMOD_RMETA) ~= 0 then str[#str + 1] = "RMETA"
-    elseif SDL.bit_and(sdlmod, SDL.KMOD_NUM) ~= 0 then str[#str + 1] = "NUM"
-    elseif SDL.bit_and(sdlmod, SDL.KMOD_CAPS) ~= 0 then str[#str + 1] = "CAPS"
-    elseif SDL.bit_and(sdlmod, SDL.KMOD_MODE) ~= 0 then str[#str + 1] = "MODE"
+    if SDL.And(sdlmod, SDL.KMOD_LSHIFT) ~= 0 then str[#str + 1] = "LSHIFT"
+    elseif SDL.And(sdlmod, SDL.KMOD_RSHIFT) ~= 0 then str[#str + 1] = "RSHIFT"
+    elseif SDL.And(sdlmod, SDL.KMOD_LCTRL) ~= 0 then str[#str + 1] = "LCTRL"
+    elseif SDL.And(sdlmod, SDL.KMOD_RCTRL) ~= 0 then str[#str + 1] = "RCTRL"
+    elseif SDL.And(sdlmod, SDL.KMOD_LALT) ~= 0 then str[#str + 1] = "LALT"
+    elseif SDL.And(sdlmod, SDL.KMOD_RALT) ~= 0 then str[#str + 1] = "RALT"
+    elseif SDL.And(sdlmod, SDL.KMOD_LMETA) ~= 0 then str[#str + 1] = "LMETA"
+    elseif SDL.And(sdlmod, SDL.KMOD_RMETA) ~= 0 then str[#str + 1] = "RMETA"
+    elseif SDL.And(sdlmod, SDL.KMOD_NUM) ~= 0 then str[#str + 1] = "NUM"
+    elseif SDL.And(sdlmod, SDL.KMOD_CAPS) ~= 0 then str[#str + 1] = "CAPS"
+    elseif SDL.And(sdlmod, SDL.KMOD_MODE) ~= 0 then str[#str + 1] = "MODE"
     end
     return (#str == 0) and "no mods" or table.concat(str, " ")
 end

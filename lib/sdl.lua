@@ -4,12 +4,14 @@ if WIN32 then
     entry = "luaopen_SDL"
 else
     -- Assume Linux for now.
-    path = "lib/sdl/luaSDL/libluasdl.so"
-    entry = "luaopen_SDL"
+    path = "lib/sdl/LuaSDL_new/libluasdl.so"
+    entry = "luaopen_LuaSDL"
 end
 local f = assert(package.loadlib(path, entry))
 f()
 
--- luaSDL provides high- and low-level BlitSurface-esque functions.
--- The high-level one is essentially the one we want.
-SDL.SDL_BlitSurface = SDL.SDL_UpperBlit
+if WIN32 then
+    -- Old luaSDL provides high- and low-level BlitSurface-esque functions.
+    -- The high-level one is essentially the one we want.
+    SDL.SDL_BlitSurface = SDL.SDL_UpperBlit
+end

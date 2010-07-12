@@ -73,7 +73,9 @@ clean_luapng:
 
 ### New LuaSDL bindings from Kein-Hong Man (needs tolua++) ###
 
-LUASDL_CFLAGS:=${QKENG_CFLAGS} ${SDL_CFLAGS}
+# Kein-Hong Man's LuaSDL breaks on -std=c99 due to some inline function issues.
+#LUASDL_CFLAGS:=${QKENG_CFLAGS} ${SDL_CFLAGS}
+LUASDL_CFLAGS:=${LUA_CFLAGS} ${SDL_CFLAGS}
 LUASDL_LIBS:=${QKENG_LIBS} ${SDL_LIBS} -lSDL_image -lSDL_net -lSDL_ttf
 
 # Link tolua++ statically, otherwise distribution will be a nightmare.

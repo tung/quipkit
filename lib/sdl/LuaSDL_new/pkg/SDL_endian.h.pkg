@@ -53,11 +53,11 @@ Uint32 SDL_Pass32 (Uint32 x);
 
 // implementation of dummy swaps for LE/BE
 
-$       inline Uint16 SDL_Pass16 (Uint16 x)
+$       static inline Uint16 SDL_Pass16 (Uint16 x)
 $       {
 $           return x;
 $       }
-$       inline Uint32 SDL_Pass32 (Uint32 x)
+$       static inline Uint32 SDL_Pass32 (Uint32 x)
 $       {
 $           return x;
 $       }

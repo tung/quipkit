@@ -131,15 +131,15 @@ SDL_bool _SDLNet_TCP_SocketReady @ SDLNet_SocketReady(struct _TCPsocket *sock);
 SDL_bool _SDLNet_UDP_SocketReady @ SDLNet_SocketReady(struct _UDPsocket *sock);
 
 // NOTE: overloaded, was macro SDLNet_SocketReady(sock)
-$       inline SDL_bool _SDLNet_SocketReady(SDLNet_GenericSocket sock)
+$       static inline SDL_bool _SDLNet_SocketReady(SDLNet_GenericSocket sock)
 $       {
 $           return SDLNet_SocketReady(sock);
 $       }
-$       inline SDL_bool _SDLNet_TCP_SocketReady(TCPsocket sock)
+$       static inline SDL_bool _SDLNet_TCP_SocketReady(TCPsocket sock)
 $       {
 $           return SDLNet_SocketReady(sock);
 $       }
-$       inline SDL_bool _SDLNet_UDP_SocketReady(UDPsocket sock)
+$       static inline SDL_bool _SDLNet_UDP_SocketReady(UDPsocket sock)
 $       {
 $           return SDLNet_SocketReady(sock);
 $       }

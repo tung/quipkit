@@ -90,7 +90,7 @@ int SDL_memcmp(const void *s1, const void *s2, size_t len);
 //       versions of SDL_memcpy and SDL_revcpy that is wrapped by a do-while
 //       loop, thus it cannot fit into a return statement and the following
 //       hack is required.
-$       inline void * _SDL_memcpy (void *dst, const void *src, size_t len)
+$       static inline void * _SDL_memcpy (void *dst, const void *src, size_t len)
 $       {
 $       #if defined(__GNUC__) && defined(i386)
 $           SDL_memcpy(dst, src, len);
@@ -99,7 +99,7 @@ $       #else
 $           return SDL_memcpy(dst, src, len);
 $       #endif
 $       }
-$       inline void * _SDL_revcpy (void *dst, const void *src, size_t len)
+$       static inline void * _SDL_revcpy (void *dst, const void *src, size_t len)
 $       {
 $       #if defined(__GNUC__) && defined(i386)
 $           SDL_revcpy(dst, src, len);
