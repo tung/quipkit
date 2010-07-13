@@ -109,9 +109,7 @@ function run()
 
     init()
 
-    -- TODO: Switch to this when new LuaSDL works on Windows.
-    --_event = SDL.SDL_Event_local()
-    _event = SDL.SDL_Event_new()
+    _event = SDL.SDL_Event_local()
 
     local success, error_message
     success, error_message = pcall(_loop)
