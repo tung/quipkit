@@ -1,6 +1,5 @@
 require "game"
 require "gl"
-require "png"
 require "sdl"
 
 local smile
@@ -8,16 +7,27 @@ local smile
 function game.init()
     SDL.SDL_WM_SetCaption("OpenGL with SDL", "OpenGL")
 
+    local smile_image_orig = SDL.IMG_Load("test/smile.png")
+    local smile_image = SDL.SDL_CreateRGBSurface(SDL.SDL_SWSURFACE, smile_image_orig.w, smile_image_orig.h, 32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000)
+    if not smile_image then
+        error("SDL_CreateRGBSurface failed: " .. SDL.SDL_GetError())
+    end
+    if SDL.SDL_BlitSurface(smile_image_orig, nil, smile_image, nil) ~= 0 then
+        error("SDL_BlitSurface failed: " .. SDL.SDL_GetError())
+    end
+    SDL.SDL_FreeSurface(smile_image_orig)
+
     gl.PixelStore(gl.UNPACK_ALIGNMENT, 1)
 
     smile = gl.GenTextures(1)[1]
     gl.BindTexture(gl.TEXTURE_2D, smile)
     gl.TexParameter(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
     gl.TexParameter(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
-    local smile_image = PNG.Open("test/smile.png")
-    local gl_format = gl.RGBA
-    local data_format = (smile_image.format == PNG.RGBA) and gl.RGBA or gl.RGB
-    gl.TexImage2D(0, gl_format, smile_image.width, smile_image.height, 0, data_format, gl.UNSIGNED_BYTE, smile_image.data)
+    gl.TexImage2D(0, gl.RGBA, smile_image.w, smile_image.h, 0, gl.RGBA, gl.UNSIGNED_BYTE, smile_image.pixels)
+end
+
+function game.exit()
+    gl.DeleteTextures({smile})
 end
 
 function game.event(e)

@@ -2,7 +2,6 @@
 -- Loads SDL and OpenGL, and drives the game loop.
 
 require "gl"
-require "png"
 require "sdl"
 
 module(..., package.seeall)
