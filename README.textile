@@ -31,7 +31,7 @@ Grab these development libs for the engine:
 * libpng
 * Lua 5.1
 * OpenGL
-* SDL
+* SDL, SDL_image, SDL_net and SDL_ttf
 
 Grab these development libs for the editor:
 
