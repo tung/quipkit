@@ -26,15 +26,18 @@ end
 GAME_QUIT = 1       -- Stop the game loop.
 GAME_REDRAW = 2     -- Call the draw() function.
 
--- User-defined event hook. Closes on quit by default.
+-- User-defined event hook.
 event = function (e)
-    if e.type == SDL.SDL_QUIT then
+    if e.type == SDL.SDL_VIDEOEXPOSE then
+        return GAME_REDRAW
+    elseif e.type == SDL.SDL_QUIT then
         return GAME_QUIT
     end
 end
 
 -- User-defined game logic update hook. Should usually return GAME_REDRAW.
 update = function (delta)
+    SDL.SDL_Delay(10)
 end
 
 -- User-defined rendering hook.
