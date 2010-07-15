@@ -1307,7 +1307,7 @@ static int SDL_VideoInfo_local(lua_State* L)
  */
 /* ================================================================== */
 
-TOLUA_API int luaopen_LuaSDL (lua_State* L)
+TOLUA_API int DLL_EXPORT luaopen_LuaSDL (lua_State* L)
 {
     /* interface initialization */
     tolua_SDL_open(L);                  /* tolua++ bound stuff */
@@ -1403,3 +1403,12 @@ TOLUA_API int luaopen_LuaSDL (lua_State* L)
     audio2.len = 0;
     return 1;
 }
+
+#ifdef __MINGW32__
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
+    (void)hinstDLL;
+    (void)fdwReason;
+    (void)lpvReserved;
+    return TRUE;
+}
+#endif

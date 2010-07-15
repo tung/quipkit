@@ -1,3 +1,6 @@
+#ifndef LUASDL_SDLLIB_H_INCLUDED
+#define LUASDL_SDLLIB_H_INCLUDED
+
 /* ================================================================== */
 /*
  * sdllib.h
@@ -11,11 +14,29 @@
  */
 /* ================================================================== */
 
+
+
+#include <lua.h>
+
+#ifdef __MINGW32__
+#   include <windows.h>
+#   define DLL_EXPORT __declspec(dllexport)
+#else
+#   define DLL_EXPORT
+#endif
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+
+
 /* also, please change version number at luasdl.rc */
 #define LuaSDL_VERSION  "LuaSDL 0.3.4"
 
 /* called by luasdl.c to initialize LuaSDL services */
-TOLUA_API int luaopen_LuaSDL (lua_State* L);
+TOLUA_API int DLL_EXPORT luaopen_LuaSDL (lua_State* L);
 
 /* supplementary functionality exposed */
 
@@ -74,3 +95,11 @@ extern void SDL_PixelFormat_delete(SDL_PixelFormat *obj);
 /* extern void SDL_Surface_delete(SDL_Surface *obj); */
 extern SDL_VideoInfo* SDL_VideoInfo_new(void);
 extern void SDL_VideoInfo_delete(SDL_VideoInfo *obj);
+
+
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif

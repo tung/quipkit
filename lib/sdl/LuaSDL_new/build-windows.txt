@@ -1,0 +1,27 @@
+To build LuaSDL.dll in Windows:
+
+
+0. Ensure MinGW and MSYS are installed and setup, and build tolua++.
+
+
+1. With the MSYS shell in this directory, enter the following to generate the main LuaSDL bindings:
+
+cd pkg/ && ../../../../contrib/tolua++/src/bin/tolua++.exe -o ../SDL_bind.c -H ../SDL_bind.h SDL.pkg && cd ..
+
+
+2. Build the support library the bindings use:
+
+gcc -I../../../contrib/lua/include -I../../../contrib/sdl/include/SDL -I../../../contrib/tolua++/include -c sdllib.c
+
+
+3. Build the generated bindings themselves:
+
+gcc -I../../../contrib/lua/include -I../../../contrib/sdl/include/SDL -I../../../contrib/tolua++/include -c SDL_bind.c
+
+
+4. Finally, link them into the final DLL (I'm not sure both of lua51 and lua5.1 are strictly needed):
+
+gcc -shared -o LuaSDL.dll SDL_bind.o sdllib.o -L../../../contrib/lua -llua51 -llua5.1 -L../../../contrib/sdl/lib -lSDL -lSDL_image -lSDL_net -lSDL_ttf -L../../../contrib/tolua++/src/lib -ltolua++
+
+
+After that, you should see LuaSDL.dll sitting in this directory. The Quipkit engine will load this DLL when you require the "sdl" package.
