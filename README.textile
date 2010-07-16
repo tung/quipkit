@@ -36,8 +36,7 @@ Grab these development libs for the engine:
 Grab these development libs for the editor:
 
 * Lua 5.1
-* Tcl 8.5
-* Tk 8.5
+* Tcl and Tk 8.5
 
 Type @make@, then try running the engine with @./game@ and the editor with @./edit@.
 
@@ -62,14 +61,13 @@ h2. Status
 
 Running the engine shows a yellow animated character that constantly walks down the screen. Running the editor shows a small "hello world" dialog box.
 
-The basic game and sprite libs are done. The gamelet framework is nearly done. Persistence and tool support are still to come.
+The basic game and sprite libs are done. The gamelet framework and font lib are nearly done. Persistence and tool support are still to come.
 
 These low-level libs are integrated and stable:
 
 * Engine
-** Input handling with SDL
+** Input handling and image loading via SDL
 ** Graphics with OpenGL
-** PNG images
 ** Audio with proteaAudio
 
 * Editor
