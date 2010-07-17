@@ -190,3 +190,34 @@ height = SFont_TextHeight
 function writeCenter(self, surface, y, text)
     return SFont_WriteCenter(surface, self, y, text)
 end
+
+-----------------------------------------------------------------------
+-- SFont SDL convenience object: no need to load a surface yourself.
+-----------------------------------------------------------------------
+
+sdlFont = {}
+
+function sdlFont:new(image_file)
+    -- Assume tolua++ has IMG_Load rigged to return a GC'able surface.
+    local s = SDL.IMG_Load(image_file)
+    if not s then error("IMG_Load failed: " .. SDL.IMG_GetError()) end
+    local f = SFont_InitFont(s)
+    if not f then error("SFont_InitFont failed: Unknown error.") end
+    setmetatable(f, self)
+    self.__index = self
+    return f
+end
+
+function sdlFont:write(surface, x, y, text)
+    return SFont_Write(surface, self, x, y, text)
+end
+
+-- args: self, text
+sdlFont.textWidth = SFont_TextWidth
+
+-- args: self
+sdlFont.height = SFont_TextHeight
+
+function sdlFont:writeCenter(self, surface, y, text)
+    return SFont_WriteCenter(surface, self, y, text)
+end

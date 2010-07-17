@@ -8,14 +8,7 @@ local msg = "SFont works in Quipkit!"
 local msg_texture, msg_w, msg_h
 
 function game.init()
-    local font_image = SDL.IMG_Load(font_file)
-    if not font_image then
-        error("IMG_Load failed: " .. SDL.IMG_GetError())
-    end
-    local font = sfont:new(font_image)
-    if not font then
-        error("sfont:new failed: Could not load " .. font_file)
-    end
+    local font = sfont.sdlFont:new(font_file)
 
     -- Draw message onto an intermediate surface.
     -- Round up width and height to nearest power of 2 for OpenGL.
@@ -48,7 +41,6 @@ function game.init()
     gl.TexImage2D(0, gl.RGBA, msg_w, msg_h, 0, gl.RGBA, gl.UNSIGNED_BYTE, msg_image.pixels)
 
     SDL.SDL_FreeSurface(msg_image)
-    SDL.SDL_FreeSurface(font_image)
 end
 
 function game.exit()
