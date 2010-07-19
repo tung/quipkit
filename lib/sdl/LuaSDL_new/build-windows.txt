@@ -4,22 +4,31 @@ To build LuaSDL.dll in Windows:
 0. Ensure MinGW and MSYS are installed and setup, and build tolua++.
 
 
-1. With the MSYS shell in this directory, enter the following to generate the main LuaSDL bindings:
+1. Copy lua51.dll and lua5.1.dll into the pkg/ folder.
+
+
+2. Uncomment the line under __WIN32__ in pkg/SDL_config.h.pkg, and ensure all others are commented.
+
+
+3. Uncomment the __WIN32__ line in pkg/SDL_platform.h.pkg, and ensure all others are commented.
+
+
+4. With the MSYS shell in this directory, enter the following to generate the main LuaSDL bindings:
 
 cd pkg/ && ../../../../contrib/tolua++/src/bin/tolua++.exe -o ../SDL_bind.c -H ../SDL_bind.h SDL.pkg && cd ..
 
 
-2. Build the support library the bindings use:
+5. Build the support library the bindings use:
 
 gcc -I../../../contrib/lua/include -I../../../contrib/sdl/include/SDL -I../../../contrib/tolua++/include -c sdllib.c
 
 
-3. Build the generated bindings themselves:
+6. Build the generated bindings themselves:
 
 gcc -I../../../contrib/lua/include -I../../../contrib/sdl/include/SDL -I../../../contrib/tolua++/include -c SDL_bind.c
 
 
-4. Finally, link them into the final DLL (I'm not sure both of lua51 and lua5.1 are strictly needed):
+7. Finally, link them into the final DLL (I'm not sure both of lua51 and lua5.1 are strictly needed):
 
 gcc -shared -o LuaSDL.dll SDL_bind.o sdllib.o -L../../../contrib/lua -llua51 -llua5.1 -L../../../contrib/sdl/lib -lSDL -lSDL_image -lSDL_net -lSDL_ttf -L../../../contrib/tolua++/src/lib -ltolua++
 
