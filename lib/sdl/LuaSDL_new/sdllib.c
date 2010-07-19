@@ -645,6 +645,62 @@ void SDL_PutPixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
 
 /* ================================================================== */
 /*
+ * SDL.SDL_ClobberBlit(src, src_rect, dest, dest_rect)
+ *
+ * Transfer RGBA pixels from src surface to dest surface. Written
+ * because SDL_BlitSurface doesn't bring the alpha values from src
+ * to dest.
+ *
+ * Returns 0 on success and -1 on failure (couldn't lock surfaces.)
+ */
+/* ================================================================== */
+
+int SDL_ClobberBlit(SDL_Surface *src, SDL_Rect *src_rect,
+    SDL_Surface *dest, SDL_Rect *dest_rect)
+{
+    int x, y;
+    Uint32 pixel;
+    Uint8 r, g, b, a;
+
+    int src_rect_x, src_rect_y, src_rect_w, src_rect_h;
+    SDL_PixelFormat *src_format;
+
+    int dest_rect_x, dest_rect_y;
+    SDL_PixelFormat *dest_format;
+
+    if (SDL_MUSTLOCK(src) && SDL_LockSurface(src) == -1) return -1;
+    if (SDL_MUSTLOCK(dest) && SDL_LockSurface(dest) == -1) {
+        if (SDL_MUSTLOCK(src)) SDL_UnlockSurface(src);
+        return -1;
+    }
+
+    src_rect_x = src_rect->x;
+    src_rect_y = src_rect->y;
+    src_rect_w = src_rect->w;
+    src_rect_h = src_rect->h;
+    src_format = src->format;
+
+    dest_rect_x = dest_rect->x;
+    dest_rect_y = dest_rect->y;
+    dest_format = dest->format;
+
+    /* No bounds checking, so this may segfault. */
+    for (y = 0; y < src_rect_h; ++y) {
+        for (x = 0; x < src_rect_w; ++x) {
+            SDL_GetRGBA(SDL_GetPixel(src, src_rect_x + x, src_rect_y + y),
+                src_format, &r, &g, &b, &a);
+            SDL_PutPixel(dest, dest_rect_x + x, dest_rect_y + y,
+                SDL_MapRGBA(dest_format, r, g, b, a));
+        }
+    }
+
+    if (SDL_MUSTLOCK(dest)) SDL_UnlockSurface(dest);
+    if (SDL_MUSTLOCK(src)) SDL_UnlockSurface(src);
+    return 0;
+}
+
+/* ================================================================== */
+/*
  * SDL.SDL_malloc_local(size|string, data_type)
  *
  * Create a Lua-managed memory block from a string, or a size

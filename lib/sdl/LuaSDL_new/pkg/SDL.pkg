@@ -44,6 +44,8 @@ $pfile "SDL_ttf.h.pkg"
 
 Uint32 SDL_GetPixel(SDL_Surface *surface, int x, int y);
 void SDL_PutPixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
+int SDL_ClobberBlit(SDL_Surface *src, SDL_Rect *src_rect,
+    SDL_Surface *dest, SDL_Rect *dest_rect);
 
 void LuaSDL_AudioCh1(void *audio_buf, Uint32 audio_len, int loop = 0,
     int volume = SDL_MIX_MAXVOLUME);

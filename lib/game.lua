@@ -101,11 +101,8 @@ function run()
     gl.PixelStore(gl.UNPACK_ALIGNMENT, 1)
 
     -- Account for transparency when drawing fragments.
-    --[[
     gl.Enable(gl.BLEND)
     gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
-    --gl.Color(1, 1, 1, 1)
-    --]]
 
     -- Tell OpenGL where to render in our window.
     gl.Viewport(0, 0, screen.w, screen.h)

@@ -324,22 +324,10 @@ function glFont:new(image_file)
             src_rect.w = f.GlyphWidth[i]
             dest_rect.x = f.GlyphX[i]
             dest_rect.y = f.GlyphY[i]
-            if SDL.SDL_BlitSurface(s, src_rect, surface, dest_rect) ~= 0 then
-                error("SDL_BlitSurface failed for char " .. i .. ": " .. SDL.SDL_GetError())
-            end
-            src_rect.x = src_rect.x + src_rect.w
-        end
 
-        -- DEBUG
-        --[[
-        do
-            SDL.SDL_LockSurface(surface)
-            print(SDL.SDL_GetRGBA(SDL.SDL_GetPixel(surface, 3, 5), surface.format, 1, 1, 1, 1))
-            SDL.SDL_UnlockSurface(surface)
-            error("TODO: Manually port alpha values so alpha blending works.")
-            -- Once done, re-enable alpha blending in game.lua.
+            -- SDL_BlitSurface doesn't import alpha, so use custom blit.
+            SDL.SDL_ClobberBlit(s, src_rect, surface, dest_rect)
         end
-        --]]
 
         -- Load the new surface as an OpenGL texture.
         f.TexId = gl.GenTextures(1)[1]

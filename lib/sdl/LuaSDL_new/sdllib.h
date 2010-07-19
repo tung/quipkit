@@ -42,6 +42,7 @@ TOLUA_API int DLL_EXPORT luaopen_LuaSDL (lua_State* L);
 
 extern Uint32 SDL_GetPixel(SDL_Surface *surface, int x, int y);
 extern void SDL_PutPixel(SDL_Surface *surface, int x, int y, Uint32 pixel);
+extern int SDL_ClobberBlit(SDL_Surface *src, SDL_Rect *src_rect, SDL_Surface *dest, SDL_Rect *dest_rect);
 
 extern void LuaSDL_AudioCh1(void *audio_buf, Uint32 audio_len, int loop, int volume);
 extern void LuaSDL_AudioCh2(void *audio_buf, Uint32 audio_len, int loop, int volume);
