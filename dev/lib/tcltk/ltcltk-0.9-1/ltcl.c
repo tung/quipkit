@@ -18,7 +18,7 @@
 
 #include "tcl.h"
 
-#ifdef __MINGW32__
+#ifdef _WIN32
 #   include "ltcl.h"
 #endif
 
@@ -1696,7 +1696,7 @@ static const luaL_reg ltcl_lib[] = {
  *	+1	tcl module table
  */
 int
-#ifdef __MINGW32__
+#ifdef _WIN32
 DLL_EXPORT
 #endif
 luaopen_ltcl(lua_State *L)
@@ -1784,7 +1784,7 @@ luaopen_ltcl(lua_State *L)
 	return 1;
 }
 
-#ifdef __MINGW32__
+#ifdef _WIN32
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
     (void)hinstDLL;
     (void)fdwReason;

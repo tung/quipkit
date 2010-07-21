@@ -5,7 +5,7 @@
 #include <lua.h>
 #include <lauxlib.h>
 
-#ifdef __MINGW32__
+#ifdef _WIN32
 #   include "png.h"
 #endif
 
@@ -190,7 +190,7 @@ static const struct luaL_reg png_functions[] = {
 };
 
 int
-#ifdef __MINGW32__
+#ifdef _WIN32
 DLL_EXPORT
 #endif
 luaopen_luapng(lua_State *L) {
@@ -199,7 +199,7 @@ luaopen_luapng(lua_State *L) {
     return 1;
 }
 
-#ifdef __MINGW32__
+#ifdef _WIN32
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
     (void)hinstDLL;
     (void)fdwReason;

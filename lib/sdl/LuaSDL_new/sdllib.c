@@ -1460,7 +1460,7 @@ TOLUA_API int DLL_EXPORT luaopen_LuaSDL (lua_State* L)
     return 1;
 }
 
-#ifdef __MINGW32__
+#ifdef _WIN32
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
     (void)hinstDLL;
     (void)fdwReason;

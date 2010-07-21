@@ -18,7 +18,7 @@
 
 #include <lua.h>
 
-#ifdef __MINGW32__
+#ifdef _WIN32
 #   include <windows.h>
 #   define DLL_EXPORT __declspec(dllexport)
 #else
