@@ -27,6 +27,10 @@ function gamelet.init()
     gamelet.stack:push(gamelet.load("center_image").init{
         image = "test/smile.png"
     })
+    gamelet.stack:push(gamelet.load("top_text").init{
+        font = "test/bitstream-vera-sans-bold-24pt.png",
+        text = "A title in the background."
+    })
 end
 
 gamelet.run()

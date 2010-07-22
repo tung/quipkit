@@ -52,9 +52,14 @@ function event(self, e)
             end
         elseif key == SDL.SDLK_RETURN then
             gamelet.stack:pop()
+            gamelet.stack:pop()
             gamelet.stack:push(gamelet.load("center_image").init{
                 image = "test/smile.png",
                 scale = 8.0
+            })
+            gamelet.stack:push(gamelet.load("top_text").init{
+                font = "test/bitstream-vera-sans-bold-24pt.png",
+                text = "Image again"
             })
         elseif key == SDL.SDLK_ESCAPE then
             return gamelet.GAMELET_QUIT
@@ -76,7 +81,6 @@ function draw(self)
     -- We'll draw the menu at the top-left for simplicity.
     -- Selection gets a column, then a blank, then the item.
     -- Everything is blobs because I don't have text support yet. ;_;
-    game.clearScreen()
 
     -- Draw selection cursor.
     self.blob:draw(0, (self.selection - 1) * self.blob.tile_h)

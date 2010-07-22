@@ -67,10 +67,12 @@ end
 -- before running.
 init = function () end
 
--- Valid return values for event() and update() gamelet hooks.
+-- Valid return values for gamelet hooks.
 GAMELET_QUIT = 1        -- End the gamelet game loop.
 GAMELET_REDRAW = 2      -- Call draw() hook of the top-most gamelet.
+GAMELET_NEXT = 3        -- Call the gamelet hook below this one.
 
+-- Gamelet event handling hook.
 function game.event(e)
     for i = #stack, 1, -1 do
         local event_fn = stack[i].event
@@ -80,6 +82,9 @@ function game.event(e)
                 return game.GAME_REDRAW
             elseif e_return == GAMELET_QUIT then
                 return game.GAME_QUIT
+            elseif e_return ~= GAMELET_NEXT then
+                -- Stop if GAMELET_NEXT is _not_ returned.
+                return
             end
         end
     end
@@ -95,7 +100,8 @@ function game.update(delta)
                 return game.GAME_REDRAW
             elseif u_return == GAMELET_QUIT then
                 return game.GAME_QUIT
-            else
+            elseif e_return ~= GAMELET_NEXT then
+                -- Stop if GAMELET_NEXT is _not_ returned.
                 return
             end
         end
@@ -107,11 +113,14 @@ end
 
 -- Gamelet draw hook.
 function game.draw()
+    game.clearScreen()
+
     for i = #stack, 1, -1 do
         local draw_fn = stack[i].draw
         if draw_fn then
-            draw_fn(stack[i])
-            break
+            if draw_fn(stack[i]) ~= GAMELET_NEXT then
+                break
+            end
         end
     end
 end
