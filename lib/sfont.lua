@@ -358,7 +358,7 @@ function glFont:write(x, y, text)
     gl.PushMatrix()
         -- Move the text where it should begin.
         gl.LoadIdentity()
-        gl.Translate(x, y, 0)
+        gl.Translate(0, y, 0)
 
         -- Draw glyphs as textured quads.
         gl.Enable(gl.TEXTURE_2D)
