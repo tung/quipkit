@@ -28,7 +28,7 @@ GAME_REDRAW = 2     -- Call the draw() function.
 
 -- User-defined event hook.
 event = function (e)
-    if e.type == SDL.SDL_VIDEOEXPOSE then
+    if e.type == SDL.SDL_VIDEOEXPOSE or e.type == SDL.SDL_ACTIVEEVENT then
         return GAME_REDRAW
     elseif e.type == SDL.SDL_QUIT then
         return GAME_QUIT
