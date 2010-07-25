@@ -30,7 +30,7 @@ function printTable(t, indent)
     for k, v in pairs(t) do
         for i = 1, indent + 1 do s = s .. "  " end
         s = s .. "["
-        s = s .. printValue(k)
+        s = s .. tostring(k)
         s = s .. "] = "
         s = s .. printValue(v, indent + 1)
         s = s .. ",\n"
@@ -42,5 +42,6 @@ end
 
 
 
-a = {x = 1, y = "two", z = {3, "four"}; 5, "six", 7}
-print(printTable(persist.work(a)))
+--a = {x = 1, y = "two", z = {3, "four"}; 5, "six", 7}
+--print(printTable(persist.save(a, "string")))
+print(printTable(persist.getTablePaths()))
