@@ -30,7 +30,7 @@ function printTable(t, indent)
     for k, v in pairs(t) do
         for i = 1, indent + 1 do s = s .. "  " end
         s = s .. "["
-        s = s .. tostring(k)
+        s = s .. string.format("%q", k)
         s = s .. "] = "
         s = s .. printValue(v, indent + 1)
         s = s .. ",\n"
@@ -42,6 +42,13 @@ end
 
 
 
---a = {x = 1, y = "two", z = {3, "four"}; 5, "six", 7}
+a = {x = 1, y = "two", z = {3, "four"}; 5, "six", 7}
+---[[
+mt = {__index = mt, hi = function () return "hi" end}
+--setmetatable(a, mt)
+setmetatable(a.z, mt)
+--]]
+--setmetatable(a, {__index = function(i) return i end})
 --print(printTable(persist.save(a, "string")))
-print(printTable(persist.getTablePaths()))
+--print(printTable(a))
+print(printTable(persist.proxyCopy(a)))

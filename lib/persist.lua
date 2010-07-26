@@ -33,6 +33,52 @@ function getTablePaths(level)
 end
 
 
+-- Copy a table. Only copy number, string and table keys and values.
+-- Create proxies for tables so that if it has a metatable, it can
+-- be restored at load time.
+function proxyCopy(tbl)
+    local table_paths = getTablePaths(2)
+    local processed = {}
+    local function processTable(t)
+        if not processed[t] then
+            processed[t] = {tbl = {}}
+
+            for k, v in pairs(t) do
+                local k_type = type(k)
+                local v_type = type(v)
+                if (k_type == "number" or k_type == "string" or k_type == "table") and
+                        (v_type == "number" or v_type == "string" or v_type == "table") then
+                    local new_k
+                    if k_type == "table" then
+                        new_k = processTable(k)
+                    else
+                        new_k = k
+                    end
+
+                    local new_v
+                    if v_type == "table" then
+                        new_v = processTable(v)
+                    else
+                        new_v = v
+                    end
+
+                    processed[t].tbl[new_k] = new_v
+                end
+            end
+
+            processed[t].mt = table_paths[getmetatable(t)]
+        end
+        return processed[t]
+    end
+    return processTable(tbl)
+end
+
+
+-- Copy a table, restoring proxy tables and metatables.
+function unproxyCopy(tbl)
+end
+
+
 -- Save a table.
 -- If mode is "string", return a string representation of the table.
 -- If mode is "tmpfile", return a string made from a temporary file buffer.
