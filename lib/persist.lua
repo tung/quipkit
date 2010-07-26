@@ -10,8 +10,8 @@ module(..., package.seeall)
 -- to that table.
 function getTablePaths(level)
     level = level or 1
-    local paths = {[getfenv(level + 1)] = {"_G"}}
-    local queue = {{getfenv(level + 1), {"_G"}}}
+    local paths = {}
+    local queue = {{getfenv(level + 1), {}}}
     local i = 1
     while queue[i] do
         local current_table = queue[i][1]
