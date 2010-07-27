@@ -36,8 +36,8 @@ end
 -- Copy a table. Only copy number, string and table keys and values.
 -- Create proxies for tables so that if it has a metatable, it can
 -- be restored at load time.
-function proxyCopy(tbl)
-    local table_paths = getTablePaths(2)
+function proxyCopy(tbl, fenv_level)
+    local table_paths = getTablePaths(fenv_level + 1)
     local processed = {}
     local function processTable(t)
         if not processed[t] then
@@ -75,8 +75,8 @@ end
 
 
 -- Copy a table, restoring proxy tables and metatables.
-function unproxyCopy(tbl)
-    local caller_fenv = getfenv(2)
+function unproxyCopy(tbl, fenv_level)
+    local caller_fenv = getfenv(fenv_level + 1)
     local processed = {}
     local function processTable(t)
         if not processed[t] then
@@ -121,13 +121,50 @@ function unproxyCopy(tbl)
 end
 
 
--- Save a table.
--- If mode is "string", return a string representation of the table.
--- If mode is "tmpfile", return a string made from a temporary file buffer.
--- If mode is "file", save the table to the given filename.
-function save(tbl, mode, filename)
+-- Save a table to a string with env as data to be passed to a pre-load hook
+-- when loading the table data again.
+-- Returns the string on success, or nil on failure.
+function saveToString(tbl, env)
+    local to_save = {
+        data = proxyCopy(tbl, 2),
+        env = env
+    }
+    return table.save(to_save)
 end
 
 
-function load(src)
+-- Save a table to a string using a buffer (for larger tables), with env
+-- as data to be passed to a pre-load hook when loading the table data again.
+-- Returns the string on success, or nil on failure.
+function saveToBufferedString(tbl, env)
+    local to_save = {
+        data = proxyCopy(tbl, 2),
+        env = env
+    }
+    return table.save(to_save, true)
+end
+
+
+-- Save a table to the given file, with env as data to be passed to a
+-- pre-load hook when loading the table data again.
+-- Returns 1 on success, or nil and an error message on failure.
+function saveToFile(tbl, filename, env)
+    local to_save = {
+        data = proxyCopy(tbl, 2),
+        env = env
+    }
+    return table.save(to_save, filename)
+end
+
+
+-- Load a table saved as a string or as a file. restore_env_hook is called
+-- with the env passed when the table was saved, to restore environment,
+-- e.g. loaded Lua packages.
+-- Returns the restored table on success, or nil and an error message
+-- on failure.
+function load(string_or_filename, restore_env_hook)
+    local freshly_loaded, error_message = table.load(string_or_filename)
+    if not freshly_loaded then error(error_message) end
+    if restore_env_hook then restore_env_hook(freshly_loaded.env) end
+    return unproxyCopy(freshly_loaded.data, 2)
 end
