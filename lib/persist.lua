@@ -76,6 +76,48 @@ end
 
 -- Copy a table, restoring proxy tables and metatables.
 function unproxyCopy(tbl)
+    local caller_fenv = getfenv(2)
+    local processed = {}
+    local function processTable(t)
+        if not processed[t] then
+            processed[t] = {}
+
+            for k, v in pairs(t.tbl) do
+                local new_k
+                if type(k) == "table" then
+                    new_k = processTable(k)
+                else
+                    new_k = k
+                end
+
+                local new_v
+                if type(v) == "table" then
+                    new_v = processTable(v)
+                else
+                    new_v = v
+                end
+
+                processed[t][new_k] = new_v
+            end
+
+            if t.mt then
+                local mt = caller_fenv
+                for i = 1, #(t.mt) do
+                    mt = mt[t.mt[i]]
+                    if not mt then
+                        local err_str = "Could not resolve " .. t.mt[1]
+                        for e = 2, i do
+                            err_str = err_str .. "." .. t.mt[e]
+                        end
+                        error(err_str)
+                    end
+                end
+                setmetatable(processed[t], mt)
+            end
+        end
+        return processed[t]
+    end
+    return processTable(tbl)
 end
 
 

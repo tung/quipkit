@@ -43,12 +43,16 @@ end
 
 
 a = {x = 1, y = "two", z = {3, "four"}; 5, "six", 7}
----[[
-mt = {__index = mt, hi = function () return "hi" end}
---setmetatable(a, mt)
+mt = {hi = function () return "metatable preserved" end}
+mt.__index = mt
 setmetatable(a.z, mt)
---]]
---setmetatable(a, {__index = function(i) return i end})
---print(printTable(persist.save(a, "string")))
---print(printTable(a))
-print(printTable(persist.proxyCopy(a)))
+
+proc_a = persist.proxyCopy(a)
+unproc_a = persist.unproxyCopy(proc_a)
+
+print("original", printTable(a))
+print("copied  ", printTable(proc_a))
+print("restored", printTable(unproc_a))
+
+print("before", a.z.hi())
+print("after", unproc_a.z.hi())
