@@ -5,6 +5,9 @@ CFLAGS:=-std=c99 -W -Wall -Wextra
 ALSA_CFLAGS:=
 ALSA_LIBS:=-lasound
 
+GL_CFLAGS:=`pkg-config --cflags gl glu`
+GL_LIBS:=`pkg-config --libs gl glu`
+
 LIBPNG_CFLAGS:=`pkg-config --cflags libpng`
 LIBPNG_LIBS:=`pkg-config --libs libpng`
 
@@ -25,6 +28,7 @@ LUASDL_DIR:=lib/sdl/LuaSDL_new/
 LUASDL_DIR_BACK:=../../../
 OLDLUASDL_DIR:=lib/sdl/luaSDL/
 PROTEAAUDIO_DIR:=lib/proteaAudio/
+SDLGL_DIR:=lib/sdlgl/
 TOLUAPP_DIR:=contrib/tolua++/
 
 
@@ -32,10 +36,10 @@ TOLUAPP_DIR:=contrib/tolua++/
 ### Tasks ###
 
 .PHONY: all
-all: game ${LUAPNG_DIR}libluapng.so ${LUASDL_DIR}libluasdl.so all_toluapp ${PROTEAAUDIO_DIR}libproaudio.so edit ${LTCLTK_DIR}ltcl.so
+all: game ${LUAPNG_DIR}libluapng.so ${LUASDL_DIR}libluasdl.so all_toluapp ${PROTEAAUDIO_DIR}libproaudio.so ${SDLGL_DIR}libsdlgl.so edit ${LTCLTK_DIR}ltcl.so
 
 .PHONY: clean
-clean: clean_game clean_luapng clean_luasdl clean_toluapp clean_proteaaudio clean_edit clean_ltcltk
+clean: clean_game clean_luapng clean_luasdl clean_toluapp clean_proteaaudio clean_sdlgl clean_edit clean_ltcltk
 
 
 
@@ -137,6 +141,23 @@ clean_proteaaudio:
 	-rm -f ${PROTEAAUDIO_DIR}libproaudio.a
 	-rm -f ${PROTEAAUDIO_DIR}*.o
 	-rm -f ${PROTEAAUDIO_DIR}rtaudio/RtAudio.o
+
+
+### sdlgl helper library ##
+
+SDLGL_CFLAGS:=${QKENG_CFLAGS} ${SDL_CFLAGS} ${GL_CFLAGS}
+SDLGL_LIBS:=${QKENG_LIBS} ${SDL_LIBS} ${GL_LIBS} -lm
+
+${SDLGL_DIR}libsdlgl.so: ${SDLGL_DIR}sdlgl.o
+	gcc -shared -Wl,-soname,$(notdir $@) -o $@ ${SDLGL_LIBS} $^
+
+${SDLGL_DIR}sdlgl.o: ${SDLGL_DIR}sdlgl.c
+	gcc -fPIC -o $@ ${SDLGL_CFLAGS} -c $<
+
+.PHONY: clean_sdlgl
+clean_sdlgl:
+	-rm -f ${SDLGL_DIR}libsdlgl.so
+	-rm -f ${SDLGL_DIR}sdlgl.o
 
 
 ### tolua++ utility ###
