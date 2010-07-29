@@ -10,10 +10,6 @@ module(..., package.seeall)
 
 --- game.lua public hooks. Assign to these to change how your game runs.
 
-events = {}
-
-screen = {w = 640, h = 480, title = "Quipkit"}
-
 -- Called after SDL.SDL_Init().
 init = function ()
 end
@@ -43,6 +39,18 @@ end
 -- User-defined rendering hook.
 draw = function ()
 end
+
+
+
+--- Game configuration.
+
+local config = {
+    screen = {
+        w = 640,
+        h = 480,
+        title = "Quipkit"
+    },
+}
 
 
 
@@ -93,9 +101,9 @@ function run()
     SDL.SDL_GL_SetAttribute(SDL.SDL_GL_RED_SIZE, 8)
     SDL.SDL_GL_SetAttribute(SDL.SDL_GL_GREEN_SIZE, 8)
     SDL.SDL_GL_SetAttribute(SDL.SDL_GL_BLUE_SIZE, 8)
-    SDL.SDL_SetVideoMode(screen.w, screen.h, 32, SDL.SDL_OPENGL)
+    SDL.SDL_SetVideoMode(config.screen.w, config.screen.h, 32, SDL.SDL_OPENGL)
 
-    SDL.SDL_WM_SetCaption(screen.title, "")
+    SDL.SDL_WM_SetCaption(config.screen.title, "")
 
     -- Accept byte-aligned textures.
     gl.PixelStore(gl.UNPACK_ALIGNMENT, 1)
@@ -105,13 +113,13 @@ function run()
     gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 
     -- Tell OpenGL where to render in our window.
-    gl.Viewport(0, 0, screen.w, screen.h)
+    gl.Viewport(0, 0, config.screen.w, config.screen.h)
 
     -- Project the scenes-to-be orthographically, like in blue-prints.
     -- Also, switch bottom and top so (0, 0) is top-left and y extends down.
     gl.MatrixMode(gl.PROJECTION)
     gl.LoadIdentity()
-    gl.Ortho(0, screen.w, screen.h, 0, -1, 1)
+    gl.Ortho(0, config.screen.w, config.screen.h, 0, -1, 1)
 
     init()
 
@@ -136,4 +144,37 @@ end
 function clearScreen()
     gl.ClearColor(0, 0, 0, 0)
     gl.Clear(gl.COLOR_BUFFER_BIT)
+end
+
+
+
+--- Configuration Functions
+
+-- Get the width and height of the game window.
+function getScreenSize()
+    return config.screen.w, config.screen.h
+end
+
+
+-- Get the title of the game window.
+function getScreenTitle()
+    return config.screen.title
+end
+
+
+-- Set the width and height of the game window.
+function setScreenSize(w, h)
+    local old_w = config.screen.w
+    local old_h = config.screen.h
+    config.screen.w = w
+    config.screen.h = h
+    return old_w, old_h
+end
+
+
+-- Set the title of the game window.
+function setScreenTitle(title)
+    local old_title = config.screen.title
+    config.screen.title = title
+    return old_title
 end

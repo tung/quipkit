@@ -29,7 +29,7 @@ function game.draw()
     gl.End()
 end
 
-game.screen.w, game.screen.h = 640, 480
-game.screen.title = "Colored Triangle"
+game.setScreenSize(640, 480)
+game.setScreenTitle("Colored Triangle")
 
 game.run()

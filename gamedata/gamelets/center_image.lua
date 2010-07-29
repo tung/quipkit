@@ -37,7 +37,8 @@ function update(self, delta)
 end
 
 function draw(self)
-    local x = (game.screen.w - self.loaded_image.w) / 2
-    local y = (game.screen.h - self.loaded_image.h) / 2
+    local screen_w, screen_h = game.getScreenSize()
+    local x = (screen_w - self.loaded_image.w) / 2
+    local y = (screen_h - self.loaded_image.h) / 2
     self.loaded_image:draw(x, y)
 end

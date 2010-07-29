@@ -20,11 +20,13 @@ function game.event(e)
 end
 
 function game.update(ms_delta)
+    local screen_w, screen_h = game.getScreenSize()
+
     -- Move Glob down the screen.
     local s_delta = ms_delta / 1000
     y = y + y_speed * s_delta
-    if y >= game.screen.h then
-        x = math.random(game.screen.w - glob.w - 1)
+    if y >= screen_h then
+        x = math.random(screen_w - glob.w - 1)
         y = -glob.h
     end
 
@@ -44,7 +46,7 @@ function game.draw()
     glob:draw(x, y)
 end
 
-game.screen.w, game.screen.h = 640, 480
-game.screen.title = "Animation Demo"
+game.setScreenSize(640, 480)
+game.setScreenTitle("Animation Demo")
 
 game.run()

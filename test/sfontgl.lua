@@ -10,5 +10,5 @@ function game.draw()
     font:write(0, 0, "SFont with OpenGL")
 end
 
-game.screen.w, game.screen.h = 320, 240
+game.setScreenSize(320, 240)
 game.run()

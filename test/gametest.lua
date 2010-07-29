@@ -16,20 +16,21 @@ function game.event(e)
 end
 
 function game.update(delta)
+    local screen_w, screen_h = game.getScreenSize()
     x = x + dx
     y = y + dy
     if x < 0 then
         x = 0
         dx = -dx
-    elseif x + smile.w >= game.screen.w then
-        x = game.screen.w - 1 - smile.w
+    elseif x + smile.w >= screen_w then
+        x = screen_w - 1 - smile.w
         dx = -dx
     end
     if y < 0 then
         y = 0
         dy = -dy
-    elseif y + smile.h >= game.screen.h then
-        y = game.screen.h - 1 - smile.h
+    elseif y + smile.h >= screen_h then
+        y = screen_h - 1 - smile.h
         dy = -dy
     end
 
@@ -42,8 +43,8 @@ function game.draw()
 end
 
 -- Set screen properties.
-game.screen.w, game.screen.h = 640, 480
-game.screen.title = "Quipkit Engine Demo"
+game.setScreenSize(640, 480)
+game.setScreenTitle("Quipkit Engine Demo")
 
 -- Launch our game.
 game.run()
