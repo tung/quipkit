@@ -17,7 +17,7 @@ function event(self, e)
     return gamelet.GAMELET_NEXT
 end
 
-function update(self, e)
+function update(self, delta)
     return gamelet.GAMELET_NEXT
 end
 
