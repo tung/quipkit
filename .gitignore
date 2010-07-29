@@ -6,5 +6,6 @@
 *.layout
 game
 edit
+config.tbl
 /obj
 /bin

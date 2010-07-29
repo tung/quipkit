@@ -2,6 +2,7 @@
 -- Loads SDL and OpenGL, and drives the game loop.
 
 require "gl"
+require "persist"
 require "sdl"
 
 module(..., package.seeall)
@@ -159,6 +160,23 @@ end
 -- Get the title of the game window.
 function getScreenTitle()
     return config.screen.title
+end
+
+
+-- Load a saved configuration from disk.
+function loadConfig()
+    local new_config, err_msg = persist.load("config.tbl")
+    if not new_config then
+        return nil
+    end
+    config = new_config
+    return true
+end
+
+
+-- Save the current configuration to disk.
+function saveConfig()
+    persist.saveToFile(config, "config.tbl")
 end
 
 

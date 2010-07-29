@@ -164,7 +164,11 @@ end
 -- on failure.
 function load(string_or_filename, restore_env_hook)
     local freshly_loaded, error_message = table.load(string_or_filename)
-    if not freshly_loaded then error(error_message) end
-    if restore_env_hook then restore_env_hook(freshly_loaded.env) end
+    if not freshly_loaded then
+        return nil, error_message
+    end
+    if restore_env_hook then
+        restore_env_hook(freshly_loaded.env)
+    end
     return unproxyCopy(freshly_loaded.data, 2)
 end
