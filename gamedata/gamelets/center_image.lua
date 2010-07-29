@@ -8,21 +8,21 @@ require "sdl"
 
 gamelet.new(...)
 
-function init(opts)
-    local self = gamelet.instance()
-    self.loaded_image = sprite:new(opts.image)
-    return self
+function new(self, opts)
+    local inst = gamelet.instance(self)
+    inst.loaded_image = sprite:new(opts.image)
+    return inst
 end
 
 function event(self, e)
     if e.type == SDL.SDL_KEYDOWN then
         gamelet.stack:pop()
         gamelet.stack:pop()
-        gamelet.stack:push(gamelet.get("menu").init{
+        gamelet.stack:push(gamelet.get("menu"):new{
             items = {7, 5, 9},
             default = 2
         })
-        gamelet.stack:push(gamelet.get("top_text").init{
+        gamelet.stack:push(gamelet.get("top_text"):new{
             font = "test/bitstream-vera-sans-bold-24pt.png",
             text = "A menu is below"
         })

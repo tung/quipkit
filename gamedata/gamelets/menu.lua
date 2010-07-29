@@ -9,32 +9,32 @@ require "sdl"
 
 gamelet.new(...)
 
-function init(opts)
-    local self = gamelet.instance()
+function new(self, opts)
+    local inst = gamelet.instance(self)
 
     -- Ensure all items are 1+ in length.
-    self.items = {}
+    inst.items = {}
     for i in ipairs(opts.items) do
         if opts.items[i] > 0 then
-            self.items[i] = opts.items[i]
+            inst.items[i] = opts.items[i]
         else
-            self.items[i] = 1
+            inst.items[i] = 1
         end
     end
 
     -- Set default menu selection.
-    local num_items = #(self.items)
+    local num_items = #(inst.items)
     if opts.default < 1 then
-        self.selection = 1
+        isnt.selection = 1
     elseif opts.default > num_items then
-        self.selection = num_items
+        inst.selection = num_items
     else
-        self.selection = opts.default
+        inst.selection = opts.default
     end
 
-    self.blob = sprite:new("test/glob.png", 32, 32)
+    inst.blob = sprite:new("test/glob.png", 32, 32)
 
-    return self
+    return inst
 end
 
 function event(self, e)
@@ -53,11 +53,11 @@ function event(self, e)
         elseif key == SDL.SDLK_RETURN then
             gamelet.stack:pop()
             gamelet.stack:pop()
-            gamelet.stack:push(gamelet.get("center_image").init{
+            gamelet.stack:push(gamelet.get("center_image"):new{
                 image = "test/smile.png",
                 scale = 8.0
             })
-            gamelet.stack:push(gamelet.get("top_text").init{
+            gamelet.stack:push(gamelet.get("top_text"):new{
                 font = "test/bitstream-vera-sans-bold-24pt.png",
                 text = "Image again"
             })

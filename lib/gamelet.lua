@@ -55,9 +55,8 @@ end
 
 -- Create an instance of the gamelet in which this function is called.
 -- Typically called within the gamelet's init function.
-function instance()
+function instance(gamelet)
     local inst = {}
-    local gamelet = loaded[getfenv(2).GAMELET_NAME]
     setmetatable(inst, {__index = gamelet})
     return inst
 end

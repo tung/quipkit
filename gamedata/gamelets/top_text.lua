@@ -6,11 +6,11 @@ require "sfont"
 
 gamelet.new(...)
 
-function init(opts)
-    local self = gamelet.instance()
-    self.font = sfont.glFont:new(opts.font)
-    self.text = opts.text
-    return self
+function new(self, opts)
+    local inst = gamelet.instance(self)
+    inst.font = sfont.glFont:new(opts.font)
+    inst.text = opts.text
+    return inst
 end
 
 function event(self, e)
