@@ -18,11 +18,11 @@ function event(self, e)
     if e.type == SDL.SDL_KEYDOWN then
         gamelet.stack:pop()
         gamelet.stack:pop()
-        gamelet.stack:push(gamelet.load("menu").init{
+        gamelet.stack:push(gamelet.get("menu").init{
             items = {7, 5, 9},
             default = 2
         })
-        gamelet.stack:push(gamelet.load("top_text").init{
+        gamelet.stack:push(gamelet.get("top_text").init{
             font = "test/bitstream-vera-sans-bold-24pt.png",
             text = "A menu is below"
         })

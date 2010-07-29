@@ -29,7 +29,7 @@ stack = {
 
 
 -- Retrieve a gamelet (table).
-function load(gamelet_name)
+function get(gamelet_name)
     if not loaded[gamelet_name] then
         local code = loadfile("gamedata/gamelets/" .. gamelet_name .. ".lua")
         if not code then
