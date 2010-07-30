@@ -58,7 +58,7 @@ function game.draw()
     gl.Clear(gl.COLOR_BUFFER_BIT)
 
     gl.Enable(gl.TEXTURE_2D)
-    gl.TexEnv(gl.TEXTURE_ENV, gl.TEXTURE_ENV_MODE, gl.REPLACE)
+    gl.TexEnv(gl.TEXTURE_ENV_MODE, gl.REPLACE)
     gl.BindTexture(gl.TEXTURE_2D, smile)
     gl.Begin(gl.QUADS)
         gl.TexCoord(0, 0)

@@ -83,7 +83,7 @@ end
 
 function draw(self, x, y)
     -- Replace/draw over existing fragments (pixels).
-    gl.TexEnv(gl.TEXTURE_ENV, gl.TEXTURE_ENV_MODE, gl.REPLACE)
+    gl.TexEnv(gl.TEXTURE_ENV_MODE, gl.REPLACE)
 
     -- Move the sprite where it needs to be.
     gl.LoadIdentity()

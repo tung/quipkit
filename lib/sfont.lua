@@ -353,7 +353,7 @@ function glFont:write(x, y, text)
     if not text then return end
 
     -- Use replace mode when drawing textures.
-    gl.TexEnv(gl.TEXTURE_ENV, gl.TEXTURE_ENV_MODE, gl.REPLACE)
+    gl.TexEnv(gl.TEXTURE_ENV_MODE, gl.REPLACE)
 
     gl.PushMatrix()
         -- Move the text where it should begin.
