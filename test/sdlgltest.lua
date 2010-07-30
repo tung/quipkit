@@ -6,7 +6,7 @@ local smile
 
 function game.init()
     local smile_surface = SDL.IMG_Load("test/smile.png")
-    smile = sdlgl.Texture:new(smile_surface)
+    smile = sdlgl.texture:new(smile_surface)
     SDL.SDL_FreeSurface(smile_surface)
 end
 

@@ -103,9 +103,9 @@ static int RawBlit(SDL_Surface *src, SDL_Surface *dest) {
  * Exported sdlgl functions
  */
 
-/* __gc finaliser metamethod of sdlgl.Texture userdata. */
+/* __gc finaliser metamethod of sdlgl.texture userdata. */
 static int TextureGc(lua_State *L) {
-    sdlgl_Texture *tex = luaL_checkudata(L, 1, "sdlgl.Texture");
+    sdlgl_Texture *tex = luaL_checkudata(L, 1, "sdlgl.texture");
     GLuint textures[1];
     textures[0] = tex->texId;
     glDeleteTextures(1, textures);
@@ -113,9 +113,9 @@ static int TextureGc(lua_State *L) {
 }
 
 
-/* __index metamethod of sdlgl.Texture userdata. */
+/* __index metamethod of sdlgl.texture userdata. */
 static int TextureIndex(lua_State *L) {
-    sdlgl_Texture *tex = luaL_checkudata(L, 1, "sdlgl.Texture");
+    sdlgl_Texture *tex = luaL_checkudata(L, 1, "sdlgl.texture");
     const char *key = luaL_checkstring(L, 2);
     if (strncmp(key, "w", 1) == 0) {
         lua_pushinteger(L, tex->w);
@@ -134,8 +134,8 @@ static int TextureIndex(lua_State *L) {
 }
 
 
-/* Constructor for sdlgl.Texture userdatum. Call like sdlgl.Texture:new(my_sdl_surface). */
-/* userdatum<SDL_Surface **> -> userdatum<sdlgl.Texture> */
+/* Constructor for sdlgl.texture userdatum. Call like sdlgl.texture:new(my_sdl_surface). */
+/* userdatum<SDL_Surface **> -> userdatum<sdlgl.texture> */
 static int TextureNew(lua_State *L) {
     if (!lua_isuserdata(L, 2)) {
         return luaL_error(L, "expected userdatum at arg 2, got %s", lua_typename(L, 2));
@@ -182,19 +182,19 @@ static int TextureNew(lua_State *L) {
         return luaL_error(L, "OpenGL error: %s", gluErrorString(gl_error));
     }
 
-    /* Create the sdlgl.Texture userdatum. */
+    /* Create the sdlgl.texture userdatum. */
     sdlgl_Texture *tex;
     tex = (sdlgl_Texture *)lua_newuserdata(L, sizeof(sdlgl_Texture));
     if (tex == NULL) {
         glDeleteTextures(1, textures);
-        return luaL_error(L, "cannot allocate new sdlgl.Texture userdatum");
+        return luaL_error(L, "cannot allocate new sdlgl.texture userdatum");
     }
     tex->w = surface->w;
     tex->h = surface->h;
     tex->texId = textures[0];
     tex->texW = full_w;
     tex->texH = full_h;
-    luaL_getmetatable(L, "sdlgl.Texture");
+    luaL_getmetatable(L, "sdlgl.texture");
     lua_setmetatable(L, -2);
 
     return 1;
@@ -216,8 +216,8 @@ static const struct luaL_reg sdlgl_TextureMethods[] = {
 int luaopen_sdlgl(lua_State *L) {
     lua_createtable(L, 0, 1);
 
-    lua_pushliteral(L, "Texture");
-    luaL_newmetatable(L, "sdlgl.Texture");
+    lua_pushliteral(L, "texture");
+    luaL_newmetatable(L, "sdlgl.texture");
     luaL_register(L, NULL, sdlgl_TextureMethods);
     lua_rawset(L, -3);
 
