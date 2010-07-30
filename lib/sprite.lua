@@ -3,74 +3,35 @@
 
 require "gl"
 require "sdl"
+require "sdlgl"
 
 module(..., package.seeall)
 
 
 
 function new(self, image_file, tile_w, tile_h)
+    -- Load image into OpenGL.
     local image = SDL.IMG_Load(image_file)
-    if not image then
-        error("IMG_Load failed: " .. SDL.IMG_GetError())
-    end
-
-    -- Convert image surface to RGBA.
-    -- TODO: Convert width and height to powers of 2 for OpenGL if needed.
-    local rmask, gmask, bmask, amask
-    if SDL.SDL_BYTEORDER == SDL.SDL_LIL_ENDIAN then
-        rmask = 0x000000ff
-        gmask = 0x0000ff00
-        bmask = 0x00ff0000
-        amask = 0xff000000
-    else
-        rmask = 0xff000000
-        gmask = 0x00ff0000
-        bmask = 0x0000ff00
-        amask = 0x000000ff
-    end
-    local surface = SDL.SDL_CreateRGBSurface(SDL.SDL_SWSURFACE, image.w, image.h, 32, rmask, gmask, bmask, amask)
-    if not surface then
-        error("SDL_CreateRGBSurface failed: " .. SDL.SDL_GetError())
-    end
-    if SDL.SDL_BlitSurface(image, nil, surface, nil) ~= 0 then
-        error("SDL_BlitSurface failed: " .. SDL.SDL_GetError())
-    end
+    local tex = sdlgl.texture:new(image)
     SDL.SDL_FreeSurface(image)
 
-    -- Load texture into OpenGL.
-    local textures = gl.GenTextures(1)
-    if not textures then
-        local ec = gl.GetError()
-        if ec then
-            error("glGenTextures error: " .. glu.ErrorString(ec))
-        else
-            error("glGenTextures unknown error")
-        end
-    end
-    local texture_id = textures[1]
-    gl.BindTexture(gl.TEXTURE_2D, texture_id)
-    gl.TexParameter(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
-    gl.TexParameter(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
-    gl.TexImage2D(0, gl.RGBA, surface.w, surface.h, 0, gl.RGBA, gl.UNSIGNED_BYTE, surface.pixels)
-
     -- Tile support: allows drawing of fixed-size sub-images.
-    local tw = tile_w and tile_w or surface.w
-    local th = tile_h and tile_h or surface.h
+    local tw = tile_w and tile_w or tex.texW
+    local th = tile_h and tile_h or tex.texH
     if tw < 1 or th < 1 then
         error("Cannot tile sprite by width or height < 1 (got w = " .. tw .. ", h = " .. th .. ")")
     end
 
     -- Standard Lua OOP setup.
     local s = {
-        texture_id = texture_id,
-        w = surface.w,
-        h = surface.h,
+        texture_id = tex.texId,
+        w = tex.texW,
+        h = tex.texH,
         tile_w = tw,
         tile_h = th,
         tile_x = 0,
         tile_y = 0
     }
-    SDL.SDL_FreeSurface(surface)
     setmetatable(s, {__index = self})
     self.__index = self
     return s
