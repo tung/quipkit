@@ -45,6 +45,9 @@ static int RawBlit(SDL_Surface *src, SDL_Surface *dest) {
 
     Uint8 r, g, b, a;
 
+    int use_key = src->flags & SDL_SRCCOLORKEY;
+    Uint32 key = src->format->colorkey;
+
     /* No bounds checking, so this may segfault. */
     for (int y = 0; y < min_h; ++y) {
         for (int x = 0; x < min_w; ++x) {
@@ -64,6 +67,9 @@ static int RawBlit(SDL_Surface *src, SDL_Surface *dest) {
                     break;
                 case 4: src_pixel = *(Uint32 *)src_p; break;
                 default: src_pixel = 0;
+            }
+            if (use_key && src_pixel == key) {
+                continue;
             }
             SDL_GetRGBA(src_pixel, src->format, &r, &g, &b, &a);
 
