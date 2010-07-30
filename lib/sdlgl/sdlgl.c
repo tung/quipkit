@@ -31,7 +31,6 @@ typedef struct {
  * sdlgl Helper Functions
  */
 
-#include <stdio.h>
 /* Draws all of src onto dest, alpha and all. */
 /* Returns 0 on success, -1 on failure. */
 static int RawBlit(SDL_Surface *src, SDL_Surface *dest) {
