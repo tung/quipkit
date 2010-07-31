@@ -37,7 +37,9 @@
 --
 ------------------------------------------------------------------------
 
+require "gl"
 require "sdl"
+require "sdlgl"
 
 module(..., package.seeall)
 
@@ -294,9 +296,6 @@ function glFont:new(image_file)
         end
 
         -- Create intermediate surface to send to OpenGL.
-        local log2 = math.log(2)
-        f.TexW = math.pow(2, math.ceil(math.log(max_width) / log2))
-        f.TexH = math.pow(2, math.ceil(math.log(max_height) / log2))
         local rmask, gmask, bmask, amask
         if SDL.SDL_BYTEORDER == SDL.SDL_LIL_ENDIAN then
             rmask = 0x000000ff
@@ -309,7 +308,7 @@ function glFont:new(image_file)
             bmask = 0x0000ff00
             amask = 0x000000ff
         end
-        local surface = SDL.SDL_CreateRGBSurface(SDL.SDL_SWSURFACE, f.TexW, f.TexH, 32, rmask, gmask, bmask, amask)
+        local surface = SDL.SDL_CreateRGBSurface(SDL.SDL_SWSURFACE, max_width, max_height, 32, rmask, gmask, bmask, amask)
         if not surface then
             error("SDL_CreateRGBSurface failed: " .. SDL.SDL_GetError())
         end
@@ -330,11 +329,10 @@ function glFont:new(image_file)
         end
 
         -- Load the new surface as an OpenGL texture.
-        f.TexId = gl.GenTextures(1)[1]
-        gl.BindTexture(gl.TEXTURE_2D, f.TexId)
-        gl.TexParameter(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
-        gl.TexParameter(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
-        gl.TexImage2D(0, gl.RGBA, surface.w, surface.h, 0, gl.RGBA, gl.UNSIGNED_BYTE, surface.pixels)
+        f.Tex = sdlgl.texture:new(surface)
+        f.TexId = f.Tex.texId
+        f.TexW = f.Tex.texW
+        f.TexH = f.Tex.texH
 
         -- Free the intermediate surface.
         SDL.SDL_FreeSurface(surface)
