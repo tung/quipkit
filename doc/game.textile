@@ -81,3 +81,37 @@ game.event() and game.update() can control the game loop by returning special va
 |_. Hook Return Value |_. Description |
 | @game.REDRAW@       | Request that game.draw() be called to redraw the screen. |
 | @game.QUIT@         | End the game loop. |
+
+h3. Functions
+
+h4. game.clearScreen() - nil
+
+Clear the game window to black. Call this at the start of your game.draw() hook to prevent weird trails.
+
+h4. game.getScreenSize() - width, height
+
+Get the configured width and height of the game window. See also game.setScreenSize().
+
+h4. game.getScreenTitle() - title
+
+Get the configured title of the game window. See also game.setScreenTitle().
+
+h4. game.loadConfig() - true or nil
+
+Load a saved configuration from disk. This configuration lives at "config.tbl", so this function returns true if it there and loadable, or nil otherwise. See also game.saveConfig().
+
+h4. game.run() - nil
+
+Set up the game environment, launch the game loop and clean up afterwards. Call this after you've set up your hooks and configuration.
+
+h4. game.saveConfig() - nil
+
+Save the current game's configuration to disk. This configuration is saved to "config.tbl". See also game.loadConfig().
+
+h4. game.setScreenSize(new_width, new_height) - old_width, old_height
+
+Configure the width and height of the game window to be set when game.run() is called. Note that this won't change the screen size while the game is running, only before. See also game.getScreenSize().
+
+h4. game.setScreenTitle(new_title) - old_title
+
+Set the title of the game window when game.run() is called. See also game.getScreenTitle().
