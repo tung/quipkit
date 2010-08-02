@@ -5,8 +5,8 @@ CFLAGS:=-std=c99 -W -Wall -Wextra
 ALSA_CFLAGS:=
 ALSA_LIBS:=-lasound
 
-GL_CFLAGS:=`pkg-config --cflags gl glu`
-GL_LIBS:=`pkg-config --libs gl glu`
+GL_CFLAGS:=`pkg-config --cflags gl`
+GL_LIBS:=`pkg-config --libs gl` -lGLU
 
 LIBPNG_CFLAGS:=`pkg-config --cflags libpng`
 LIBPNG_LIBS:=`pkg-config --libs libpng`
