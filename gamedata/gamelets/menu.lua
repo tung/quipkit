@@ -7,10 +7,10 @@ require "sprite"
 
 require "sdl"
 
-gamelet.new(...)
+gamelets.new(...)
 
 function new(self, opts)
-    local inst = gamelet.instance(self)
+    local inst = gamelets.instance(self)
 
     -- Ensure all items are 1+ in length.
     inst.items = {}
@@ -51,25 +51,25 @@ function event(self, e)
                 self.selection = #(self.items)
             end
         elseif key == SDL.SDLK_RETURN then
-            gamelet.stack:pop()
-            gamelet.stack:pop()
-            gamelet.stack:push(gamelet.get("center_image"):new{
+            gamelets.stack:pop()
+            gamelets.stack:pop()
+            gamelets.stack:push(gamelets.get("center_image"):new{
                 image = "test/smile.png",
                 scale = 8.0
             })
-            gamelet.stack:push(gamelet.get("top_text"):new{
+            gamelets.stack:push(gamelets.get("top_text"):new{
                 font = "test/bitstream-vera-sans-bold-24pt.png",
                 text = "Image again"
             })
         elseif key == SDL.SDLK_ESCAPE then
-            return gamelet.GAMELET_QUIT
+            return gamelets.GAMELET_QUIT
         else
             return
         end
-        return gamelet.GAMELET_REDRAW
+        return gamelets.GAMELET_REDRAW
 
     elseif e.type == SDL.SDL_QUIT then
-        return gamelet.GAMELET_QUIT
+        return gamelets.GAMELET_QUIT
     end
 end
 

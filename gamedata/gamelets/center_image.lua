@@ -6,29 +6,29 @@ require "sprite"
 
 require "sdl"
 
-gamelet.new(...)
+gamelets.new(...)
 
 function new(self, opts)
-    local inst = gamelet.instance(self)
+    local inst = gamelets.instance(self)
     inst.loaded_image = sprite:new(opts.image)
     return inst
 end
 
 function event(self, e)
     if e.type == SDL.SDL_KEYDOWN then
-        gamelet.stack:pop()
-        gamelet.stack:pop()
-        gamelet.stack:push(gamelet.get("menu"):new{
+        gamelets.stack:pop()
+        gamelets.stack:pop()
+        gamelets.stack:push(gamelets.get("menu"):new{
             items = {7, 5, 9},
             default = 2
         })
-        gamelet.stack:push(gamelet.get("top_text"):new{
+        gamelets.stack:push(gamelets.get("top_text"):new{
             font = "test/bitstream-vera-sans-bold-24pt.png",
             text = "A menu is below"
         })
-        return game.GAME_REDRAW
+        return gamelets.GAMELET_REDRAW
     elseif e.type == SDL.SDL_QUIT then
-        return gamelet.GAMELET_QUIT
+        return gamelets.GAMELET_QUIT
     end
 end
 
