@@ -1,0 +1,91 @@
+h1. gamelets.lua Framework
+
+gamelets.lua is a framework that lets you write separate game states or _gamelets_, and control your game logic by pushing and popping them from a stack.
+
+
+h2. Using gamelets.lua
+
+The main steps in using gamelets.lua are:
+
+# Define your gamelets.
+# Push a gamelet instance or two onto the stack to start with.
+# Call gamelets.run().
+# Push and pop gamelet instances to control your game's logic.
+
+
+h3. Defining a Gamelet
+
+To define a gamelet, make a new Lua script in the gamelets directory (currently "gamedata/gamelets/"). The name of your gamelet is the filename, minus the ".lua" extension.
+
+The gamelet code will look something like this:
+
+<pre><code>
+require "game"
+
+gamelets.new(...)
+
+function new(self, options)
+    local inst = gamelets.instance(self)
+    inst.x = options.x
+    inst.y = options.y
+    return inst
+end
+
+function event(self, e)
+    -- Handle SDL Event e for this gamelet instance.
+end
+
+function update(self, delta)
+    -- Update gamelet instance logic.
+end
+
+function draw(self)
+    -- Draw gamelet instance here.
+end
+</code></pre>
+
+First, require any packages you'll need.
+
+Next, call gamelets.new(...). This registers the gamelet so that you can later make instances of it to push to and pop from the stack. This also defines a string variable called @GAMELET_NAME@ that you can refer to if you need it.
+
+After that, define the @new@ function as above. This is called when you make gamelet instances, and should call and return the result of gamelets.instance(self).
+
+Once that's done, define @event@, @update@ and @draw@ hooks, like when using game.lua. Like hooks for game.lua, these hooks can return special values to control the game loop and the gamelet stack:
+
+|_. Return Value          |_. Can Be Returned From    |_. Description |
+| @gamelets.GAMELET_NEXT@ | @draw@, @event@, @update@ | Call the @draw@, @event@ or @update@ hook of the gamelet under this one in the stack. |
+| @gamelets.REDRAW@       | @event@, @update@         | Call @draw@ hooks on the gamelet stack after this @event@ or @update@ hook. |
+| @gamelets.QUIT@         | @event@, @update@         | End the game loop that drives the gamelets framework. |
+
+
+h3. Setting Up and Running Gamelets
+
+Your main script will look something like this:
+
+<pre><code>
+require "gamelets"
+
+gamelets.stack:push(gamelets.get("my_gamelet"):new{ x = 1, y = 2 })
+
+gamelets.run()
+</code></pre>
+
+First, require "gamelets" to get access to the gamelets framework.
+
+Next, get your gamelet and make a new instance of it, passing any options you need.
+
+Push your new gamelet instance onto the gamelets stack with the @push@ method, as shown above. You can push as many gamelet instances as you need, but usually you'll only need one or two, depending on how you want your game to work.
+
+Finally, call gamelest.run() to run your game.
+
+
+h3. Controlling Game Logic with Gamelets
+
+The gamelets.lua framework always runs the @event@, @update@ and @draw@ hooks of the gamelet instance on top of the stack. Pushing and popping gamelet instances from this stack changes what your game runs.
+
+Generally, to switch from one gamelet to another, use code like this in a gamelet's @event@ or @update@ hooks:
+
+<pre><code>
+gamelets.stack:pop()
+gamelets.stack:push(gamelets.get("new_gamelet"):new{ x = 1, y = 2 })
+</code></pre>
