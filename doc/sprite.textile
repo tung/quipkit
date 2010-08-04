@@ -1,0 +1,71 @@
+h1. sprite.lua Framework
+
+Sprites are simple images that can be used in OpenGL. If you have a grid of images in a file, you can also pick and draw any of them individually.
+
+
+h2. Usage
+
+First, load the sprite.lua package:
+
+<pre><code>
+require "sprite"
+</code></pre>
+
+To load a sprite, call @sprite:new@:
+
+<pre><code>
+local my_sprite = sprite:new("my_sprite.png")
+</code></pre>
+
+To draw the sprite, call its @draw@ method with x and y coordinates:
+
+<pre><code>
+my_sprite:draw(x, y)
+</code></pre>
+
+h3. Using Tiles
+
+To load an image containing a grid of sub-images, call @sprite:new@ with the size of the tiles as well as the image filename:
+
+<pre><code>
+local my_sprite_sheet = sprite:new("my_sprite_sheet.png", 32, 32)
+</code></pre>
+
+To use select a tile, call the sprite's @setTile@ method before calling @draw@:
+
+<pre><code>
+my_sprite_sheet:setTile(0, 1)
+my_sprite_sheet:draw(x, y)
+</code></pre>
+
+
+h2. Reference
+
+h3. Functions
+
+h4. sprite:new(image_path, [tile_width, tile_height])
+
+Load and return a new sprite object. If tile_width and tile_height are given, @setTile@ can be used later to pick which tile is drawn.
+
+
+h3. Sprite Object
+
+Sprite objects have the following members:
+
+|_. Member |_. Description |
+| @w@      | Full width of the sprite image |
+| @h@      | Full height of the sprite image |
+| @tile_w@ | Width of each tile |
+| @tile_h@ | Height of each tile |
+| @tile_x@ | 0-based column of the tile picked for drawing |
+| @tile_y@ | 0-based row of the tile picked for drawing |
+
+Sprites also have these methods:
+
+h4. sprite_object:draw(x, y)
+
+Draw the sprite at the given coordinates. If the sprite is tiled, draw just the tile chosen by @setTile@ (0, 0 by default).
+
+h4. sprite_object:setTile(tile_x, tile_y)
+
+Pick the sub-image to draw from a tiled sprite. @tile_x@ and @tile_y@ are the 0-based column and row of the tile respectively.
