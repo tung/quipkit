@@ -1,4 +1,4 @@
-h1. sprite.lua Framework
+h1. sprite.lua Package
 
 Sprites are simple images that can be used in OpenGL. If you have a grid of images in a file, you can also pick and draw any of them individually.
 
