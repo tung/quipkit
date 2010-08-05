@@ -51,29 +51,29 @@ Make a new @sfont.sdlFont@ object from an image. You can use any image format su
 
 h3. sfont.glFont Methods
 
-h4. glFont:height()
+h4. glFont:height() - height
 
 Get the height of the font in pixels. All glyphs are the same height, so it doesn't take any text argument.
 
-h4. glFont:textWidth(text)
+h4. glFont:textWidth(text) - total_width
 
 Get the width of some text drawn with this font in pixels.
 
-h4. glFont:write(x, y, text)
+h4. glFont:write(x, y, text) - nil
 
 Draw the text at the given coordinates on the current OpenGL context. The coordinates are for the top-left corner of the text to be drawn.
 
 
 h3. sfont.sdlFont Methods
 
-h4. sdlFont:height()
+h4. sdlFont:height() - height
 
 Get the height of the font in pixels. All glyphs are the same height, so it doesn't take any text argument.
 
-h4. sdlFont:textWidth(text)
+h4. sdlFont:textWidth(text) - total_width
 
 Get the width of some text drawn with this font in pixels.
 
-h4. sdlFont:write(surface, x, y, text)
+h4. sdlFont:write(surface, x, y, text) - nil
 
 Draw the text at the given coordinates on the given surface. The coordinates are for the top-left corner of the text to be drawn.
