@@ -1,0 +1,79 @@
+h1. sfont.lua Package
+
+SFont is an format for encoding ASCII fonts in images, and sfont.lua lets you load and draw fonts in that format. Visit the "SFont website":http://www.linux-games.com/sfont/ for info on how to make fonts.
+
+
+h2. Using sfont.lua
+
+To use SFont-formatted bitmapped fonts, require "sfont", make your font image and load it as a @glFont@, for use with OpenGL, which is what the game.lua framework uses:
+
+<pre><code>
+require "sfont"
+local my_font = sfont.glFont:new("my_font.png")
+</code></pre>
+
+With the font loaded, you can now write the text you want:
+
+<pre><code>
+-- Draw centered text.
+local screen_width, screen_height = game.getScreenSize()
+local text = "Hello World!"
+local x = math.floor((screen_width - my_font:textWidth(text)) / 2)
+local y = math.floor((screen_height - my_font:height()) / 2)
+my_font:write(x, y, text)
+</code></pre>
+
+If you want, you can also use sfont.lua with just SDL by loading your font image as an @sdlFont@:
+
+<pre><code>
+local other_font = sfont.sdlFont:new("my_font.png")
+</code></pre>
+
+@sdlFont@ shares all the methods of @glFont@, except that the @write@ method takes a target SDL surface:
+
+<pre><code>
+other_font:write(SDL.SDL_GetVideoSurface(), 0, 0, "Writing with SDL and SFont!")
+</code></pre>
+
+
+h2. Reference
+
+h3. Functions
+
+h4. sfont.glFont:new(image_path) - sfont.glFont object
+
+Make a new @sfont.glFont@ object from an image. You can use any image format supported by SDL_image. The @write@ method can be used with an OpenGL context.
+
+h4. sfont.sdlFont:new(image_path) - sfont.sdlFont object
+
+Make a new @sfont.sdlFont@ object from an image. You can use any image format supported by SDL_image. The @write@ method can be used with any SDL surface.
+
+
+h3. sfont.glFont Methods
+
+h4. glFont:height()
+
+Get the height of the font in pixels. All glyphs are the same height, so it doesn't take any text argument.
+
+h4. glFont:textWidth(text)
+
+Get the width of some text drawn with this font in pixels.
+
+h4. glFont:write(x, y, text)
+
+Draw the text at the given coordinates on the current OpenGL context. The coordinates are for the top-left corner of the text to be drawn.
+
+
+h3. sfont.sdlFont Methods
+
+h4. sdlFont:height()
+
+Get the height of the font in pixels. All glyphs are the same height, so it doesn't take any text argument.
+
+h4. sdlFont:textWidth(text)
+
+Get the width of some text drawn with this font in pixels.
+
+h4. sdlFont:write(surface, x, y, text)
+
+Draw the text at the given coordinates on the given surface. The coordinates are for the top-left corner of the text to be drawn.
