@@ -1,0 +1,73 @@
+h1. persist.lua Package
+
+persist.lua allows you to save Lua tables with numbers, strings and references to other tables to disk, or to a string. This can be used to implement save files for your game.
+
+persist.lua can automatically detect and re-link Lua metatables, making it easier to save custom objects.
+
+persist.lua can handle circular table references, but not Lua userdata.
+
+
+h2. Usage
+
+Require "persist", then just use the functions to save or load tables.
+
+For tables with metatables, persist.lua records the reachable dotted name of each metatable if it's available, or ignores it otherwise. This can be handy if you're using Lua's metatables to implement simple objects.
+
+To save and restore metatables properly, first you need to provide an _environment table_ when saving, holding e.g. loaded Lua packages:
+
+<pre><code>
+local env = {}
+
+for pkg_name, _ in pairs(package.loaded) do
+    table.insert(env, pkg_name)
+end
+
+local success, err_msg = persist.saveToFile(tbl_to_save, "save.tbl", env)
+</code></pre>
+
+Now to load the table such that metatables can be restored, you need to provide a _restoration hook_ when loading, which can load packages before the @persist.load@ function attempts to relink metatables:
+
+<pre><code>
+local restore_hook = function (env)
+    for i = 1, #env do
+        require(env[i])
+    end
+end
+
+local saved_table, err_msg = persist.load("save.tbl", restore_hook)
+</code></pre>
+
+Now the loaded tables will have their metatable links restored.
+
+
+h2. Reference
+
+h3. Functions
+
+h4. persist.load(string_or_filename, [restore_env_hook]) - table, or nil and error_message
+
+Load a table saved as a string or a file.
+
+If a function is passed for @restore_env_hook@, it will be called with the extra environment saved with the table originally, before it attempts to restore metatables. This can be used to load packages and gamelets that hold those metatables.
+
+On failure, this function returns nil and a string with the error message.
+
+h4. persist.saveToBufferedString(tbl, env) - table_string, or nil and error_message
+
+Save the given table to a string, with the help of a file buffer; useful for large tables. For smaller tables, consider @persist.saveToString@ instead.
+
+@env@ is an extra table stored with the given table. On load it can be passed to a restoration hook, which can load any packages or gamelets needed to restore metatables. To do this, put the names of packages and gamelets to load in this table.
+
+Returns the table saved to a string on success, or nil and the error message otherwise.
+
+h4. persist.saveToFile(tbl, filename, env) - 1, or nil and error_message
+
+Save the table to the given file. See @persist.saveToBufferedString@ for an explanation of @env@.
+
+Returns 1 on success, or nil and the error_message otherwise.
+
+h4. persist.saveToString(tbl, env) - table_string, or nil and error_message
+
+Save the given table to a string. For larger tables, see @persist.saveToBufferedString@, which uses a file buffer to assist in this task. Also refer to it for an explanation of @env@.
+
+Returns the table in string form on success, or nil and the error_message on failure.
