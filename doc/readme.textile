@@ -1,0 +1,22 @@
+h1. Quipkit Documentation
+
+Welcome to the Quipkit Documentation directory! If it's noted here, Quipkit can do it.
+
+
+h2. Quipkit Engine
+
+The Quipkit engine runs your game, once you've written code for it. These packages will help you do just that.
+
+High-level packages:
+
+* "game.lua":game.textile - game window, loop and event handling
+* "gamelets.lua":gamelets.textile - game logic with states
+* "persist.lua":persist.textile - saving and loading tables
+* "sfont.lua":sfont.textile - drawing text with bitmap glyphs
+* "sprite.lua":sprite.textile - loading and drawing single and tiled images
+
+Low-level packages:
+
+* "gl":http://luagl.sourceforge.net/ - OpenGL bindings for Lua
+* "proAudioRt":http://www.viremo.de/proteaAudio/ - proteaAudio sound library bindings for Lua
+* "sdl":http://luaforge.net/projects/luasdl/ - Kein-Hong Man's SDL bindings for Lua (with SDL_image, SDL_net and SDL_ttf)
