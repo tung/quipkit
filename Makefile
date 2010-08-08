@@ -8,9 +8,6 @@ ALSA_LIBS:=-lasound
 GL_CFLAGS:=`pkg-config --cflags gl`
 GL_LIBS:=`pkg-config --libs gl` -lGLU
 
-LIBPNG_CFLAGS:=`pkg-config --cflags libpng`
-LIBPNG_LIBS:=`pkg-config --libs libpng`
-
 LUA_CFLAGS:=`pkg-config --cflags lua5.1`
 LUA_LIBS:=`pkg-config --libs lua5.1`
 
@@ -23,7 +20,6 @@ TCLTK_LIBS:=-ltcl8.5
 
 
 LTCLTK_DIR:=dev/lib/tcltk/ltcltk-0.9-1/
-LUAPNG_DIR:=lib/png/
 LUASDL_DIR:=lib/sdl/LuaSDL_new/
 LUASDL_DIR_BACK:=../../../
 OLDLUASDL_DIR:=lib/sdl/luaSDL/
@@ -36,10 +32,10 @@ TOLUAPP_DIR:=contrib/tolua++/
 ### Tasks ###
 
 .PHONY: all
-all: game ${LUAPNG_DIR}libluapng.so ${LUASDL_DIR}libluasdl.so all_toluapp ${PROTEAAUDIO_DIR}libproaudio.so ${SDLGL_DIR}libsdlgl.so edit ${LTCLTK_DIR}ltcl.so
+all: game ${LUASDL_DIR}libluasdl.so all_toluapp ${PROTEAAUDIO_DIR}libproaudio.so ${SDLGL_DIR}libsdlgl.so edit ${LTCLTK_DIR}ltcl.so
 
 .PHONY: clean
-clean: clean_game clean_luapng clean_luasdl clean_toluapp clean_proteaaudio clean_sdlgl clean_edit clean_ltcltk
+clean: clean_game clean_luasdl clean_toluapp clean_proteaaudio clean_sdlgl clean_edit clean_ltcltk
 
 
 
@@ -58,23 +54,6 @@ game.o: game.c
 clean_game:
 	-rm -f game
 	-rm -f game.o
-
-
-### libpng bindings ###
-
-QK_PNG_CFLAGS:=${QKENG_CFLAGS} ${LIBPNG_CFLAGS}
-QK_PNG_LIBS:=${QKENG_LIBS} ${LIBPNG_LIBS}
-
-${LUAPNG_DIR}libluapng.so: ${LUAPNG_DIR}png.o
-	gcc -shared -Wl,-soname,$(notdir $@) -o $@ ${QK_PNG_LIBS} $+
-
-${LUAPNG_DIR}png.o: ${LUAPNG_DIR}png.c ${LUAPNG_DIR}png.h
-	gcc -fPIC -o $@ ${QK_PNG_CFLAGS} -c $<
-
-.PHONY: clean_luapng
-clean_luapng:
-	-rm -f ${LUAPNG_DIR}libluapng.so
-	-rm -f ${LUAPNG_DIR}*.o
 
 
 ### New LuaSDL bindings from Kein-Hong Man (needs tolua++) ###
