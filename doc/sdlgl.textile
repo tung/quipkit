@@ -1,0 +1,53 @@
+h1. sdlgl.lua Package
+
+sdlgl.lua helps you use SDL with OpenGL. Specifically, it can make managed OpenGL textures from SDL surfaces.
+
+This package is used by other higher-level packages. If you just want to load an image and draw it, check out the "sprite.lua package":sprite.textile.
+
+
+h2. Usage
+
+The sdlgl.lua package's main purpose is to create @sdlgl.texture@ objects, which are essentially OpenGL textures that are garbage-collected by Lua. These textures can then be used with Quipkit's OpenGL bindings.
+
+First, require "sdlgl". To make @sdlgl.texture@ objects, call its constructor with an SDL surface:
+
+<pre><code>
+require "sdl"
+require "sdlgl"
+
+local my_surface = SDL.IMG_Load("my_image.png")
+local my_tex = sdlgl.texture:new(my_surface)
+SDL.SDL_FreeSurface(my_surface)
+
+print("Original width = ", my_tex.w)
+print("Original height = ", my_tex.h)
+print("OpenGL texture ID = ", my_tex.texId)
+print("OpenGL texture width = ", my_tex.texW)
+print("OpenGL texture height = ", my_tex.texH)
+</code></pre>
+
+@my_tex@ now has members that you can read, such as the original width and height of the texture, as well as its OpenGL texture ID. sdlgl loads textures to a width and height that are each the smallest power of two that can fit the original surface, and these can also be read as members.
+
+
+h2. Reference
+
+h3. Functions
+
+h4. sdlgl.texture:new(sdl_surface) - sdlgl.texture object
+
+Load SDL surface userdata as a managed sdlgl.texture object, which can be used in turn with OpenGL's texture facilities.
+
+h3. sdlgl.texture Object
+
+An sdlgl.texture object is a garbage-collected resource that acts as a handle to OpenGL texture data. Once loaded, it has the following members:
+
+|_. Member |_. Description |
+| w        | Width of the original SDL surface in pixels. |
+| h        | Height of the original SDL surface in pixels. |
+| texId    | OpenGL texture ID that can be used with OpenGL's texture API. |
+| texW     | Width of the loaded texture in texels. |
+| texH     | Height of the loaded texture in texels. |
+
+Oh, and "texels" are just OpenGL-speak for pixels in a texture.
+
+This object has no methods. My, what a simple object.

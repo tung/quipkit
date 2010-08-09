@@ -20,3 +20,4 @@ Low-level packages:
 * "gl":http://luagl.sourceforge.net/ - OpenGL bindings for Lua
 * "proAudioRt":http://www.viremo.de/proteaAudio/ - proteaAudio sound library bindings for Lua
 * "sdl":http://luaforge.net/projects/luasdl/ - Kein-Hong Man's SDL bindings for Lua (with SDL_image, SDL_net and SDL_ttf)
+* "sdlgl":sdlgl.textile - support for using SDL with OpenGL
