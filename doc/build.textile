@@ -1,0 +1,42 @@
+h1. Building Quipkit
+
+First visit the GitHub project page and click "Download Source" at the top-right.
+
+h2. For Windows
+
+Grab the Code::Blocks + MinGW combo from the Code::Blocks website.
+
+Open @quipkit.workspace@. Build the "Quipkit Engine" project for the engine, and "Quipkit Editor" for the editor. Both can be run within the IDE.
+
+h2. For Linux
+
+Grab these development libs for the engine:
+
+* ALSA
+* libpng
+* Lua 5.1
+* OpenGL
+* SDL, SDL_image, SDL_net and SDL_ttf
+
+Grab these development libs for the editor:
+
+* Lua 5.1
+* Tcl and Tk 8.5
+
+Type @make@, then try running the engine with @./game@ and the editor with @./edit@.
+
+h2. Trying the Demos
+
+After making the engine, you can try some of the demos in the @test/@ directory. Here's a few:
+
+<pre><code>./game test/audio.lua
+./game test/animate.lua
+./game test/audioscale.lua
+./game test/blitpng.lua
+./game test/gametest.lua
+./game test/smile.lua
+</code></pre>
+
+If you're on a command line, @./game test/key.lua@ also demonstrates keyboard input.
+
+The easiest way to try these demos on Windows is by editing @main.lua@.

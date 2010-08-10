@@ -13,51 +13,9 @@ Making RPGs is harder than making other kinds of games:
 Split your RPG's code into modules with the **gamelet framework**. Save, load and tidy up your state with the **persistence framework**. Make and use **custom tools** that help you and your team make an RPG that stands out from the rest.
 
 
-h2. Building Quipkit
-
-First visit the GitHub project page and click "Download Source" at the top-right.
-
-h3. For Windows
-
-Grab the Code::Blocks + MinGW combo from the Code::Blocks website.
-
-Open @quipkit.workspace@. Build the "Quipkit Engine" project for the engine, and "Quipkit Editor" for the editor. Both can be run within the IDE.
-
-h3. For Linux
-
-Grab these development libs for the engine:
-
-* ALSA
-* libpng
-* Lua 5.1
-* OpenGL
-* SDL, SDL_image, SDL_net and SDL_ttf
-
-Grab these development libs for the editor:
-
-* Lua 5.1
-* Tcl and Tk 8.5
-
-Type @make@, then try running the engine with @./game@ and the editor with @./edit@.
-
-h3. Trying the Demos
-
-After making the engine, you can try some of the demos in the @test/@ directory. Here's a few:
-
-<pre><code>./game test/audio.lua
-./game test/animate.lua
-./game test/audioscale.lua
-./game test/blitpng.lua
-./game test/gametest.lua
-./game test/smile.lua
-</code></pre>
-
-If you're on a command line, @./game test/key.lua@ also demonstrates keyboard input.
-
-The easiest way to try these demos on Windows is by editing @main.lua@.
-
-
 h2. Status
+
+The engine and editor can be "built":doc/built.textile for Windows and Linux.
 
 Running the engine shows a yellow animated character that constantly walks down the screen. Running the editor shows a small "hello world" dialog box.
 

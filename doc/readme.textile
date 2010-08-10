@@ -2,6 +2,8 @@ h1. Quipkit Documentation
 
 Welcome to the Quipkit Documentation directory! If it's noted here, Quipkit can do it.
 
+* "Building Quipkit":build.textile
+
 
 h2. Quipkit Engine
 
