@@ -15,7 +15,7 @@ Split your RPG's code into modules with the **gamelet framework**. Save, load an
 
 h2. Status
 
-The engine and editor can be "built":quipkit/doc/built.textile for Windows and Linux.
+The engine and editor can be "built":quipkit/doc/build.textile for Windows and Linux.
 
 Running the engine shows a yellow animated character that constantly walks down the screen. Running the editor shows a small "hello world" dialog box.
 
