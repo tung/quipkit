@@ -1,8 +1,9 @@
 -- Quipkit game engine framework.
--- Loads SDL and OpenGL, and drives the game loop.
+-- Loads SDL, OpenGL and proteaAudio, and drives the game loop.
 
 require "gl"
 require "persist"
+require "proAudioRt"
 require "sdl"
 
 module(..., package.seeall)
@@ -122,6 +123,11 @@ function run()
     gl.LoadIdentity()
     gl.Ortho(0, config.screen.w, config.screen.h, 0, -1, 1)
 
+    -- Open audio device.
+    if not proAudio.create() then
+        error("Could not initialize audio device.", 2)
+    end
+
     init()
 
     _event = SDL.SDL_Event_local()
@@ -130,10 +136,15 @@ function run()
     success, error_message = pcall(_loop)
     if not success then
         SDL.SDL_Quit()
+        proAudio.destroy()
         error("Error in game loop: " .. error_message, 2)
     end
 
     exit()
+
+    -- Close audio device.
+    proAudio.destroy()
+
     SDL.SDL_Quit()
 end
 
