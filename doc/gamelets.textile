@@ -87,5 +87,5 @@ Generally, to switch from one gamelet to another, use code like this in a gamele
 
 <pre><code>
 gamelets.stack:pop()
-gamelets.stack:push(gamelets.get("new_gamelet"):new{ x = 1, y = 2 })
+gamelets.stack:push(gamelets("new_gamelet"):new{ x = 1, y = 2 })
 </code></pre>
