@@ -28,18 +28,25 @@ stack = {
 
 
 
--- Retrieve a gamelet (table).
-function get(gamelet_name)
-    if not loaded[gamelet_name] then
-        local code = loadfile("gamedata/gamelets/" .. gamelet_name .. ".lua")
-        if not code then
-            error("Could not load gamelet '" .. gamelet_name .. "'", 2)
-        end
-
-        -- Should fill loaded[gamelet_name] via calling gamelet.new(...).
-        code(gamelet_name)
+-- Retrieve a gamelet (table) by calling this package like a function.
+do
+    fenv_mt = getmetatable(getfenv())
+    if not fenv_mt then
+        fenv_mt = {}
+        setmetatable(getfenv(), fenv_mt)
     end
-    return loaded[gamelet_name]
+    fenv_mt.__call = function (self, gamelet_name)
+        if not loaded[gamelet_name] then
+            local code = loadfile("gamedata/gamelets/" .. gamelet_name .. ".lua")
+            if not code then
+                error("Could not load gamelet '" .. gamelet_name .. "'", 2)
+            end
+
+            -- Should fill loaded[gamelet_name] via calling gamelet.new(...).
+            code(gamelet_name)
+        end
+        return loaded[gamelet_name]
+    end
 end
 
 

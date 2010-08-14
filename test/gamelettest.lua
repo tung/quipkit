@@ -24,10 +24,10 @@ Press UP and DOWN at the globs to move, RETURN to go back to the smile.
 Press ESCAPE at the globs to exit.]])
 
 function gamelets.init()
-    gamelets.stack:push(gamelets.get("center_image"):new{
+    gamelets.stack:push(gamelets("center_image"):new{
         image = "test/smile.png"
     })
-    gamelets.stack:push(gamelets.get("top_text"):new{
+    gamelets.stack:push(gamelets("top_text"):new{
         font = "test/bitstream-vera-sans-bold-24pt.png",
         text = "A title in the background."
     })
