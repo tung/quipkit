@@ -76,7 +76,7 @@ Next, get your gamelet by calling @gamelets@ with its name and make a new instan
 
 Push your new gamelet instance onto the gamelets stack with the @push@ method, as shown above. You can push as many gamelet instances as you need, but usually you'll only need one or two, depending on how you want your game to work.
 
-Finally, call gamelest.run() to run your game.
+Finally, call gamelets.run() to run your game.
 
 
 h3. Controlling Game Logic with Gamelets
