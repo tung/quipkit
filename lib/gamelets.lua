@@ -46,7 +46,9 @@ end
 -- Prepare an environment table for the gamelet calling this function.
 -- A call to this is typically one of the first lines in a gamelet.
 function new(gamelet_name)
-    local gamelet = { GAMELET_NAME = gamelet_name }
+    local gamelet = {}
+    gamelet.GAMELET_NAME = gamelet_name
+    gamelet.GAMELET_INST_MT = { __index = gamelet }
     setmetatable(gamelet, {__index = getfenv(2)})
     loaded[gamelet_name] = gamelet
     setfenv(2, gamelet)
@@ -57,7 +59,7 @@ end
 -- Typically called within the gamelet's init function.
 function instance(gamelet)
     local inst = {}
-    setmetatable(inst, {__index = gamelet})
+    setmetatable(inst, getfenv(2).GAMELET_INST_MT)
     return inst
 end
 
