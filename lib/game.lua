@@ -5,6 +5,7 @@ require "gl"
 require "persist"
 require "proAudioRt"
 require "sdl"
+require "sdlgl"
 
 module(..., package.seeall)
 
@@ -89,6 +90,8 @@ local function _loop()
         u_result = update(current_time - last_time)
         last_time = current_time
         if u_result == GAME_QUIT then return end
+
+        sdlgl.checkGlError()
     end
 end
 

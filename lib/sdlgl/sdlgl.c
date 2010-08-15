@@ -206,6 +206,14 @@ static int TextureNew(lua_State *L) {
 }
 
 
+static int CheckGlError(lua_State *L) {
+    GLenum gl_error = glGetError();
+    if (gl_error != GL_NO_ERROR)
+        return luaL_error(L, "OpenGL error: %s", gluErrorString(gl_error));
+    return 0;
+}
+
+
 
 /**
  * Public API
@@ -224,6 +232,10 @@ int luaopen_sdlgl(lua_State *L) {
     lua_pushliteral(L, "texture");
     luaL_newmetatable(L, "sdlgl.texture");
     luaL_register(L, NULL, sdlgl_TextureMethods);
+    lua_rawset(L, -3);
+
+    lua_pushliteral(L, "checkGlError");
+    lua_pushcfunction(L, CheckGlError);
     lua_rawset(L, -3);
 
     lua_setglobal(L, "sdlgl");
