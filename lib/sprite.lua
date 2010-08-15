@@ -24,7 +24,7 @@ function new(self, image_file, tile_w, tile_h)
 
     -- Standard Lua OOP setup.
     local s = {
-        texture_id = tex.texId,
+        texture = tex,
         w = tex.texW,
         h = tex.texH,
         tile_w = tw,
@@ -58,8 +58,7 @@ function draw(self, x, y)
     local offset_x = tile_x * offset_w
     local offset_y = tile_y * offset_h
     gl.Enable(gl.TEXTURE_2D)
-        gl.BlendFunc(gl.SRC_ALPHA, gl.ONE)
-        gl.BindTexture(gl.TEXTURE_2D, self.texture_id)
+        gl.BindTexture(gl.TEXTURE_2D, self.texture.texId)
         gl.Begin(gl.QUADS)
             gl.TexCoord(offset_x, offset_y)
             gl.Vertex(0, 0)
