@@ -2,35 +2,43 @@
 
 -- How to use gamelets:
 --
--- First, write your gamelets in the gamelets/ directory.
+-- Write your gamelets in the gamedata/gamelets/ directory, or point
+-- gamelet.location to where your gamelets are.
 --
--- To use gamelets, make instances of them, and put them on
--- the gamelet stack.
+-- Set up the gamelet stack when your game inits by pushing gamelet
+-- instances onto it.
 --
--- The gamelet instance on top of the stack will have its event(),
--- update() and draw() functions called once everything is running.
+-- Hook up the gamelet stack's event, update and draw hooks to the
+-- matching hooks in your game.
 --
--- Gamelet instances can pop themselves and push other gamelet
--- instances over the course of a game.
---
--- Finally, setting up gamelets.init() and calling gamelets.run()
--- as below kicks off the whole thing.
+-- While the game is running, gamelets may change the gamelet stack
+-- by removing gamelet instances and adding new ones.
 
-require "gamelets"
+require "game"
+require "gamelet"
 
-print([[
-Press a key to go from the smile to the globs.
-Press UP and DOWN at the globs to move, RETURN to go back to the smile.
-Press ESCAPE at the globs to exit.]])
-
-function gamelets.init()
-    gamelets.stack:push(gamelets("center_image"):new{
+function game.init()
+    table.insert(gamelet.stack, gamelet("center_image"):new{
         image = "test/smile.png"
     })
-    gamelets.stack:push(gamelets("top_text"):new{
+    table.insert(gamelet.stack, gamelet("top_text"):new{
         font = "test/bitstream-vera-sans-bold-24pt.png",
         text = "A title in the background."
     })
 end
 
-gamelets.run()
+function game.event(e)
+    return gamelet.stack:event(e)
+end
+
+function game.update(delta)
+    return gamelet.stack:update(delta)
+end
+
+function game.draw()
+    game.clearScreen()
+    return gamelet.stack:draw()
+end
+
+game.setScreenTitle("Gamelet Test")
+game.run()

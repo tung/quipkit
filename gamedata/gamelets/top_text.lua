@@ -4,26 +4,28 @@
 require "game"
 require "sfont"
 
-gamelets.new(...)
+module(..., package.seeall)
 
-function new(self, opts)
-    local inst = gamelets.instance(self)
-    inst.font = sfont.glFont:new(opts.font)
-    inst.text = opts.text
+MT = { __index = getfenv() }
+
+function new(g, o)
+    local inst = o or {}
+    inst.font = sfont.glFont:new(inst.font)
+    setmetatable(inst, MT)
     return inst
 end
 
 function event(self, e)
-    return gamelets.GAMELET_NEXT
+    return gamelet.NEXT
 end
 
 function update(self, delta)
-    return gamelets.GAMELET_NEXT
+    return gamelet.NEXT
 end
 
 function draw(self)
     local screen_w, screen_h = game.getScreenSize()
     local x = (screen_w - self.font:textWidth(self.text)) / 2
     self.font:write(x, 0, self.text)
-    return gamelets.GAMELET_NEXT
+    return gamelet.NEXT
 end

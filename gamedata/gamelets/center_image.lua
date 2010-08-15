@@ -2,38 +2,36 @@
 -- Switch to the menu gamelet when a key is pressed.
 
 require "game"
+require "sdl"
 require "sprite"
 
-require "sdl"
+module(..., package.seeall)
 
-gamelets.new(...)
+MT = { __index = getfenv() }
 
-function new(self, opts)
-    local inst = gamelets.instance(self)
-    inst.loaded_image = sprite:new(opts.image)
+function new(g, o)
+    local inst = o or {}
+    inst.loaded_image = sprite:new(inst.image)
+    setmetatable(inst, MT)
     return inst
 end
 
 function event(self, e)
     if e.type == SDL.SDL_KEYDOWN then
-        gamelets.stack:pop()
-        gamelets.stack:pop()
-        gamelets.stack:push(gamelets("menu"):new{
+        table.remove(gamelet.stack)
+        table.remove(gamelet.stack)
+        table.insert(gamelet.stack, gamelet("menu"):new{
             items = {7, 5, 9},
             default = 2
         })
-        gamelets.stack:push(gamelets("top_text"):new{
+        table.insert(gamelet.stack, gamelet("top_text"):new{
             font = "test/bitstream-vera-sans-bold-24pt.png",
             text = "A menu is below"
         })
-        return gamelets.GAMELET_REDRAW
+        return game.GAME_REDRAW
     elseif e.type == SDL.SDL_QUIT then
-        return gamelets.GAMELET_QUIT
+        return game.GAME_QUIT
     end
-end
-
-function update(self, delta)
-    -- Nothing to update.
 end
 
 function draw(self)

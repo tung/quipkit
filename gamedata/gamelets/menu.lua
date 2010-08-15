@@ -3,37 +3,35 @@
 -- When Enter is pressed, switch to the center_image gamelet.
 
 require "game"
+require "sdl"
 require "sprite"
 
-require "sdl"
+module(..., package.seeall)
 
-gamelets.new(...)
+MT = { __index = getfenv() }
 
-function new(self, opts)
-    local inst = gamelets.instance(self)
+function new(g, o)
+    local inst = o or {}
 
     -- Ensure all items are 1+ in length.
-    inst.items = {}
-    for i in ipairs(opts.items) do
-        if opts.items[i] > 0 then
-            inst.items[i] = opts.items[i]
-        else
+    for i, v in ipairs(inst.items) do
+        if v < 1 then
             inst.items[i] = 1
         end
     end
 
     -- Set default menu selection.
-    local num_items = #(inst.items)
-    if opts.default < 1 then
-        isnt.selection = 1
-    elseif opts.default > num_items then
-        inst.selection = num_items
+    if inst.default ~= nil then
+        inst.selection = inst.default
     else
-        inst.selection = opts.default
+        inst.selection = 1
     end
+    if inst.selection < 1 then inst.selection = 1 end
+    if inst.selection > #inst.items then inst.selection = #inst.items end
 
     inst.blob = sprite:new("test/glob.png", 32, 32)
 
+    setmetatable(inst, MT)
     return inst
 end
 
@@ -42,34 +40,32 @@ function event(self, e)
         local key = e.key.keysym.sym
         if key == SDL.SDLK_DOWN then
             self.selection = self.selection + 1
-            if self.selection > #(self.items) then
-                self.selection = 1
-            end
+            if self.selection > #self.items then self.selection = 1 end
         elseif key == SDL.SDLK_UP then
             self.selection = self.selection - 1
-            if self.selection < 1 then
-                self.selection = #(self.items)
-            end
+            if self.selection < 1 then self.selection = #self.items end
         elseif key == SDL.SDLK_RETURN then
-            gamelets.stack:pop()
-            gamelets.stack:pop()
-            gamelets.stack:push(gamelets("center_image"):new{
+            table.remove(gamelet.stack)
+            table.remove(gamelet.stack)
+            table.insert(gamelet.stack, gamelet("center_image"):new{
                 image = "test/smile.png",
                 scale = 8.0
             })
-            gamelets.stack:push(gamelets("top_text"):new{
+            table.insert(gamelet.stack, gamelet("top_text"):new{
                 font = "test/bitstream-vera-sans-bold-24pt.png",
                 text = "Image again"
             })
         elseif key == SDL.SDLK_ESCAPE then
-            return gamelets.GAMELET_QUIT
+            return game.GAME_QUIT
         else
             return
         end
-        return gamelets.GAMELET_REDRAW
+        return game.GAME_REDRAW
 
     elseif e.type == SDL.SDL_QUIT then
-        return gamelets.GAMELET_QUIT
+        return game.GAME_QUIT
+    elseif e.type == SDL.SDL_VIDEOEXPOSE or e.type == SDL.SDL_ACTIVEEVENT then
+        return game.GAME_REDRAW
     end
 end
 
