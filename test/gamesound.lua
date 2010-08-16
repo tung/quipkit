@@ -8,7 +8,7 @@ end
 
 function game.update(delta)
     if proAudio.soundActive() == 0 then
-        return game.GAME_QUIT
+        return game.QUIT
     end
     proAudio.sleep(0.05)
 end

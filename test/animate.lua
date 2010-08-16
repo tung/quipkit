@@ -15,7 +15,7 @@ end
 
 function game.event(e)
     if e.type == SDL.SDL_QUIT then
-        return game.GAME_QUIT
+        return game.QUIT
     end
 end
 
@@ -38,7 +38,7 @@ function game.update(ms_delta)
         tile_tick = tile_tick - tile_advance
     end
 
-    return game.GAME_REDRAW
+    return game.REDRAW
 end
 
 function game.draw()

@@ -22,19 +22,19 @@ exit = function ()
 end
 
 -- Valid return values for event()/update().
-GAME_QUIT = 1       -- Stop the game loop.
-GAME_REDRAW = 2     -- Call the draw() function.
+QUIT = {}       -- Stop the game loop.
+REDRAW = {}     -- Call the draw() function.
 
 -- User-defined event hook.
 event = function (e)
     if e.type == SDL.SDL_VIDEOEXPOSE or e.type == SDL.SDL_ACTIVEEVENT then
-        return GAME_REDRAW
+        return REDRAW
     elseif e.type == SDL.SDL_QUIT then
-        return GAME_QUIT
+        return QUIT
     end
 end
 
--- User-defined game logic update hook. Should usually return GAME_REDRAW.
+-- User-defined game logic update hook. Should usually return REDRAW.
 update = function (delta)
     SDL.SDL_Delay(10)
 end
@@ -65,13 +65,13 @@ local _event
 
 -- Main game loop. Called by game.run()
 local function _loop()
-    local e_result = GAME_REDRAW
-    local u_result = GAME_REDRAW
+    local e_result = REDRAW
+    local u_result = REDRAW
     local current_time
     local last_time = SDL.SDL_GetTicks()
     while true do
         -- Draw.
-        if e_result == GAME_REDRAW or u_result == GAME_REDRAW then
+        if e_result == REDRAW or u_result == REDRAW then
             gl.MatrixMode(gl.MODELVIEW)
             gl.LoadIdentity()
             draw()
@@ -83,13 +83,13 @@ local function _loop()
         while SDL.SDL_PollEvent(_event) == 1 do
             e_result = event(_event)
         end
-        if e_result == GAME_QUIT then return end
+        if e_result == QUIT then return end
 
         -- Update.
         current_time = SDL.SDL_GetTicks()
         u_result = update(current_time - last_time)
         last_time = current_time
-        if u_result == GAME_QUIT then return end
+        if u_result == QUIT then return end
 
         sdlgl.checkGlError()
     end

@@ -28,9 +28,11 @@ function event(self, e)
             font = "test/bitstream-vera-sans-bold-24pt.png",
             text = "A menu is below"
         })
-        return game.GAME_REDRAW
+        return game.REDRAW
     elseif e.type == SDL.SDL_QUIT then
-        return game.GAME_QUIT
+        return game.QUIT
+    elseif e.type == SDL.SDL_VIDEOEXPOSE or e.type == SDL.SDL_ACTIVEEVENT then
+        return game.REDRAW
     end
 end
 

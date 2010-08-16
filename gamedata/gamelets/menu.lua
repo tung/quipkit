@@ -56,16 +56,16 @@ function event(self, e)
                 text = "Image again"
             })
         elseif key == SDL.SDLK_ESCAPE then
-            return game.GAME_QUIT
+            return game.QUIT
         else
             return
         end
-        return game.GAME_REDRAW
+        return game.REDRAW
 
     elseif e.type == SDL.SDL_QUIT then
-        return game.GAME_QUIT
+        return game.QUIT
     elseif e.type == SDL.SDL_VIDEOEXPOSE or e.type == SDL.SDL_ACTIVEEVENT then
-        return game.GAME_REDRAW
+        return game.REDRAW
     end
 end
 

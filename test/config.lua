@@ -30,7 +30,7 @@ function game.event(e)
             quit = true
         end
         if key == SDL.SDLK_UP or key == SDL.SDLK_DOWN then
-            return game.GAME_REDRAW
+            return game.REDRAW
         end
     elseif e.type == SDL.SDL_QUIT then
         quit = true
@@ -43,7 +43,7 @@ function game.event(e)
             game.setScreenSize(320, 240)
         end
         game.saveConfig()
-        return game.GAME_QUIT
+        return game.QUIT
     end
 end
 

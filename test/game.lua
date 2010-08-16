@@ -4,7 +4,7 @@ require "sdl"
 
 function game.event(e)
     if e.type == SDL.SDL_QUIT then
-        return game.GAME_QUIT
+        return game.QUIT
     end
 end
 
@@ -12,7 +12,7 @@ local milliseconds = 0
 function game.update(delta)
     milliseconds = milliseconds + delta
     if milliseconds >= 5000 then
-        return game.GAME_QUIT
+        return game.QUIT
     end
 end
 
