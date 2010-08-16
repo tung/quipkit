@@ -105,7 +105,7 @@ end
 
 The @event@, @update@ and @draw@ methods of each gamelet can return @gamelet.NEXT@ to go one down the stack and repeat the same call in that gamelet if it's there.
 
-If @event@, @update@ or @draw@ return any other value, it will be returned by the same method of @gamelet.stack@. For example, if you're using "game.lua":game.textile, returning @game.GAME_REDRAW@ prompts a redraw of the game screen, while returning @game.GAME_QUIT@ ends the game loop.
+If @event@, @update@ or @draw@ return any other value, it will be returned by the same method of @gamelet.stack@. For example, if you're using "game.lua":doc/game.textile, returning @game.GAME_REDRAW@ prompts a redraw of the game screen, while returning @game.GAME_QUIT@ ends the game loop.
 
 
 h3. Controlling the Stack

@@ -2,7 +2,7 @@ h1. sdlgl.lua Package
 
 sdlgl.lua helps you use SDL with OpenGL. Specifically, it can make managed OpenGL textures from SDL surfaces.
 
-This package is used by other higher-level packages. If you just want to load an image and draw it, check out the "sprite.lua package":sprite.textile.
+This package is used by other higher-level packages. If you just want to load an image and draw it, check out the "sprite.lua package":doc/sprite.textile.
 
 
 h2. Usage
@@ -35,7 +35,7 @@ h3. Functions
 
 h4. sdlgl.checkGlError() - nil
 
-Check for any pending OpenGL errors. Raise a Lua error if an OpenGL error was detected. It's a good idea to call this every so often to see if OpenGL calls fail, e.g. "game.lua":game.textile calls it regularly in its game loop.
+Check for any pending OpenGL errors. Raise a Lua error if an OpenGL error was detected. It's a good idea to call this every so often to see if OpenGL calls fail, e.g. "game.lua":doc/game.textile calls it regularly in its game loop.
 
 h4. sdlgl.texture:new(sdl_surface) - sdlgl.texture object
 
