@@ -2,7 +2,6 @@
 #include <GL/glu.h>
 #include <lua.h>
 #include <lauxlib.h>
-#include <math.h>
 #include <SDL.h>
 
 
@@ -153,8 +152,8 @@ static int TextureNew(lua_State *L) {
 
     /* Import the pixels with the right dimensions and format. */
     SDL_Surface *proxy;
-    int full_w = (int)pow(2, ceil(log(surface->w) / log(2)));
-    int full_h = (int)pow(2, ceil(log(surface->h) / log(2)));
+    int full_w = surface->w;
+    int full_h = surface->h;
     proxy = SDL_CreateRGBSurface(SDL_SWSURFACE, full_w, full_h, 32,
                                  RMASK, GMASK, BMASK, AMASK);
     if (proxy == NULL) {

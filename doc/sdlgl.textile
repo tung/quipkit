@@ -26,7 +26,7 @@ print("OpenGL texture width = ", my_tex.texW)
 print("OpenGL texture height = ", my_tex.texH)
 </code></pre>
 
-@my_tex@ now has members that you can read, such as the original width and height of the texture, as well as its OpenGL texture ID. sdlgl loads textures to a width and height that are each the smallest power of two that can fit the original surface, and these can also be read as members.
+@my_tex@ now has members that you can read, such as the width and height of the texture, as well as its OpenGL texture ID.
 
 
 h2. Reference
