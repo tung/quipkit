@@ -102,6 +102,10 @@ function run()
         error("Failed to initialize SDL: " .. SDL.SDL_GetError(), 2)
     end
 
+    if SDL.TTF_Init() == -1 then
+        error("Failed to initialize SDL_ttf: " .. SDL.TTF_GetError(), 2)
+    end
+
     SDL.SDL_GL_SetAttribute(SDL.SDL_GL_DOUBLEBUFFER, 1)
     SDL.SDL_GL_SetAttribute(SDL.SDL_GL_RED_SIZE, 8)
     SDL.SDL_GL_SetAttribute(SDL.SDL_GL_GREEN_SIZE, 8)
@@ -138,6 +142,7 @@ function run()
     local success, error_message
     success, error_message = pcall(_loop)
     if not success then
+        SDL.TTF_Quit()
         SDL.SDL_Quit()
         proAudio.destroy()
         error("Error in game loop: " .. error_message, 2)
@@ -148,6 +153,7 @@ function run()
     -- Close audio device.
     proAudio.destroy()
 
+    SDL.TTF_Quit()
     SDL.SDL_Quit()
 end
 
