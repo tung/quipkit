@@ -107,6 +107,14 @@ static int RawBlit(SDL_Surface *src, SDL_Surface *dest) {
  * Exported sdlgl functions
  */
 
+static int CheckGlError(lua_State *L) {
+    GLenum gl_error = glGetError();
+    if (gl_error != GL_NO_ERROR)
+        return luaL_error(L, "OpenGL error: %s", gluErrorString(gl_error));
+    return 0;
+}
+
+
 /* __gc finaliser metamethod of sdlgl.texture userdata. */
 static int TextureGc(lua_State *L) {
     sdlgl_Texture *tex = luaL_checkudata(L, 1, "sdlgl.texture");
@@ -202,14 +210,6 @@ static int TextureNew(lua_State *L) {
     lua_setmetatable(L, -2);
 
     return 1;
-}
-
-
-static int CheckGlError(lua_State *L) {
-    GLenum gl_error = glGetError();
-    if (gl_error != GL_NO_ERROR)
-        return luaL_error(L, "OpenGL error: %s", gluErrorString(gl_error));
-    return 0;
 }
 
 
