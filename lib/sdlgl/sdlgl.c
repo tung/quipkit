@@ -3,6 +3,7 @@
 #include <lua.h>
 #include <lauxlib.h>
 #include <SDL.h>
+#include <SDL_ttf.h>
 
 
 
@@ -102,6 +103,55 @@ static int RawBlit(SDL_Surface *src, SDL_Surface *dest) {
 }
 
 
+/* Import surface pixels into the userdatum sdlgl_Texture provided. */
+static int SurfaceToTexture(lua_State *L, SDL_Surface *surface, sdlgl_Texture *tex) {
+    /* Import the pixels with the right format. */
+    SDL_Surface *proxy;
+    int full_w = surface->w;
+    int full_h = surface->h;
+    proxy = SDL_CreateRGBSurface(SDL_SWSURFACE, full_w, full_h, 32,
+                                 RMASK, GMASK, BMASK, AMASK);
+    if (proxy == NULL) {
+        return luaL_error(L, "SDL_CreateRGBSurface failed: %s", SDL_GetError());
+    }
+    if (RawBlit(surface, proxy) == -1) {
+        SDL_FreeSurface(proxy);
+        return luaL_error(L, "cannot convert SDL_Surface to needed format");
+    }
+
+    /* Load the pixels into an OpenGL texture. */
+    GLuint textures[1];
+    glGenTextures(1, textures);
+    glBindTexture(GL_TEXTURE_2D, textures[0]);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    if (SDL_MUSTLOCK(proxy) && SDL_LockSurface(proxy) == -1) {
+        glDeleteTextures(1, textures);
+        SDL_FreeSurface(proxy);
+        return luaL_error(L, "cannot lock proxy SDL_Surface for conversion");
+    }
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, full_w, full_h, 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, proxy->pixels);
+    SDL_FreeSurface(proxy);
+
+    /* Check for OpenGL errors. */
+    GLenum gl_error = glGetError();
+    if (gl_error != GL_NO_ERROR) {
+        glDeleteTextures(1, textures);
+        return luaL_error(L, "OpenGL error: %s", gluErrorString(gl_error));
+    }
+
+    /* Set the sdlgl.texture userdatum fields. */
+    tex->w = surface->w;
+    tex->h = surface->h;
+    tex->texId = textures[0];
+    tex->texW = full_w;
+    tex->texH = full_h;
+
+    return 1;
+}
+
+
 
 /**
  * Exported sdlgl functions
@@ -157,59 +207,52 @@ static int TextureNew(lua_State *L) {
         return luaL_error(L, "cannot convert null SDL_Surface at arg 2");
     }
     SDL_Surface *surface = *((SDL_Surface **)ud);
-
-    /* Import the pixels with the right dimensions and format. */
-    SDL_Surface *proxy;
-    int full_w = surface->w;
-    int full_h = surface->h;
-    proxy = SDL_CreateRGBSurface(SDL_SWSURFACE, full_w, full_h, 32,
-                                 RMASK, GMASK, BMASK, AMASK);
-    if (proxy == NULL) {
-        return luaL_error(L, "SDL_CreateRGBSurface failed: %s", SDL_GetError());
-    }
-    if (RawBlit(surface, proxy) == -1) {
-        SDL_FreeSurface(proxy);
-        return luaL_error(L, "cannot convert SDL_Surface to needed format");
-    }
-
-    /* Load the pixels into an OpenGL texture. */
-    GLuint textures[1];
-    glGenTextures(1, textures);
-    glBindTexture(GL_TEXTURE_2D, textures[0]);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    if (SDL_MUSTLOCK(proxy) && SDL_LockSurface(proxy) == -1) {
-        glDeleteTextures(1, textures);
-        SDL_FreeSurface(proxy);
-        return luaL_error(L, "cannot lock proxy SDL_Surface for conversion");
-    }
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, full_w, full_h, 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, proxy->pixels);
-    SDL_FreeSurface(proxy);
-
-    /* Check for OpenGL errors. */
-    GLenum gl_error = glGetError();
-    if (gl_error != GL_NO_ERROR) {
-        glDeleteTextures(1, textures);
-        return luaL_error(L, "OpenGL error: %s", gluErrorString(gl_error));
-    }
-
-    /* Create the sdlgl.texture userdatum. */
-    sdlgl_Texture *tex;
-    tex = (sdlgl_Texture *)lua_newuserdata(L, sizeof(sdlgl_Texture));
+    sdlgl_Texture *tex = (sdlgl_Texture *)lua_newuserdata(L, sizeof(sdlgl_Texture));
     if (tex == NULL) {
-        glDeleteTextures(1, textures);
         return luaL_error(L, "cannot allocate new sdlgl.texture userdatum");
     }
-    tex->w = surface->w;
-    tex->h = surface->h;
-    tex->texId = textures[0];
-    tex->texW = full_w;
-    tex->texH = full_h;
     luaL_getmetatable(L, "sdlgl.texture");
     lua_setmetatable(L, -2);
+    return SurfaceToTexture(L, surface, tex);
+}
 
-    return 1;
+
+/* Constructor for sdlgl.texture userdatum, with SDL_ttf's TTF_RenderText_Blended. */
+/* userdatum<TTF_Font **> font, string text, table{r, g, b} fg -> userdatum<sdlgl.texture> */
+static int TextureNewTextBlended(lua_State *L) {
+    if (!lua_isuserdata(L, 2)) {
+        return luaL_error(L, "expected userdatum at arg 2, got %d %s", lua_isuserdata(L, 2), lua_typename(L, 2));
+    }
+    void *font_ud = lua_touserdata(L, 2);
+    if (font_ud == NULL) {
+        return luaL_error(L, "cannot draw with null TTF_Font at arg 2");
+    }
+    TTF_Font *font = *((TTF_Font **)font_ud);
+    const char *text = luaL_checkstring(L, 3);
+    if (!lua_istable(L, 4) || lua_objlen(L, 4) != 3) {
+        return luaL_error(L, "expected {r, g, b} at arg 4, got %s", lua_typename(L, 4));
+    }
+    SDL_Color fg;
+    lua_rawgeti(L, 4, 1);
+    fg.r = luaL_checkint(L, -1);
+    lua_pop(L, 1);
+    lua_rawgeti(L, 4, 2);
+    fg.g = luaL_checkint(L, -1);
+    lua_pop(L, 1);
+    lua_rawgeti(L, 4, 3);
+    fg.b = luaL_checkint(L, -1);
+    lua_pop(L, 1);
+    SDL_Surface *rendered = TTF_RenderText_Blended(font, text, fg);
+    if (rendered == NULL) {
+        return luaL_error(L, "TTF_RenderText_Blended failed: %s", TTF_GetError());
+    }
+    sdlgl_Texture *tex = (sdlgl_Texture *)lua_newuserdata(L, sizeof(sdlgl_Texture));
+    if (tex == NULL) {
+        return luaL_error(L, "cannot allocate new sdlgl.texture userdatum");
+    }
+    luaL_getmetatable(L, "sdlgl.texture");
+    lua_setmetatable(L, -2);
+    return SurfaceToTexture(L, rendered, tex);
 }
 
 
@@ -222,6 +265,7 @@ static const struct luaL_reg sdlgl_TextureMethods[] = {
     {"__gc", TextureGc},
     {"__index", TextureIndex},
     {"new", TextureNew},
+    {"newTextBlended", TextureNewTextBlended},
     {NULL, NULL}
 };
 

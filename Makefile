@@ -125,7 +125,7 @@ clean_proteaaudio:
 ### sdlgl helper library ##
 
 SDLGL_CFLAGS:=${QKENG_CFLAGS} ${SDL_CFLAGS} ${GL_CFLAGS}
-SDLGL_LIBS:=${QKENG_LIBS} ${SDL_LIBS} ${GL_LIBS}
+SDLGL_LIBS:=${QKENG_LIBS} ${SDL_LIBS} -lSDL_ttf ${GL_LIBS}
 
 ${SDLGL_DIR}libsdlgl.so: ${SDLGL_DIR}sdlgl.o
 	gcc -shared -Wl,-soname,$(notdir $@) -o $@ ${SDLGL_LIBS} $^
