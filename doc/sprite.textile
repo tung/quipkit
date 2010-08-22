@@ -47,6 +47,10 @@ h4. sprite:new(image_path, [tile_width, tile_height])
 
 Load and return a new sprite object. If tile_width and tile_height are given, @setTile@ can be used later to pick which tile is drawn.
 
+h4. sprite:newTextBlended(font, text, color)
+
+Render text to a new sprite using a TrueType font loaded with a function like @SDL.TTF_OpenFont@. The color should be a table of the form @{red, green, blue}@, where each entry is a number from 0 to 255.
+
 
 h3. Sprite Object
 
