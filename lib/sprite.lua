@@ -64,6 +64,64 @@ function newTextBlended(self, font, text, color)
     return s
 end
 
+function newTextShaded(self, font, text, fg_color, bg_color)
+    local fg = SDL.SDL_Color_local()
+    fg.r = fg_color[1]
+    fg.g = fg_color[2]
+    fg.b = fg_color[3]
+    local bg = SDL.SDL_Color_local()
+    bg.r = bg_color[1]
+    bg.g = bg_color[2]
+    bg.b = bg_color[3]
+    local tmp = SDL.TTF_RenderText_Shaded(font, text, fg, bg)
+    if not tmp then
+        error("TTF_RenderText_Shaded failed: " .. SDL.TTF_GetError())
+    end
+
+    local tex = sdlgl.texture:new(tmp)
+    SDL.SDL_FreeSurface(tmp)
+
+    local s = {
+        texture = tex,
+        w = tex.texW,
+        h = tex.texH,
+        tile_w = tex.texW,
+        tile_h = tex.texH,
+        tile_x = 0,
+        tile_y = 0
+    }
+    setmetatable(s, {__index = self})
+    self.__index = self
+    return s
+end
+
+function newTextSolid(self, font, text, color)
+    local fg = SDL.SDL_Color_local()
+    fg.r = color[1]
+    fg.g = color[2]
+    fg.b = color[3]
+    local tmp = SDL.TTF_RenderText_Solid(font, text, fg)
+    if not tmp then
+        error("TTF_RenderText_Solid failed: " .. SDL.TTF_GetError())
+    end
+
+    local tex = sdlgl.texture:new(tmp)
+    SDL.SDL_FreeSurface(tmp)
+
+    local s = {
+        texture = tex,
+        w = tex.texW,
+        h = tex.texH,
+        tile_w = tex.texW,
+        tile_h = tex.texH,
+        tile_x = 0,
+        tile_y = 0
+    }
+    setmetatable(s, {__index = self})
+    self.__index = self
+    return s
+end
+
 function setTile(self, tile_x, tile_y)
     self.tile_x = tile_x
     self.tile_y = tile_y

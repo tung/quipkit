@@ -49,7 +49,15 @@ Load and return a new sprite object. If tile_width and tile_height are given, @s
 
 h4. sprite:newTextBlended(font, text, color)
 
-Render text to a new sprite using a TrueType font loaded with a function like @SDL.TTF_OpenFont@. The color should be a table of the form @{red, green, blue}@, where each entry is a number from 0 to 255.
+Render text to a new sprite using a TrueType font loaded with a function like @SDL.TTF_OpenFont@. The color should be a table of the form @{red, green, blue}@, where each entry is a number from 0 to 255. Uses @TTF_RenderText_Blended@ for rendering.
+
+h4. sprite:newTextShaded(font, text, foreground_color, background_color)
+
+Render text to a new sprite using a TrueType font loaded with a function like @SDL.TTF_OpenFont@. The colors should be tables of the form @{red, green, blue}@, where each entry is a number from 0 to 255. Uses @TTF_RenderText_Shaded@ for rendering.
+
+h4. sprite:newTextSolid(font, text, color)
+
+Render text to a new sprite using a TrueType font loaded with a function like @SDL.TTF_OpenFont@. The color should be a table of the form @{red, green, blue}@, where each entry is a number from 0 to 255. Uses @TTF_RenderText_Solid@ for rendering.
 
 
 h3. Sprite Object
