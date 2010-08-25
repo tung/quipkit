@@ -9,7 +9,12 @@ const char *MAIN_SCRIPT = "main.lua";
 
 
 int main(int argc, char *argv[]) {
-    lua_State *L = (lua_State *)lua_open();
+    lua_State *L = luaL_newstate();
+    if (L == NULL) {
+        fprintf(stderr, "Could not initialize new Lua state\n");
+        return 1;
+    }
+
     luaL_openlibs(L);
 
     if (luaL_loadfile(L, INIT_SCRIPT) || lua_pcall(L, 0, 0, 0)) {
