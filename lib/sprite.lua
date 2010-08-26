@@ -37,18 +37,9 @@ function new(self, image_file, tile_w, tile_h)
     return s
 end
 
-function newTextBlended(self, font, text, color)
-    local fg = SDL.SDL_Color_local()
-    fg.r = color[1]
-    fg.g = color[2]
-    fg.b = color[3]
-    local tmp = SDL.TTF_RenderText_Blended(font, text, fg)
-    if not tmp then
-        error("TTF_RenderText_Blended failed: " .. SDL.TTF_GetError())
-    end
-
-    local tex = sdlgl.texture:new(tmp)
-    SDL.SDL_FreeSurface(tmp)
+local function spriteFromSurface(self, surface)
+    local tex = sdlgl.texture:new(surface)
+    SDL.SDL_FreeSurface(surface)
 
     local s = {
         texture = tex,
@@ -62,6 +53,18 @@ function newTextBlended(self, font, text, color)
     setmetatable(s, {__index = self})
     self.__index = self
     return s
+end
+
+function newTextBlended(self, font, text, color)
+    local fg = SDL.SDL_Color_local()
+    fg.r = color[1]
+    fg.g = color[2]
+    fg.b = color[3]
+    local tmp = SDL.TTF_RenderText_Blended(font, text, fg)
+    if not tmp then
+        error("TTF_RenderText_Blended failed: " .. SDL.TTF_GetError())
+    end
+    return spriteFromSurface(self, tmp)
 end
 
 function newTextShaded(self, font, text, fg_color, bg_color)
@@ -77,22 +80,7 @@ function newTextShaded(self, font, text, fg_color, bg_color)
     if not tmp then
         error("TTF_RenderText_Shaded failed: " .. SDL.TTF_GetError())
     end
-
-    local tex = sdlgl.texture:new(tmp)
-    SDL.SDL_FreeSurface(tmp)
-
-    local s = {
-        texture = tex,
-        w = tex.texW,
-        h = tex.texH,
-        tile_w = tex.texW,
-        tile_h = tex.texH,
-        tile_x = 0,
-        tile_y = 0
-    }
-    setmetatable(s, {__index = self})
-    self.__index = self
-    return s
+    return spriteFromSurface(self, tmp)
 end
 
 function newTextSolid(self, font, text, color)
@@ -104,22 +92,7 @@ function newTextSolid(self, font, text, color)
     if not tmp then
         error("TTF_RenderText_Solid failed: " .. SDL.TTF_GetError())
     end
-
-    local tex = sdlgl.texture:new(tmp)
-    SDL.SDL_FreeSurface(tmp)
-
-    local s = {
-        texture = tex,
-        w = tex.texW,
-        h = tex.texH,
-        tile_w = tex.texW,
-        tile_h = tex.texH,
-        tile_x = 0,
-        tile_y = 0
-    }
-    setmetatable(s, {__index = self})
-    self.__index = self
-    return s
+    return spriteFromSurface(self, tmp)
 end
 
 function setTile(self, tile_x, tile_y)
