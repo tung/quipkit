@@ -4,6 +4,7 @@
 
 require "game"
 require "sdl"
+require "sfont"
 require "sprite"
 
 module(..., package.seeall)
@@ -13,11 +14,9 @@ MT = { __index = getfenv() }
 function new(g, o)
     local inst = o or {}
 
-    -- Ensure all items are 1+ in length.
+    -- Normalise all items to strings.
     for i, v in ipairs(inst.items) do
-        if v < 1 then
-            inst.items[i] = 1
-        end
+        inst.items[i] = tostring(v)
     end
 
     -- Set default menu selection.
@@ -30,6 +29,7 @@ function new(g, o)
     if inst.selection > #inst.items then inst.selection = #inst.items end
 
     inst.blob = sprite:new("test/glob.png", 32, 32)
+    inst.font = sfont.glFont:new("test/bitstream-vera-sans-bold-24pt.png")
 
     setmetatable(inst, MT)
     return inst
@@ -53,7 +53,7 @@ function event(self, e)
             })
             table.insert(gamelet.stack, gamelet("top_text"):new{
                 font = "test/bitstream-vera-sans-bold-24pt.png",
-                text = "Image again"
+                text = "Press any key"
             })
         elseif key == SDL.SDLK_ESCAPE then
             return game.QUIT
@@ -83,8 +83,6 @@ function draw(self)
 
     -- Draw the items.
     for i in ipairs(self.items) do
-        for x = 1, self.items[i] do
-            self.blob:draw(self.blob.tile_w * (1 + x), self.blob.tile_h *  (i - 1))
-        end
+        self.font:write(self.blob.tile_w + 16, self.blob.tile_h * (i - 1), self.items[i])
     end
 end

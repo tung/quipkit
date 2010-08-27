@@ -23,7 +23,7 @@ function game.init()
     })
     table.insert(gamelet.stack, gamelet("top_text"):new{
         font = "test/bitstream-vera-sans-bold-24pt.png",
-        text = "A title in the background."
+        text = "Press any key"
     })
 end
 

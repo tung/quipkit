@@ -21,12 +21,12 @@ function event(self, e)
         table.remove(gamelet.stack)
         table.remove(gamelet.stack)
         table.insert(gamelet.stack, gamelet("menu"):new{
-            items = {7, 5, 9},
+            items = {"New Game", "Continue", "Something Else"},
             default = 2
         })
         table.insert(gamelet.stack, gamelet("top_text"):new{
             font = "test/bitstream-vera-sans-bold-24pt.png",
-            text = "A menu is below"
+            text = "Press ESC to quit"
         })
         return game.REDRAW
     elseif e.type == SDL.SDL_QUIT then
