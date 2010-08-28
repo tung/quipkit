@@ -37,6 +37,7 @@ function new(self, image_file, tile_w, tile_h)
     return s
 end
 
+
 local function spriteFromSurface(self, surface)
     local tex = sdlgl.texture:new(surface)
     SDL.SDL_FreeSurface(surface)
@@ -55,6 +56,7 @@ local function spriteFromSurface(self, surface)
     return s
 end
 
+
 function newTextBlended(self, font, text, color)
     local fg = SDL.SDL_Color_local()
     fg.r = color[1]
@@ -66,6 +68,7 @@ function newTextBlended(self, font, text, color)
     end
     return spriteFromSurface(self, tmp)
 end
+
 
 function newTextShaded(self, font, text, fg_color, bg_color)
     local fg = SDL.SDL_Color_local()
@@ -83,6 +86,7 @@ function newTextShaded(self, font, text, fg_color, bg_color)
     return spriteFromSurface(self, tmp)
 end
 
+
 function newTextSolid(self, font, text, color)
     local fg = SDL.SDL_Color_local()
     fg.r = color[1]
@@ -95,10 +99,12 @@ function newTextSolid(self, font, text, color)
     return spriteFromSurface(self, tmp)
 end
 
+
 function setTile(self, tile_x, tile_y)
     self.tile_x = tile_x
     self.tile_y = tile_y
 end
+
 
 function draw(self, x, y)
     -- Replace/draw over existing fragments (pixels).
