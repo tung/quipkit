@@ -1,50 +1,32 @@
 h1. Quipkit
 
-Hi, I'm Tung, and this is Quipkit.
+Quipkit is a 2D JRPG engine for programmers. It works on Windows and Linux.
 
-Quipkit is the _programmer's RPG kit_. With it, you can make 2D SNES-era role-playing games.
+Unlike most RPG engines, Quipkit's editor lets you create custom tools and scripts, meaning that making lots of content becomes much easier if you invest your time wisely.
 
-Making RPGs is harder than making other kinds of games:
-
-* more _code_ needs to be written
-* more _state_ needs to be kept
-* more _content_ needs to be made
-
-Split your RPG's code into modules with the **gamelet framework**. Save, load and tidy up your state with the **persistence framework**. Make and use **custom tools** that help you and your team make an RPG that stands out from the rest.
+The way of Quipkit is divided into game states on a stack (called _gamelets_), assets, and the custom tools/scripts used to make said assets.
 
 
 h2. Status
 
-The engine and editor can be "built":quipkit/tree/master/doc/build.textile for Windows and Linux.
+The engine builds on both Windows and Linux: see the build instructions at doc/build.textile. It's nearly done.
 
-Running the engine shows a yellow animated character that constantly walks down the screen. Running the editor shows a small "hello world" dialog box.
-
-The basic game and sprite libs are done. The gamelet framework and font lib are nearly done. Persistence and tool support are still to come.
-
-These low-level libs are integrated and stable:
-
-* Engine
-** Input handling and image loading via SDL
-** Graphics with OpenGL
-** Audio with proteaAudio
-
-* Editor
-** GUI support via Tcl and Tk 8.5
+The editor, on the other hand, is little more than a "hello world" dialog box right now. I'm working on it, honest.
 
 
 h2. More Info
 
-View and download Quipkit's source on GitHub: "http://github.com/tung/quipkit":http://github.com/tung/quipkit
+Quipkit on **GitHub**: "http://github.com/tung/quipkit":http://github.com/tung/quipkit
 
-Report and watch for issues here: "http://github.com/tung/quipkit/issues":http://github.com/tung/quipkit/issues
+**Issues**: "http://github.com/tung/quipkit/issues":http://github.com/tung/quipkit/issues
 
-Read tips, design notes and ideas on the wiki: "http://wiki.github.com/tung/quipkit/":http://wiki.github.com/tung/quipkit/
+Quipkit **wiki**: "http://wiki.github.com/tung/quipkit/":http://wiki.github.com/tung/quipkit/
 
-Follow announcements on the Spherical forums thread: "http://www.spheredev.org/smforums/index.php/topic,4129.0.html":http://www.spheredev.org/smforums/index.php/topic,4129.0.html
+Updates at **Spherical**: "http://www.spheredev.org/smforums/index.php/topic,4129.0.html":http://www.spheredev.org/smforums/index.php/topic,4129.0.html
 
 
 h2. License
 
-Quipkit comes under the GNU LGPL Version 3. See COPYING for details. If you change it and share it, be awesome and share the source too!
+Quipkit comes under the GNU LGPL Version 3. See COPYING for details.
 
-Quipkit uses many other libraries, some in source, some pre-compiled. See their respective directories for their license terms.
+Quipkit uses lots of other libraries, some as source, others pre-compiled. See their respective folders for their individual license terms.
