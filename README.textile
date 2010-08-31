@@ -27,6 +27,6 @@ Updates at **Spherical**: "http://www.spheredev.org/smforums/index.php/topic,412
 
 h2. License
 
-Quipkit comes under the GNU LGPL Version 3. See COPYING for details.
+Quipkit comes under the GNU LGPL Version 3. See doc/COPYING for details.
 
 Quipkit uses lots of other libraries, some as source, others pre-compiled. See their respective folders for their individual license terms.
