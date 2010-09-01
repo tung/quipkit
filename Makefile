@@ -6,7 +6,9 @@ ALSA_CFLAGS:=
 ALSA_LIBS:=-lasound
 
 GL_CFLAGS:=`pkg-config --cflags gl`
-GL_LIBS:=`pkg-config --libs gl` -lGLU
+GL_LIBS:=`pkg-config --libs gl`
+GLU_CFLAGS:=
+GLU_LIBS:=-lGLU
 
 LUA_CFLAGS:=`pkg-config --cflags lua5.1`
 LUA_LIBS:=`pkg-config --libs lua5.1`
@@ -20,6 +22,7 @@ TCLTK_LIBS:=-ltcl8.5
 
 
 LTCLTK_DIR:=dev/lib/tcltk/ltcltk-0.9-1/
+LUAGL_DIR:=lib/gl/luagl/
 LUASDL_DIR:=lib/sdl/LuaSDL_new/
 LUASDL_DIR_BACK:=../../../
 OLDLUASDL_DIR:=lib/sdl/luaSDL/
@@ -32,10 +35,10 @@ TOLUAPP_DIR:=contrib/tolua++/
 ### Tasks ###
 
 .PHONY: all
-all: game ${LUASDL_DIR}libluasdl.so all_toluapp ${PROTEAAUDIO_DIR}libproaudio.so ${SDLGL_DIR}libsdlgl.so edit ${LTCLTK_DIR}ltcl.so
+all: game all_luagl ${LUASDL_DIR}libluasdl.so all_toluapp ${PROTEAAUDIO_DIR}libproaudio.so ${SDLGL_DIR}libsdlgl.so edit ${LTCLTK_DIR}ltcl.so
 
 .PHONY: clean
-clean: clean_game clean_luasdl clean_toluapp clean_proteaaudio clean_sdlgl clean_edit clean_ltcltk
+clean: clean_game clean_luagl clean_luasdl clean_toluapp clean_proteaaudio clean_sdlgl clean_edit clean_ltcltk
 
 
 
@@ -54,6 +57,38 @@ game.o: game.c
 clean_game:
 	-rm -f game
 	-rm -f game.o
+
+
+### LuaGL ###
+
+LUAGL_CFLAGS:=-Wall -O2
+# No LUAGL_LIBS because none of these modules share common lib flags.
+
+.PHONY: all_luagl
+all_luagl: ${LUAGL_DIR}libluagl.so ${LUAGL_DIR}libluaglu.so
+
+${LUAGL_DIR}libluagl.so: ${LUAGL_DIR}luagl.o ${LUAGL_DIR}luagl_const.o ${LUAGL_DIR}luagl_util.o
+	gcc -shared -Wl,-soname,$(notdir $@) -o $@ ${GL_LIBS} $^
+
+${LUAGL_DIR}luagl.o: ${LUAGL_DIR}luagl.c ${LUAGL_DIR}luagl.h ${LUAGL_DIR}luagl_const.h ${LUAGL_DIR}luagl_util.h
+	gcc -fPIC -o $@ ${LUAGL_CFLAGS} ${LUA_CFLAGS} ${GL_CFLAGS} -c $<
+
+${LUAGL_DIR}luagl_const.o: ${LUAGL_DIR}luagl_const.c ${LUAGL_DIR}luagl_const.h ${LUAGL_DIR}luagl_util.h
+	gcc -fPIC -o $@ ${LUAGL_CFLAGS} ${LUA_CFLAGS} ${GL_CFLAGS} -c $<
+
+${LUAGL_DIR}luagl_util.o: ${LUAGL_DIR}luagl_util.c ${LUAGL_DIR}luagl_util.h
+	gcc -fPIC -o $@ ${LUAGL_CFLAGS} ${LUA_CFLAGS} -c $<
+
+${LUAGL_DIR}libluaglu.so: ${LUAGL_DIR}luaglu.o ${LUAGL_DIR}luagl_const.o ${LUAGL_DIR}luagl_util.o
+	gcc -shared -Wl,-soname,$(notdir $@) -o $@ ${GL_LIBS} ${GLU_LIBS} $^
+
+${LUAGL_DIR}luaglu.o: ${LUAGL_DIR}luaglu.c ${LUAGL_DIR}luaglu.h ${LUAGL_DIR}luagl_const.h ${LUAGL_DIR}luagl_util.h
+	gcc -fPIC -o $@ ${LUAGL_CFLAGS} ${LUA_CFLAGS} ${GL_CFLAGS} ${GLU_CFLAGS} -c $<
+
+.PHONY: clean_luagl
+clean_luagl:
+	-rm -f ${LUAGL_DIR}*.so
+	-rm -f ${LUAGL_DIR}*.o
 
 
 ### New LuaSDL bindings from Kein-Hong Man (needs tolua++) ###
@@ -124,8 +159,8 @@ clean_proteaaudio:
 
 ### sdlgl helper library ##
 
-SDLGL_CFLAGS:=${QKENG_CFLAGS} ${SDL_CFLAGS} ${GL_CFLAGS}
-SDLGL_LIBS:=${QKENG_LIBS} ${SDL_LIBS} ${GL_LIBS}
+SDLGL_CFLAGS:=${QKENG_CFLAGS} ${SDL_CFLAGS} ${GL_CFLAGS} ${GLU_CFLAGS}
+SDLGL_LIBS:=${QKENG_LIBS} ${SDL_LIBS} ${GL_LIBS} ${GLU_LIBS}
 
 ${SDLGL_DIR}libsdlgl.so: ${SDLGL_DIR}sdlgl.o
 	gcc -shared -Wl,-soname,$(notdir $@) -o $@ ${SDLGL_LIBS} $^
