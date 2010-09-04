@@ -59,9 +59,6 @@
 		<Unit filename="lib\gl.lua">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
-		<Unit filename="lib\png.lua">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
 		<Unit filename="lib\sdl.lua">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
