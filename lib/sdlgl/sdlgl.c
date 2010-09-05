@@ -4,6 +4,9 @@
 #include <lauxlib.h>
 #include <SDL.h>
 
+#ifdef _WIN32
+#   include "sdlgl.h"
+#endif
 
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -225,7 +228,11 @@ static const struct luaL_reg sdlgl_TextureMethods[] = {
     {NULL, NULL}
 };
 
-int luaopen_sdlgl(lua_State *L) {
+int
+#ifdef _WIN32
+DLL_EXPORT
+#endif
+luaopen_sdlgl(lua_State *L) {
     lua_createtable(L, 0, 1);
 
     lua_pushliteral(L, "texture");
@@ -241,3 +248,12 @@ int luaopen_sdlgl(lua_State *L) {
     lua_getglobal(L, "sdlgl");
     return 1;
 }
+
+#ifdef _WIN32
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
+    (void)hinstDLL;
+    (void)fdwReason;
+    (void)lpvReserved;
+    return TRUE;
+}
+#endif

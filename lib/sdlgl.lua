@@ -1,6 +1,7 @@
 local path
 if WIN32 then
-    error("sdlgl not yet supported on Windows")
+    -- TODO: Support Release target too.
+    path = "lib/sdlgl/bin/Debug/sdlgl.dll"
 else
     -- Assume Linux for now.
     path = "lib/sdlgl/libsdlgl.so"
