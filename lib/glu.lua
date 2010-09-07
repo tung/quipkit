@@ -1,6 +1,6 @@
 local path
 if WIN32 then
-    error("'glu' package not built for Windows yet")
+    path = "lib/gl/luagl/luaglu.dll"
 else
     -- Assume Linux for now.
     path = "lib/gl/luagl/libluaglu.so"
