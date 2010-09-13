@@ -2,14 +2,16 @@ To build luagl.dll and luaglu.dll in Windows:
 
 First, install MinGW and MSYS if you haven't already.
 
-Change to this directory in the MSYS prompt:
+Change to this directory in the MSYS prompt and enter these commands to build luagl.dll:
 
-$ gcc -o luagl.o -Wall -O2 -I../../../contrib/lua/include -c luagl.c
-$ gcc -o luagl_const.o -Wall -O2 -I../../../contrib/lua/include -c luagl_const.c
-$ gcc -o luagl_util.o -Wall -O2 -I../../../contrib/lua/include -c luagl_util.c
+gcc -o luagl.o -Wall -O2 -I../../../contrib/lua/include -c luagl.c
+gcc -o luagl_const.o -Wall -O2 -I../../../contrib/lua/include -c luagl_const.c
+gcc -o luagl_util.o -Wall -O2 -I../../../contrib/lua/include -c luagl_util.c
 
-$ gcc -shared -o luagl.dll luagl.o luagl_const.o luagl_util.o -L../../../contrib/lua -llua5.1 -llua51 -lopengl32
+gcc -shared -o luagl.dll luagl.o luagl_const.o luagl_util.o -L../../../contrib/lua -llua5.1 -llua51 -lopengl32
 
-$ gcc -o luaglu.o -Wall -O2 -I../../../contrib/lua/include -c luaglu.c
+After that, you can build luaglu.dll by entering these commands:
 
-$ gcc -shared -o luaglu.dll luaglu.o luagl_const.o luagl_util.o -L../../../contrib/lua -llua5.1 -llua51 -lopengl32 -lglu32
+gcc -o luaglu.o -Wall -O2 -I../../../contrib/lua/include -c luaglu.c
+
+gcc -shared -o luaglu.dll luaglu.o luagl_const.o luagl_util.o -L../../../contrib/lua -llua5.1 -llua51 -lopengl32 -lglu32
