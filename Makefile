@@ -25,6 +25,7 @@ LTCLTK_DIR:=dev/lib/tcltk/ltcltk-0.9-1/
 LUAGL_DIR:=lib/gl/luagl/
 LUASDL_DIR:=lib/sdl/LuaSDL_new/
 LUASDL_DIR_BACK:=../../../
+LUASOCKET_DIR:=dev/lib/socket/luasocket-2.0.2/
 OLDLUASDL_DIR:=lib/sdl/luaSDL/
 PROTEAAUDIO_DIR:=lib/proteaAudio/
 SDLGL_DIR:=lib/sdlgl/
@@ -35,10 +36,10 @@ TOLUAPP_DIR:=contrib/tolua++/
 ### Tasks ###
 
 .PHONY: all
-all: game all_luagl ${LUASDL_DIR}libluasdl.so all_toluapp ${PROTEAAUDIO_DIR}libproaudio.so ${SDLGL_DIR}libsdlgl.so edit ${LTCLTK_DIR}ltcl.so
+all: game all_luagl ${LUASDL_DIR}libluasdl.so all_toluapp ${PROTEAAUDIO_DIR}libproaudio.so ${SDLGL_DIR}libsdlgl.so edit all_luasocket ${LTCLTK_DIR}ltcl.so
 
 .PHONY: clean
-clean: clean_game clean_luagl clean_luasdl clean_toluapp clean_proteaaudio clean_sdlgl clean_edit clean_ltcltk
+clean: clean_game clean_luagl clean_luasdl clean_toluapp clean_proteaaudio clean_sdlgl clean_edit clean_luasocket clean_ltcltk
 
 
 
@@ -262,6 +263,17 @@ edit.o: edit.c
 clean_edit:
 	-rm -f edit
 	-rm -f edit.o
+
+
+### LuaSocket ###
+
+.PHONY: all_luasocket
+all_luasocket:
+	cd ${LUASOCKET_DIR} && make all
+
+.PHONY: clean_luasocket
+clean_luasocket:
+	cd ${LUASOCKET_DIR} && make clean
 
 
 ### Tcl bindings (and thus Tk too) ###
