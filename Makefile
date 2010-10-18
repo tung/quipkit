@@ -29,6 +29,7 @@ LUASOCKET_DIR:=dev/lib/socket/luasocket-2.0.2/
 OLDLUASDL_DIR:=lib/sdl/luaSDL/
 PROTEAAUDIO_DIR:=lib/proteaAudio/
 SDLGL_DIR:=lib/sdlgl/
+SPAWN_DIR:=dev/lib/spawn/
 TOLUAPP_DIR:=contrib/tolua++/
 
 
@@ -36,10 +37,10 @@ TOLUAPP_DIR:=contrib/tolua++/
 ### Tasks ###
 
 .PHONY: all
-all: game all_luagl ${LUASDL_DIR}libluasdl.so all_toluapp ${PROTEAAUDIO_DIR}libproaudio.so ${SDLGL_DIR}libsdlgl.so edit all_luasocket ${LTCLTK_DIR}ltcl.so
+all: game all_luagl ${LUASDL_DIR}libluasdl.so all_toluapp ${PROTEAAUDIO_DIR}libproaudio.so ${SDLGL_DIR}libsdlgl.so edit all_luasocket ${LTCLTK_DIR}ltcl.so ${SPAWN_DIR}libspawn.so
 
 .PHONY: clean
-clean: clean_game clean_luagl clean_luasdl clean_toluapp clean_proteaaudio clean_sdlgl clean_edit clean_luasocket clean_ltcltk
+clean: clean_game clean_luagl clean_luasdl clean_toluapp clean_proteaaudio clean_sdlgl clean_edit clean_luasocket clean_ltcltk clean_spawn
 
 
 
@@ -274,6 +275,23 @@ all_luasocket:
 .PHONY: clean_luasocket
 clean_luasocket:
 	cd ${LUASOCKET_DIR} && make clean
+
+
+### Spawn library ###
+
+SPAWN_CFLAGS:=${QKED_CFLAGS}
+SPAWN_LIBS:=${QKED_LIBS}
+
+${SPAWN_DIR}libspawn.so: ${SPAWN_DIR}spawn.o
+	gcc -shared -Wl,-soname,$(notdir $@) -o $@ ${SPAWN_LIBS} $+
+
+${SPAWN_DIR}spawn.o: ${SPAWN_DIR}spawn.c
+	gcc -fPIC -o $@ ${SPAWN_CFLAGS} -c $<
+
+.PHONY: clean_spawn
+clean_spawn:
+	-rm -f ${SPAWN_DIR}libspawn.so
+	-rm -f ${SPAWN_DIR}*.o
 
 
 ### Tcl bindings (and thus Tk too) ###
