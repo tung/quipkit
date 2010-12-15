@@ -22,7 +22,7 @@ Quipkit on **GitHub**: "http://github.com/tung/quipkit":http://github.com/tung/q
 
 Quipkit **wiki**: "http://wiki.github.com/tung/quipkit/":http://wiki.github.com/tung/quipkit/
 
-Updates at **Spherical**: "http://www.spheredev.org/smforums/index.php/topic,4129.0.html":http://www.spheredev.org/smforums/index.php/topic,4129.0.html
+Updates at **Spherical**: "http://spheredev.org/smforums/index.php?topic=4129.0.html":http://spheredev.org/smforums/index.php?topic=4129.0.html
 
 
 h2. License
