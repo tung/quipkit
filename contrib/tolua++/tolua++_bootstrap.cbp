@@ -2,57 +2,57 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="Quipkit (edit.exe)" />
+		<Option title="tolua++ bootstrap" />
 		<Option platforms="Windows;" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin\Debug\edit" prefix_auto="1" extension_auto="1" />
+				<Option platforms="Windows;" />
+				<Option output="bin\Debug\tolua++_bootstrap" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj\Debug\" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
+				<Linker>
+					<Add directory="lib\Debug" />
+				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="bin\Release\edit" prefix_auto="1" extension_auto="1" />
+				<Option platforms="Windows;" />
+				<Option output="bin\Release\tolua++_bootstrap" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj\Release\" />
-				<Option type="0" />
+				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add directory="lib\Release" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-Wextra" />
+			<Add option="-O2" />
 			<Add option="-Wall" />
-			<Add option="-std=c99" />
-			<Add directory="contrib\lua\include" />
+			<Add option="-ansi" />
+			<Add directory="include" />
+			<Add directory="..\lua\include" />
 		</Compiler>
 		<Linker>
-			<Add library="contrib\lua\lua51.lib" />
-			<Add library="contrib\lua\lua5.1.lib" />
-			<Add directory="contrib\lua" />
+			<Add library="tolua++" />
+			<Add library="..\lua\lua51.lib" />
+			<Add library="..\lua\lua5.1.lib" />
+			<Add directory="..\lua" />
 		</Linker>
-		<Unit filename="dev\init.lua">
-			<Option target="&lt;{~None~}&gt;" />
+		<Unit filename="include\tolua++.h" />
+		<Unit filename="src\bin\tolua.c">
+			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="dev\lib\ltcl.lua">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="dev\lib\ltk.lua">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="dev\main.lua">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="edit.c">
+		<Unit filename="src\bin\toluabind_default.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>

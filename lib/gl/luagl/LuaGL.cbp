@@ -2,24 +2,26 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="Quipkit (edit.exe)" />
+		<Option title="LuaGL (LuaGL.dll)" />
 		<Option platforms="Windows;" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin\Debug\edit" prefix_auto="1" extension_auto="1" />
+				<Option platforms="Windows;" />
+				<Option output="bin\Debug\LuaGL" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj\Debug\" />
-				<Option type="1" />
+				<Option type="3" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="bin\Release\edit" prefix_auto="1" extension_auto="1" />
+				<Option platforms="Windows;" />
+				<Option output="bin\Release\LuaGL" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj\Release\" />
-				<Option type="0" />
+				<Option type="3" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
@@ -30,31 +32,31 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-Wextra" />
+			<Add option="-O2" />
 			<Add option="-Wall" />
-			<Add option="-std=c99" />
-			<Add directory="contrib\lua\include" />
+			<Add directory="..\..\..\contrib\lua\include" />
 		</Compiler>
 		<Linker>
-			<Add library="contrib\lua\lua51.lib" />
-			<Add library="contrib\lua\lua5.1.lib" />
-			<Add directory="contrib\lua" />
+			<Add library="opengl32" />
+			<Add library="..\..\..\contrib\lua\lua51.lib" />
+			<Add library="..\..\..\contrib\lua\lua5.1.lib" />
+			<Add directory="..\..\..\contrib\lua" />
 		</Linker>
-		<Unit filename="dev\init.lua">
+		<Unit filename="..\..\gl.lua">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
-		<Unit filename="dev\lib\ltcl.lua">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="dev\lib\ltk.lua">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="dev\main.lua">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="edit.c">
+		<Unit filename="luagl.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="luagl.h" />
+		<Unit filename="luagl_const.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="luagl_const.h" />
+		<Unit filename="luagl_util.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="luagl_util.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />

@@ -4,6 +4,7 @@
 *.swp
 *.depend
 *.layout
+*_build_log.html
 game
 edit
 config.tbl

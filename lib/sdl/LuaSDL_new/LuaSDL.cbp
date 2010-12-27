@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="LuaSDL" />
+		<Option platforms="Windows;" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option platforms="Windows;" />
+				<Option output="bin\Debug\LuaSDL" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Debug\" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add directory="..\..\..\contrib\tolua++\lib\Debug" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option platforms="Windows;" />
+				<Option output="bin\Release\LuaSDL" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Release\" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add directory="..\..\..\contrib\tolua++\lib\Release" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="..\..\..\contrib\lua\include" />
+			<Add directory="..\..\..\contrib\sdl\include\SDL" />
+			<Add directory="..\..\..\contrib\tolua++\include" />
+		</Compiler>
+		<Linker>
+			<Add library=".\SDL_bind.o" />
+			<Add library="tolua++" />
+			<Add library="..\..\..\contrib\lua\lua51.lib" />
+			<Add library="..\..\..\contrib\lua\lua5.1.lib" />
+			<Add library="SDL" />
+			<Add library="..\..\..\contrib\sdl\lib\SDL_ttf.lib" />
+			<Add library="..\..\..\contrib\sdl\lib\SDL_image.lib" />
+			<Add library="..\..\..\contrib\sdl\lib\SDL_net.lib" />
+			<Add directory="..\..\..\contrib\lua" />
+			<Add directory="..\..\..\contrib\sdl\lib" />
+		</Linker>
+		<Unit filename="..\..\sdl.lua">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="sdllib.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sdllib.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

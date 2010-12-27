@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="toluabind.o" />
+		<Option platforms="Windows;" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option platforms="Windows;" />
+				<Option type="4" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option platforms="Windows;" />
+				<Option type="4" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<ExtraCommands>
+			<Add after='cmd /c copy &quot;..\..\lua51.dll&quot; .' />
+			<Add after='cmd /c copy &quot;..\..\lua5.1.dll&quot; .' />
+			<Add after="bin\${TARGET_NAME}\tolua++_bootstrap.exe -C -H src\bin\toluabind.h -o src\bin\toluabind.c -n tolua src\bin\tolua_scons.pkg" />
+			<Add after="cmd /c del lua51.dll lua5.1.dll" />
+			<Add after="${TARGET_CC} -o src/bin/toluabind.o -O2 -ansi -Wall -Iinclude -I..\lua\include -c src/bin/toluabind.c" />
+		</ExtraCommands>
+		<Unit filename="src\bin\lua\all.lua" />
+		<Unit filename="src\bin\lua\array.lua" />
+		<Unit filename="src\bin\lua\basic.lua" />
+		<Unit filename="src\bin\lua\class.lua" />
+		<Unit filename="src\bin\lua\clean.lua" />
+		<Unit filename="src\bin\lua\code.lua" />
+		<Unit filename="src\bin\lua\compat-5.1.lua" />
+		<Unit filename="src\bin\lua\compat.lua" />
+		<Unit filename="src\bin\lua\container.lua" />
+		<Unit filename="src\bin\lua\custom.lua" />
+		<Unit filename="src\bin\lua\declaration.lua" />
+		<Unit filename="src\bin\lua\define.lua" />
+		<Unit filename="src\bin\lua\doit.lua" />
+		<Unit filename="src\bin\lua\enumerate.lua" />
+		<Unit filename="src\bin\lua\feature.lua" />
+		<Unit filename="src\bin\lua\function.lua" />
+		<Unit filename="src\bin\lua\module.lua" />
+		<Unit filename="src\bin\lua\namespace.lua" />
+		<Unit filename="src\bin\lua\operator.lua" />
+		<Unit filename="src\bin\lua\package.lua" />
+		<Unit filename="src\bin\lua\template_class.lua" />
+		<Unit filename="src\bin\lua\typedef.lua" />
+		<Unit filename="src\bin\lua\variable.lua" />
+		<Unit filename="src\bin\lua\verbatim.lua" />
+		<Unit filename="src\bin\tolua_scons.pkg" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

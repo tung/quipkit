@@ -29,23 +29,29 @@
     slouken@libsdl.org
 */
 
-// NOTE: Set the appropriate one in the SDL_config.h for the platform.
+$pfile "SDL_platform.h.pkg"
 
-// #define __AIX__		1
-// #define __BEOS__	1
-// #define __BSDI__	1
-// #define __DREAMCAST__	1
-// #define __FREEBSD__	1
-// #define __HPUX__	1
-// #define __IRIX__	1
-#define __LINUX__	1
-// #define __MACOSX__	1
-// #define __MACOS__	1
-// #define __NETBSD__	1
-// #define __OPENBSD__	1
-// #define __OS2__		1
-// #define __OSF__		1
-// #define __QNXNTO__	1
-// #define __RISCOS__	1
-// #define __SOLARIS__	1
-// #define __WIN32__	1
+// NOTE: Run this through cpp with/without __WIN32__ defined.
+
+// __DREAMCAST__
+// $pfile "SDL_config_dreamcast.h.pkg"
+// __MACOS__
+// $pfile "SDL_config_macos.h.pkg"
+// __MACOSX__
+// $pfile "SDL_config_macosx.h.pkg"
+// __SYMBIAN32__
+// $pfile "SDL_config_symbian.h.pkg"
+// __WIN32__
+#if defined(__WIN32__)
+$pfile "SDL_config_win32.h.pkg"
+#else
+// $pfile "SDL_config_win32.h.pkg"
+#endif
+// __OS2__
+// $pfile "SDL_config_os2.h.pkg"
+// (others)
+#if !defined(__WIN32__)
+$pfile "SDL_config_minimal.h.pkg"
+#else
+// $pfile "SDL_config_minimal.h.pkg"
+#endif

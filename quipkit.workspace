@@ -3,11 +3,38 @@
 	<Workspace title="Workspace">
 		<Project filename="game.cbp" active="1">
 			<Depends filename="lib/sdlgl/sdlgl.cbp" />
+			<Depends filename="lib/gl/luagl/LuaGL.cbp" />
+			<Depends filename="lib/gl/luagl/LuaGLU.cbp" />
+			<Depends filename="lib/sdl/LuaSDL_new/LuaSDL.cbp" />
 		</Project>
 		<Project filename="edit.cbp">
 			<Depends filename="dev/lib/tcltk/ltcltk-0.9-1/ltcl.cbp" />
 		</Project>
 		<Project filename="dev/lib/tcltk/ltcltk-0.9-1/ltcl.cbp" />
 		<Project filename="lib/sdlgl/sdlgl.cbp" />
+		<Project filename="lib/gl/luagl/LuaGL.cbp" />
+		<Project filename="lib/gl/luagl/LuaGLU.cbp" />
+		<Project filename="contrib/tolua++/tolua++_libs.cbp" />
+		<Project filename="contrib/tolua++/tolua++_bootstrap.cbp">
+			<Depends filename="contrib/tolua++/tolua++_libs.cbp" />
+		</Project>
+		<Project filename="contrib/tolua++/toluabind.cbp">
+			<Depends filename="contrib/tolua++/tolua++_bootstrap.cbp" />
+		</Project>
+		<Project filename="contrib/tolua++/tolua++.cbp">
+			<Depends filename="contrib/tolua++/tolua++_libs.cbp" />
+			<Depends filename="contrib/tolua++/toluabind.cbp" />
+		</Project>
+		<Project filename="lib/sdl/LuaSDL_new/pkg/SDL_config.h.pkg.cbp" />
+		<Project filename="lib/sdl/LuaSDL_new/pkg/SDL_platform.h.pkg.cbp" />
+		<Project filename="lib/sdl/LuaSDL_new/SDL_bind.cbp">
+			<Depends filename="contrib/tolua++/tolua++.cbp" />
+			<Depends filename="lib/sdl/LuaSDL_new/pkg/SDL_config.h.pkg.cbp" />
+			<Depends filename="lib/sdl/LuaSDL_new/pkg/SDL_platform.h.pkg.cbp" />
+		</Project>
+		<Project filename="lib/sdl/LuaSDL_new/LuaSDL.cbp">
+			<Depends filename="contrib/tolua++/tolua++_libs.cbp" />
+			<Depends filename="lib/sdl/LuaSDL_new/SDL_bind.cbp" />
+		</Project>
 	</Workspace>
 </CodeBlocks_workspace_file>

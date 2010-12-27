@@ -2,7 +2,7 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="Quipkit Engine" />
+		<Option title="Quipkit (game.exe)" />
 		<Option platforms="Windows;" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
@@ -54,9 +54,6 @@
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Unit filename="lib\game.lua">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="lib\gl.lua">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Unit filename="lib\sdl.lua">

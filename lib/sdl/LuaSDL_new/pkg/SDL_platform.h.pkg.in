@@ -29,22 +29,35 @@
     slouken@libsdl.org
 */
 
-$pfile "SDL_platform.h.pkg"
+// NOTE: Set the appropriate one in the SDL_config.h for the platform.
 
-// NOTE: Manually select the platform file, since tolua++ doesn't seem
-//       to have conditionals.
+#define THIS_FILE_ONLY_IGNORE(x) x
 
-// __DREAMCAST__
-// $pfile "SDL_config_dreamcast.h.pkg"
-// __MACOS__
-// $pfile "SDL_config_macos.h.pkg"
-// __MACOSX__
-// $pfile "SDL_config_macosx.h.pkg"
-// __SYMBIAN32__
-// $pfile "SDL_config_symbian.h.pkg"
-// __WIN32__
-// $pfile "SDL_config_win32.h.pkg"
-// __OS2__
-// $pfile "SDL_config_os2.h.pkg"
-// (others)
-$pfile "SDL_config_minimal.h.pkg"
+// #define __AIX__		1
+// #define __BEOS__	1
+// #define __BSDI__	1
+// #define __DREAMCAST__	1
+// #define __FREEBSD__	1
+// #define __HPUX__	1
+// #define __IRIX__	1
+#if defined(__LINUX__)
+#undef __LINUX__
+THIS_FILE_ONLY_IGNORE(#define) __LINUX__	1
+#define __LINUX__ 1
+#endif
+// #define __MACOSX__	1
+// #define __MACOS__	1
+// #define __NETBSD__	1
+// #define __OPENBSD__	1
+// #define __OS2__		1
+// #define __OSF__		1
+// #define __QNXNTO__	1
+// #define __RISCOS__	1
+// #define __SOLARIS__	1
+#if defined(__WIN32__)
+#undef __WIN32__
+THIS_FILE_ONLY_IGNORE(#define) __WIN32__	1
+#define __WIN32__ 1
+#endif
+
+#undef THIS_FILE_ONLY_IGNORE

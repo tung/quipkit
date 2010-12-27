@@ -1,6 +1,7 @@
 local path
 if WIN32 then
-    path = "lib/sdl/LuaSDL_new/LuaSDL.dll"
+    -- TODO: Support Release target too.
+    path = "lib/sdl/LuaSDL_new/bin/Debug/LuaSDL.dll"
 else
     -- Assume Linux for now.
     path = "lib/sdl/LuaSDL_new/libluasdl.so"

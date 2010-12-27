@@ -1,2 +1,6 @@
 SDL_bind.c
 SDL_bind.h
+bin/Debug/*.dll
+bin/Release/*.dll
+pkg/SDL_config.h.pkg
+pkg/SDL_platform.h.pkg

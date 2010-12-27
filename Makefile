@@ -117,6 +117,12 @@ ${LUASDL_DIR}SDL_bind.c: ${TOLUAPP_DIR}bin/tolua++ ${LUASDL_DIR}pkg/*.pkg
 ${LUASDL_DIR}SDL_bind.h: ${TOLUAPP_DIR}bin/tolua++ ${LUASDL_DIR}pkg/*.pkg
 	cd ${LUASDL_DIR}pkg/ && ${LUASDL_DIR_BACK}../${TOLUAPP_DIR}bin/tolua++ -o ../SDL_bind.c -H ../SDL_bind.h SDL.pkg && cd -
 
+# C preprocessor (ab)use to generate the right code for the right platform.
+${LUASDL_DIR}pkg/SDL_config.h.pkg: ${LUASDL_DIR}pkg/SDL_config.h.pkg.in
+	cpp -P $@ $<
+${LUASDL_DIR}pkg/SDL_platform.h.pkg: ${LUASDL_DIR}pkg/SDL_platform.h.pkg.in
+	cpp -P -D__LINUX__ $@ $<
+
 .PHONY: clean_luasdl
 clean_luasdl:
 	-rm -f ${LUASDL_DIR}libluasdl.so

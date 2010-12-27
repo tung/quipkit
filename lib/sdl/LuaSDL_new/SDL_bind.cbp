@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="SDL_bind.o" />
+		<Option platforms="Windows;" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option platforms="Windows;" />
+				<Option type="4" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option platforms="Windows;" />
+				<Option type="4" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<ExtraCommands>
+			<Add after='cmd /c copy &quot;..\..\..\lua51.dll&quot; &quot;pkg\&quot;' />
+			<Add after='cmd /c copy &quot;..\..\..\lua5.1.dll&quot; &quot;pkg\&quot;' />
+			<Add after="cmd /c pushd pkg &amp;&amp; ..\..\..\..\contrib\tolua++\bin\${TARGET_NAME}\tolua++.exe -o ..\SDL_bind.c -H ..\SDL_bind.h SDL.pkg &amp;&amp; popd" />
+			<Add after="cmd /c del pkg\lua51.dll pkg\lua5.1.dll" />
+			<Add after="${TARGET_CC} -o SDL_bind.o -Wall -I..\..\..\contrib\lua\include -I..\..\..\contrib\sdl\include\SDL -I..\..\..\contrib\tolua++\include -c SDL_bind.c" />
+		</ExtraCommands>
+		<Unit filename="pkg\SDL.h.pkg" />
+		<Unit filename="pkg\SDL.pkg" />
+		<Unit filename="pkg\SDL_active.h.pkg" />
+		<Unit filename="pkg\SDL_audio.h.pkg" />
+		<Unit filename="pkg\SDL_cdrom.h.pkg" />
+		<Unit filename="pkg\SDL_config_win32.h.pkg" />
+		<Unit filename="pkg\SDL_cpuinfo.h.pkg" />
+		<Unit filename="pkg\SDL_endian.h.pkg" />
+		<Unit filename="pkg\SDL_error.h.pkg" />
+		<Unit filename="pkg\SDL_events.h.pkg" />
+		<Unit filename="pkg\SDL_image.h.pkg" />
+		<Unit filename="pkg\SDL_joystick.h.pkg" />
+		<Unit filename="pkg\SDL_keyboard.h.pkg" />
+		<Unit filename="pkg\SDL_keysym.h.pkg" />
+		<Unit filename="pkg\SDL_mouse.h.pkg" />
+		<Unit filename="pkg\SDL_net.h.pkg" />
+		<Unit filename="pkg\SDL_quit.h.pkg" />
+		<Unit filename="pkg\SDL_rwops.h.pkg" />
+		<Unit filename="pkg\SDL_stdinc.h.pkg" />
+		<Unit filename="pkg\SDL_timer.h.pkg" />
+		<Unit filename="pkg\SDL_ttf.h.pkg" />
+		<Unit filename="pkg\SDL_version.h.pkg" />
+		<Unit filename="pkg\SDL_video.h.pkg" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
