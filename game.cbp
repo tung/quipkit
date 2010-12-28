@@ -56,12 +56,6 @@
 		<Unit filename="lib\game.lua">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
-		<Unit filename="lib\sdl.lua">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="lib\sdlgl.lua">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
 		<Unit filename="main.lua">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>

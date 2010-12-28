@@ -45,6 +45,9 @@
 			<Add directory="..\..\contrib\lua" />
 			<Add directory="..\..\contrib\sdl\lib" />
 		</Linker>
+		<Unit filename="..\sdlgl.lua">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="sdlgl.c">
 			<Option compilerVar="CC" />
 		</Unit>
