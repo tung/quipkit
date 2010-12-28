@@ -112,16 +112,16 @@ ${LUASDL_DIR}SDL_bind.o: ${LUASDL_DIR}SDL_bind.c ${LUASDL_DIR}SDL_bind.h ${TOLUA
 
 # These commands produce both outputs, but I'm not sure how to "combine" them in Make.
 # Also, this cd's because tolua++ doesn't accept search directories.
-${LUASDL_DIR}SDL_bind.c: ${TOLUAPP_DIR}bin/tolua++ ${LUASDL_DIR}pkg/*.pkg
+${LUASDL_DIR}SDL_bind.c: ${TOLUAPP_DIR}bin/tolua++ ${LUASDL_DIR}pkg/SDL_config.h.pkg ${LUASDL_DIR}pkg/SDL_platform.h.pkg ${LUASDL_DIR}pkg/*.pkg
 	cd ${LUASDL_DIR}pkg/ && ${LUASDL_DIR_BACK}../${TOLUAPP_DIR}bin/tolua++ -o ../SDL_bind.c -H ../SDL_bind.h SDL.pkg && cd -
-${LUASDL_DIR}SDL_bind.h: ${TOLUAPP_DIR}bin/tolua++ ${LUASDL_DIR}pkg/*.pkg
+${LUASDL_DIR}SDL_bind.h: ${TOLUAPP_DIR}bin/tolua++ ${LUASDL_DIR}pkg/SDL_config.h.pkg ${LUASDL_DIR}pkg/SDL_platform.h.pkg ${LUASDL_DIR}pkg/*.pkg
 	cd ${LUASDL_DIR}pkg/ && ${LUASDL_DIR_BACK}../${TOLUAPP_DIR}bin/tolua++ -o ../SDL_bind.c -H ../SDL_bind.h SDL.pkg && cd -
 
 # C preprocessor (ab)use to generate the right code for the right platform.
 ${LUASDL_DIR}pkg/SDL_config.h.pkg: ${LUASDL_DIR}pkg/SDL_config.h.pkg.in
-	cpp -P $@ $<
+	cpp -P $< $@
 ${LUASDL_DIR}pkg/SDL_platform.h.pkg: ${LUASDL_DIR}pkg/SDL_platform.h.pkg.in
-	cpp -P -D__LINUX__ $@ $<
+	cpp -P -D__LINUX__ $< $@
 
 .PHONY: clean_luasdl
 clean_luasdl:
@@ -129,6 +129,7 @@ clean_luasdl:
 	-rm -f ${LUASDL_DIR}sdllib.o
 	-rm -f ${LUASDL_DIR}SDL_bind.o
 	-rm -f ${LUASDL_DIR}SDL_bind.c ${LUASDL_DIR}SDL_bind.h
+	-rm -f ${LUASDL_DIR}pkg/SDL_config.h.pkg ${LUASDL_DIR}pkg/SDL_platform.h.pkg
 
 
 ### proteaAudio bindings ###
