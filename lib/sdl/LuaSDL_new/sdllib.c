@@ -659,7 +659,6 @@ int SDL_ClobberBlit(SDL_Surface *src, SDL_Rect *src_rect,
     SDL_Surface *dest, SDL_Rect *dest_rect)
 {
     int x, y;
-    Uint32 pixel;
     Uint8 r, g, b, a;
 
     int src_rect_x, src_rect_y, src_rect_w, src_rect_h;
