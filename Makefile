@@ -277,7 +277,7 @@ clean_edit:
 
 .PHONY: all_luasocket
 all_luasocket:
-	cd ${LUASOCKET_DIR} && make all
+	cd ${LUASOCKET_DIR} && LUAINC=${LUA_CFLAGS} make all
 
 .PHONY: clean_luasocket
 clean_luasocket:
