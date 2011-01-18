@@ -6,8 +6,7 @@
 *  Description: This file implements the OpenGL
 *               binding for Lua 5
 *-------------------------------------------------
-* Changed by Antonio Scuri for LuaForge
-*  http://luagl.luaforge.net
+* Mantained by Antonio Scuri since 2009
 *-------------------------------------------------
 *  See Copyright Notice in LuaGL.h
 *************************************************/
@@ -33,7 +32,7 @@
 #include "luagl_util.h"
 
 
-#define LUAGL_VERSION "1.4"
+#define LUAGL_VERSION "1.6"
 
 static const char *luagl_get_str_gl_enum(GLenum num)
 {
@@ -117,16 +116,16 @@ static int luagl_bind_texture(lua_State *L)
 /*Bitmap (xorig, yorig, xmove, ymove, bitmapArray) -> none*/
 static int luagl_bitmap(lua_State *L)
 {
-  int width, height;
-  GLubyte *bitmap;
-
-  width=0;
-  height=0;
-  bitmap=(GLubyte *)NULL;
+  int width = 0, height = 0;
+  GLubyte *bitmap = NULL;
 
   /* if no bitmap passed usefull to move raster pos */
-  if (lua_istable(L,5)) 
+  if (lua_istable(L,5))
+  {
     height = luagl_get_array2uc(L, 5, &bitmap, &width);
+    if (height==-1)
+      luaL_argerror(L, 5, "must be a table of tables");
+  }
 
   glBitmap(width, height, (GLfloat)luaL_checknumber(L, 1), (GLfloat)luaL_checknumber(L, 2),
            (GLfloat)luaL_checknumber(L, 3), (GLfloat)luaL_checknumber(L, 4), bitmap);
@@ -140,7 +139,7 @@ static int luagl_bitmap_raw(lua_State *L)
 {
   glBitmap(luaL_checkinteger(L, 1), luaL_checkinteger(L, 2), (GLfloat)luaL_checknumber(L, 3), 
            (GLfloat)luaL_checknumber(L, 4), (GLfloat)luaL_checknumber(L, 5), 
-           (GLfloat)luaL_checknumber(L, 6), lua_touserdata(L, 7));
+           (GLfloat)luaL_checknumber(L, 6), luagl_checkuserdata(L, 7));
   return 0;
 }
 
@@ -235,7 +234,7 @@ static int luagl_color(lua_State *L)
 {
   if (lua_istable(L, 1))
   {
-    GLdouble *parray = 0;
+    GLdouble *parray = NULL;
     int n;
 
     n = luagl_get_arrayd(L, 1, &parray);
@@ -286,7 +285,7 @@ static int luagl_color_material(lua_State *L)
 static int luagl_color_pointer(lua_State *L)
 {
   GLint size;
-  static GLdouble *parray = 0;
+  static GLdouble *parray = NULL;
 
   LUAGL_DELETE_ARRAY(parray);
 
@@ -296,10 +295,14 @@ static int luagl_color_pointer(lua_State *L)
   if (lua_isnumber(L, 2))
   {
     size = luaL_checkinteger(L, 2);
-    luagl_get_arrayd_pointer(L, 1, &parray);
+    luagl_get_arrayd(L, 1, &parray);
   }
   else 
-    luagl_get_array2d_pointer(L, 1, &parray, &size);
+  {
+    int h = luagl_get_array2d(L, 1, &parray, &size);
+    if (h==-1)
+      luaL_argerror(L, 1, "must be a table of tables");
+  }
 
   glColorPointer(size, GL_DOUBLE, 0, parray);
   return 0;
@@ -466,7 +469,7 @@ static int luagl_draw_pixels(lua_State *L)
 static int luagl_draw_pixels_raw(lua_State *L)
 {
   glDrawPixels(luaL_checkinteger(L, 1), luaL_checkinteger(L, 2), 
-               luagl_get_gl_enum(L, 3), luagl_get_gl_enum(L, 4), lua_touserdata(L, 5));
+               luagl_get_gl_enum(L, 3), luagl_get_gl_enum(L, 4), luagl_checkuserdata(L, 5));
   return 0;
 }
 
@@ -498,7 +501,7 @@ static int luagl_edge_flag_pointer(lua_State *L)
   if(lua_isnil(L,1))
     return 0;
 
-  luagl_get_arrayb_pointer(L, 1, &flags);
+  luagl_get_arrayb(L, 1, &flags);
 
   glEdgeFlagPointer(0, flags);
 
@@ -1262,7 +1265,7 @@ static int luagl_get_tex_image(lua_State *L)
 static int luagl_get_tex_image_raw(lua_State *L)
 {
   glGetTexImage(luagl_get_gl_enum(L, 1), luaL_checkinteger(L, 2), luagl_get_gl_enum(L, 3), 
-                luagl_get_gl_enum(L, 4), lua_touserdata(L, 5));
+                luagl_get_gl_enum(L, 4), luagl_checkuserdata(L, 5));
   return 0;
 }
 
@@ -1349,7 +1352,7 @@ static int luagl_index_mask(lua_State *L)
 /*IndexPointer (indexArray) -> none*/
 static int luagl_index_pointer(lua_State *L)
 {
-  static GLdouble *parray = 0;
+  static GLdouble *parray = NULL;
 
   LUAGL_DELETE_ARRAY(parray);
 
@@ -1357,7 +1360,7 @@ static int luagl_index_pointer(lua_State *L)
   if(lua_isnil(L,1))
     return 0;
 
-  luagl_get_arrayd_pointer(L, 1, &parray);
+  luagl_get_arrayd(L, 1, &parray);
 
   glIndexPointer(GL_DOUBLE, 0, parray);
 
@@ -1549,6 +1552,9 @@ static int luagl_map(lua_State *L)
     vorder = luagl_get_array2d(L, 6, &points, &uorder);
     uorder /= size;
 
+    if (vorder==-1)
+      luaL_argerror(L, 6, "must be a table of tables");
+
     glMap2d(target, luaL_checknumber(L, 2), luaL_checknumber(L, 3),
             size, uorder, luaL_checknumber(L, 4), luaL_checknumber(L, 5),
             size * uorder, vorder, points);
@@ -1658,7 +1664,7 @@ static int luagl_normal(lua_State *L)
 static int luagl_normal_pointer(lua_State *L)
 {
   GLint size;
-  static GLdouble *parray = 0;
+  static GLdouble *parray = NULL;
 
   LUAGL_DELETE_ARRAY(parray);
 
@@ -1668,10 +1674,14 @@ static int luagl_normal_pointer(lua_State *L)
   if (lua_isnumber(L, 2))
   {
     size = luaL_checkinteger(L, 2);
-    luagl_get_arrayd_pointer(L, 1, &parray);
+    luagl_get_arrayd(L, 1, &parray);
   }
   else 
-    luagl_get_array2d_pointer(L, 1, &parray, &size);
+  {
+    int h = luagl_get_array2d(L, 1, &parray, &size);
+    if (h==-1)
+      luaL_argerror(L, 1, "must be a table of tables");
+  }
 
   glNormalPointer(GL_DOUBLE, 0, parray);
 
@@ -1904,7 +1914,7 @@ static int luagl_read_buffer(lua_State *L)
   return 0;
 }
 
-/*ReadPixels (x, y, width, height, format, pixelsArray) -> none*/
+/*ReadPixels (x, y, width, height, format) -> pixelsArray */
 static int luagl_read_pixels(lua_State *L)
 {
   GLenum format;
@@ -1937,7 +1947,7 @@ static int luagl_read_pixels_raw(lua_State *L)
 {
   glReadPixels(luaL_checkinteger(L, 1), luaL_checkinteger(L, 2),
                luaL_checkinteger(L, 3), luaL_checkinteger(L, 4), 
-               luagl_get_gl_enum(L, 5), luagl_get_gl_enum(L, 6), lua_touserdata(L, 7));
+               luagl_get_gl_enum(L, 5), luagl_get_gl_enum(L, 6), luagl_checkuserdata(L, 7));
   return 0;
 }
 
@@ -2009,17 +2019,11 @@ static int luagl_select_buffer(lua_State *L)
 
 static int luagl_get_select_buffer(lua_State *L)
 {
-  int size, i;
-  GLuint *buffer;
-
-  if(!lua_islightuserdata(L, 1))
-    luaL_typerror(L, 1, lua_typename(L, LUA_TLIGHTUSERDATA));
-
-  buffer=(GLuint *)lua_touserdata(L,1);
-  i=luaL_checkinteger(L,2);
+  GLuint* buffer = (GLuint*)luagl_checkuserdata(L, 1);
+  int i = luaL_checkinteger(L,2);
   if (buffer) 
   { 
-    size = (int)buffer[0];
+    int size = (int)buffer[0];
     if ((i<=size) && (i>0)) 
     {
       lua_pushnumber(L,buffer[i]); /*select buffer data begin at index i */
@@ -2031,10 +2035,22 @@ static int luagl_get_select_buffer(lua_State *L)
 
 static int luagl_free_select_buffer(lua_State *L)
 {
-  GLuint *buffer;
-  if(!lua_islightuserdata(L, 1))
-    luaL_typerror(L, 1, lua_typename(L, LUA_TLIGHTUSERDATA));
-  buffer=(GLuint *)lua_touserdata(L,1);
+  GLuint* buffer = (GLuint*)luagl_checkuserdata(L, 1);
+  LUAGL_DELETE_ARRAY(buffer);
+  return 0;
+}
+
+static int luagl_new_data(lua_State *L)
+{
+  int size = luaL_checkinteger(L, 1);
+  void* buffer = LUAGL_NEW_ARRAY(unsigned char, size);
+  lua_pushlightuserdata(L, buffer);
+  return 1;
+}
+
+static int luagl_free_data(lua_State *L)
+{
+  void* buffer = luagl_checkuserdata(L, 1);
   LUAGL_DELETE_ARRAY(buffer);
   return 0;
 }
@@ -2111,7 +2127,7 @@ static int luagl_tex_coord(lua_State *L)
 static int luagl_tex_coord_pointer(lua_State *L)
 {
   GLint size;
-  static GLdouble *parray = 0;
+  static GLdouble *parray = NULL;
 
   LUAGL_DELETE_ARRAY(parray);
 
@@ -2121,10 +2137,14 @@ static int luagl_tex_coord_pointer(lua_State *L)
   if (lua_isnumber(L, 2))
   {
     size = luaL_checkinteger(L, 2);
-    luagl_get_arrayd_pointer(L, 1, &parray);
+    luagl_get_arrayd(L, 1, &parray);
   }
-  else 
-    luagl_get_array2d_pointer(L, 1, &parray, &size);
+  else
+  {
+    int h = luagl_get_array2d(L, 1, &parray, &size);
+    if (h==-1)
+      luaL_argerror(L, 1, "must be a table of tables");
+  }
 
   glTexCoordPointer(size, GL_DOUBLE, 0, parray);
 
@@ -2187,7 +2207,8 @@ static int luagl_tex_image(lua_State *L)
 
   if(lua_isnumber(L, 1) && lua_istable(L, 2))
   {
-    /* un documented parameter passing */
+    /* undocumented parameter passing, 
+       so it can be compatible with a texture created for glu.Build2DMipmaps */
     lua_getfield(L, 2, "components");
     iformat = luaL_checkinteger(L, -1);
     lua_remove(L, -1);
@@ -2227,7 +2248,7 @@ static int luagl_tex_image_2d(lua_State *L)
   glTexImage2D(GL_TEXTURE_2D, luaL_checkinteger(L, 1),
               luaL_checkinteger(L, 2), (GLsizei)luaL_checkinteger(L, 3), 
               (GLsizei)luaL_checkinteger(L, 4), luaL_checkinteger(L, 5), 
-              luagl_get_gl_enum(L, 6), luagl_get_gl_enum(L, 7), lua_touserdata(L, 8));
+              luagl_get_gl_enum(L, 6), luagl_get_gl_enum(L, 7), luagl_checkuserdata(L, 8));
   return 0;
 }
 
@@ -2237,7 +2258,7 @@ static int luagl_tex_image_1d(lua_State *L)
   glTexImage1D(GL_TEXTURE_1D, luaL_checkinteger(L, 1),
                luaL_checkinteger(L, 2), (GLsizei)luaL_checkinteger(L, 3), 
                luaL_checkinteger(L, 4), luagl_get_gl_enum(L, 5), 
-               luagl_get_gl_enum(L, 6), lua_touserdata(L, 7));
+               luagl_get_gl_enum(L, 6), luagl_checkuserdata(L, 7));
   return 0;
 }
 
@@ -2277,7 +2298,7 @@ static int luagl_tex_sub_image_2d(lua_State *L)
 {
   glTexSubImage2D(GL_TEXTURE_2D, luaL_checkinteger(L, 1), luaL_checkinteger(L, 2), 
                   luaL_checkinteger(L, 3), luaL_checkinteger(L, 4), luaL_checkinteger(L, 5), 
-                  luagl_get_gl_enum(L, 6), luagl_get_gl_enum(L, 7), lua_touserdata(L, 8));
+                  luagl_get_gl_enum(L, 6), luagl_get_gl_enum(L, 7), luagl_checkuserdata(L, 8));
   return 0;
 }
 
@@ -2286,7 +2307,7 @@ static int luagl_tex_sub_image_1d(lua_State *L)
 {
   glTexSubImage1D(GL_TEXTURE_1D, luaL_checkinteger(L, 1), luaL_checkinteger(L, 2), 
                   luaL_checkinteger(L, 3), luagl_get_gl_enum(L, 4), 
-                  luagl_get_gl_enum(L, 5), lua_touserdata(L, 6));
+                  luagl_get_gl_enum(L, 5), luagl_checkuserdata(L, 6));
   return 0;
 }
 
@@ -2363,7 +2384,7 @@ static int luagl_vertex(lua_State *L)
 static int luagl_vertex_pointer(lua_State *L)
 {
   GLint size;
-  static GLdouble *parray = 0;
+  static GLdouble *parray = NULL;
 
   LUAGL_DELETE_ARRAY(parray);
 
@@ -2373,10 +2394,14 @@ static int luagl_vertex_pointer(lua_State *L)
   if (lua_isnumber(L, 2))
   {
     size = luaL_checkinteger(L, 2);
-    luagl_get_arrayd_pointer(L, 1, &parray);
+    luagl_get_arrayd(L, 1, &parray);
   }
   else 
-    luagl_get_array2d_pointer(L, 1, &parray, &size);
+  {
+    int h = luagl_get_array2d(L, 1, &parray, &size);
+    if (h==-1)
+      luaL_argerror(L, 1, "must be a table of tables");
+  }
 
   glVertexPointer(size, GL_DOUBLE, 0, parray);
 
@@ -2521,6 +2546,8 @@ static const luaL_reg luagl_lib[] = {
   {"SelectBuffer", luagl_select_buffer},
   {"GetSelectBuffer", luagl_get_select_buffer},
   {"FreeSelectBuffer", luagl_free_select_buffer},
+  {"NewData", luagl_new_data},
+  {"FreeData", luagl_free_data},
   {"ShadeModel", luagl_shade_model},
   {"StencilFunc", luagl_stencil_func},
   {"StencilMask", luagl_stencil_mask},

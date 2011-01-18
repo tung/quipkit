@@ -11,6 +11,12 @@
 
 const luaglConst luagl_const[] = {
   { "VERSION_1_1"                     , GL_VERSION_1_1                    },
+#ifdef GL_VERSION_1_2
+  { "VERSION_1_2"                     , GL_VERSION_1_2                    },
+#endif
+#ifdef GL_VERSION_1_3
+  { "VERSION_1_3"                     , GL_VERSION_1_3                    },
+#endif
   { "ACCUM"                           , GL_ACCUM                          },
   { "LOAD"                            , GL_LOAD                           },
   { "RETURN"                          , GL_RETURN                         },
@@ -425,6 +431,12 @@ const luaglConst luagl_const[] = {
   { "TEXTURE_WRAP_T"                  , GL_TEXTURE_WRAP_T                 },
   { "CLAMP"                           , GL_CLAMP                          },
   { "REPEAT"                          , GL_REPEAT                         },
+#ifdef GL_MIRRORED_REPEAT
+  { "MIRRORED_REPEAT"                 , GL_MIRRORED_REPEAT                },
+#endif
+#ifdef GL_VERSION_1_2
+  { "CLAMP_TO_EDGE"                   , GL_CLAMP_TO_EDGE                  },
+#endif
   { "POLYGON_OFFSET_FACTOR"           , GL_POLYGON_OFFSET_FACTOR          },
   { "POLYGON_OFFSET_UNITS"            , GL_POLYGON_OFFSET_UNITS           },
   { "POLYGON_OFFSET_POINT"            , GL_POLYGON_OFFSET_POINT           },

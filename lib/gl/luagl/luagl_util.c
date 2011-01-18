@@ -8,64 +8,15 @@
 #include "luagl_util.h"
 
 
-#define STATIC_MEMORY_SIZE 1024
-static char __luagl_using_static_mem = 0;
-static char *static_mem[STATIC_MEMORY_SIZE];
+/* returns a bi-dimensional parray with given type and size */
+#define LUAGL_NEW_ARRAY2(type, size1, size2) ( (type *)malloc((size1) * (size2) * sizeof(type)) )
 
-#ifdef __luagl_debug_memleak
-
-static int __memleak_malloc_counter = 0;
-static int __memleak_counter = 0;
-static int __malloc_counter = 0;
-static void *myMalloc(size_t s) { __memleak_malloc_counter++; __memleak_counter++; return malloc(s); }
-static void myFree(void *v) { __memleak_counter--; free(v); }
-
-#define malloc myMalloc
-#define free myFree
-
-#endif
-
-int luagl_checkboolean (lua_State *L, int narg) 
-{
-  int d = lua_toboolean(L, narg);
-  if (d == 0 && !lua_isboolean(L, narg))  /* avoid extra test when d is not 0 */
-    luaL_typerror(L, narg, lua_typename(L, LUA_TBOOLEAN));
-  return d;
-}
-
-void *luagl_malloc(size_t s)
-{
-  if (__luagl_using_static_mem == 0 && s < STATIC_MEMORY_SIZE)
-  {
-    __luagl_using_static_mem = 0xff;
-    return static_mem;
-  }
-
-  return malloc(s);
-}
-
-void luagl_free(void *v)
-{
-  if (v != static_mem)
-  {
-    free(v);
-    return;
-  }
-  __luagl_using_static_mem = 0;
-}
-
-/* returns an parray with given _type and size, this will always call malloc function */
-#define LUAGL_NEW_ARRAY_POINTER(_type, size) ( (_type *)malloc((size) * sizeof(_type)) )
-
-/* returns a bi-dimensional parray with given _type and size */
-#define LUAGL_NEW_ARRAY2_POINTER(_type, size1, size2) ( (_type *)malloc((size1) * (size2) * sizeof(_type)) )
-
-#define LUAGL_INIT_ARRAY(parray, _type, size, conversionFunc)           \
+#define LUAGL_INIT_ARRAY(parray, _type, size, conversionFunc)   \
 {                                                               \
   int i;                                                        \
   for(i = 0; i < (size); i++) {                                 \
     lua_rawgeti(L, index, i+1);                                 \
-    (parray)[i] = (_type)(conversionFunc)(L, -1);                 \
+    (parray)[i] = (_type)(conversionFunc)(L, -1);               \
     lua_remove(L, -1);                                          \
   }                                                             \
 }
@@ -88,57 +39,29 @@ void luagl_free(void *v)
 /* Gets an parray from a lua table, store it in 'parray' and returns the no. of elems of the parray
 index refers to where the table is in stack. */
 #define DEFINE_GET_ARRAY_FUNC(name, _type, conversionFunc) \
-  int name(lua_State *L, int index, _type **parray)           \
-{                                                         \
-  int n;                                                  \
-  luaL_checktype(L, index, LUA_TTABLE);                   \
-  n = luaL_getn(L, index);                           \
-  *parray = LUAGL_NEW_ARRAY(_type, n);                           \
-  LUAGL_INIT_ARRAY(*parray, _type, n, conversionFunc);           \
-  return n;                                              \
+  int name(lua_State *L, int index, _type **parray)        \
+{                                                          \
+  int n;                                                   \
+  luaL_checktype(L, index, LUA_TTABLE);                    \
+  n = luaL_getn(L, index);                                 \
+  *parray = LUAGL_NEW_ARRAY(_type, n);                     \
+  LUAGL_INIT_ARRAY(*parray, _type, n, conversionFunc);     \
+  return n;                                                \
 }
 
-/* Same as above, but use use LUAGL_NEW_ARRAY_POINTER instead of LUAGL_NEW_ARRAY */
-#define DEFINE_GET_ARRAY_POINTER_FUNC(name, _type, conversionFunc) \
-  int name(lua_State *L, int index, _type **parray)           \
-{                                                         \
-  int n;                                                  \
-  luaL_checktype(L, index, LUA_TTABLE);                   \
-  n = luaL_getn(L, index);                           \
-  *parray = LUAGL_NEW_ARRAY_POINTER(_type, n);                   \
-  LUAGL_INIT_ARRAY(*parray, _type, n, conversionFunc);           \
-  return n;                                              \
-}
-
-#define DEFINE_GET_ARRAY2_FUNC(name, _type, conversionFunc)   \
-  int name(lua_State *L, int index, _type **parray, int *size)   \
-{                                                            \
-  int n;                                                  \
-  luaL_checktype(L, index, LUA_TTABLE);                   \
-  n = luaL_getn(L, index);                           \
-  lua_rawgeti(L, index, 1);                                 \
-  if(!lua_istable(L, -1)) { lua_remove(L, -1); return -1; } \
-  *size = luaL_getn(L, -1);                                 \
-  *parray = LUAGL_NEW_ARRAY2(_type, n, *size);                      \
-  LUAGL_INIT_ARRAY2(*parray, _type, n, size, conversionFunc);       \
-  lua_remove(L, -1);                                        \
-  return n;                                                 \
-}
-
-/* Same as above, but use use LUAGL_NEW_ARRAY2_POINTER instead of LUAGL_NEW_ARRAY2 */
-#define DEFINE_GET_ARRAY2_POINTER_FUNC(name, _type, conversionFunc)   \
-  int name(lua_State *L, int index, _type **parray, int *size)   \
-{                                                            \
-  int n;                                                  \
-  luaL_checktype(L, index, LUA_TTABLE);                   \
-  n = luaL_getn(L, index);                           \
-  lua_rawgeti(L, index, 1);                                 \
-  if(!lua_istable(L, -1)) { lua_remove(L, -1); return -1; } \
-  *size = luaL_getn(L, -1);                                 \
-  *parray = (_type *)malloc(*size * n * sizeof(_type));        \
-  LUAGL_INIT_ARRAY2(*parray, _type, n, size, conversionFunc);       \
-  lua_remove(L, -1);                                        \
-  return n;                                                 \
+#define DEFINE_GET_ARRAY2_FUNC(name, _type, conversionFunc)    \
+  int name(lua_State *L, int index, _type **parray, int *size) \
+{                                                              \
+  int n;                                                       \
+  luaL_checktype(L, index, LUA_TTABLE);                        \
+  n = luaL_getn(L, index);                                     \
+  lua_rawgeti(L, index, 1);                                    \
+  if(!lua_istable(L, -1)) { lua_remove(L, -1); return -1; }    \
+  *size = luaL_getn(L, -1);                                    \
+  *parray = LUAGL_NEW_ARRAY2(_type, n, *size);                 \
+  LUAGL_INIT_ARRAY2(*parray, _type, n, size, conversionFunc);  \
+  lua_remove(L, -1);                                           \
+  return n;                                                    \
 }
 
 DEFINE_GET_ARRAY_FUNC(luagl_get_arrayb, unsigned char, lua_toboolean)
@@ -148,31 +71,24 @@ DEFINE_GET_ARRAY_FUNC(luagl_get_arrayi, int, lua_tointeger)
 DEFINE_GET_ARRAY_FUNC(luagl_get_arrayui, unsigned int, lua_tointeger)
 DEFINE_GET_ARRAY_FUNC(luagl_get_arrayuc, unsigned char, lua_tointeger)
 
-DEFINE_GET_ARRAY_POINTER_FUNC(luagl_get_arrayb_pointer, unsigned char, lua_toboolean)
-DEFINE_GET_ARRAY_POINTER_FUNC(luagl_get_arrayd_pointer, double, lua_tonumber)
-
 DEFINE_GET_ARRAY2_FUNC(luagl_get_array2uc, unsigned char, lua_tointeger)
 DEFINE_GET_ARRAY2_FUNC(luagl_get_array2d, double, lua_tonumber)
 DEFINE_GET_ARRAY2_FUNC(luagl_get_array2f, float, lua_tonumber)
 
-DEFINE_GET_ARRAY2_POINTER_FUNC(luagl_get_array2d_pointer, double, lua_tonumber)
-
 #undef DEFINE_GET_ARRAY_FUNC
-#undef DEFINE_GET_ARRAY_POINTER_FUNC
 #undef DEFINE_GET_ARRAY2_FUNC
-#undef DEFINE_GET_ARRAY2_POINTER_FUNC
 
 #define DEFINE_PUSH_ARRAY_FUNC(name, _type, pushFunc) \
-  void name(lua_State *L, _type *parray, int size)         \
-{                                                         \
-  int i;                                                  \
-  lua_createtable(L, size, 0);                            \
-  for(i = 0; i < size; i++)                               \
-  {                                                       \
-    lua_pushinteger(L, i+1);                              \
-    pushFunc(L, (_type)parray[i]);                         \
-    lua_settable(L, -3);                                  \
-  }                                                       \
+  void name(lua_State *L, _type *parray, int size)    \
+{                                                     \
+  int i;                                              \
+  lua_createtable(L, size, 0);                        \
+  for(i = 0; i < size; i++)                           \
+  {                                                   \
+    lua_pushinteger(L, i+1);                          \
+    pushFunc(L, (_type)parray[i]);                    \
+    lua_settable(L, -3);                              \
+  }                                                   \
 }
 
 DEFINE_PUSH_ARRAY_FUNC(luagl_push_arrayb, unsigned char, lua_pushboolean)
@@ -183,6 +99,21 @@ DEFINE_PUSH_ARRAY_FUNC(luagl_push_arrayd, double, lua_pushnumber)
 DEFINE_PUSH_ARRAY_FUNC(luagl_push_arrayuc, unsigned char, lua_pushinteger)
                                           
 #undef DEFINE_PUSH_ARRAY_FUNC
+
+int luagl_checkboolean (lua_State *L, int narg)
+{
+  int d = lua_toboolean(L, narg);
+  if (d == 0 && !lua_isboolean(L, narg))  /* avoid extra test when d is not 0 */
+    luaL_typerror(L, narg, lua_typename(L, LUA_TBOOLEAN));
+  return d;
+}
+
+void* luagl_checkuserdata (lua_State *L, int narg)
+{
+  if (!lua_islightuserdata(L, narg))
+    luaL_typerror(L, narg, lua_typename(L, LUA_TLIGHTUSERDATA));
+  return lua_touserdata(L, narg);
+}
 
 int luagl_str2mask(const char *str)
 {

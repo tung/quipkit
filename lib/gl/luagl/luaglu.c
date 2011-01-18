@@ -6,8 +6,7 @@
 *  Description: This file implements the GLU
 *               binding for Lua 5
 *-------------------------------------------------
-* Changed by Antonio Scuri for LuaForge
-*  http://luagl.luaforge.net
+* Mantained by Antonio Scuri since 2009
 *-------------------------------------------------
 *  See Copyright Notice in LuaGL.h
 *************************************************/
@@ -43,7 +42,9 @@ static const luaglConst luaglu_const[] = {
   {"FALSE"	,GLU_FALSE},
   {"TRUE"	,GLU_TRUE},
   {"VERSION_1_1"	,GLU_VERSION_1_1},
+#ifdef GLU_VERSION_1_2
   {"VERSION_1_2"	,GLU_VERSION_1_2},
+#endif
 #ifdef GLU_VERSION_1_3
   {"VERSION_1_3"	,GLU_VERSION_1_3},
 #endif
@@ -265,64 +266,247 @@ static int luaglu_error_string(lua_State *L)
   return 1;
 }
 
-/*********************************** GLU Mipmapping ***********************************/
+#define DEFINE_GET_MATRIX_FUNC(name, _type, _size, conversionFunc) \
+  void name(lua_State *L, int index, _type *matrix)                 \
+{                                                                  \
+  int i;                                                           \
+  luaL_checktype(L, index, LUA_TTABLE);                            \
+  if(luaL_getn(L, index) < _size)                                  \
+    luaL_argerror(L, index, "invalid number of items in table (n<_size)"); \
+  for(i = 0; i < _size; i++) {                                     \
+    lua_rawgeti(L, index, i+1);                                    \
+    matrix[i] = (_type)(conversionFunc)(L, -1);                    \
+    lua_remove(L, -1);                                             \
+  }                                                                \
+}
 
-/*int gluScaleImage( GLenum format, GLsizei widthin,
-GLsizei heightin, GLenum typein, const void *datain,
-GLsizei widthout, GLsizei heightout, GLenum typeout,
-void *dataout );*/
-/* not implemented */
+DEFINE_GET_MATRIX_FUNC(luaglu_load_matrix16f, GLfloat, 16, lua_tonumber);
+DEFINE_GET_MATRIX_FUNC(luaglu_load_matrix16d, GLdouble, 16, lua_tonumber);
+DEFINE_GET_MATRIX_FUNC(luaglu_load_viewport, GLint, 16, lua_tointeger);
 
-/*int gluBuild1DMipmaps( GLenum target,
-GLint internalFormat, GLsizei width, GLenum format,
-GLenum type, const void *data );*/
-/* not implemented */
-
-/*int gluBuild2DMipmaps( GLenum target,
-GLint internalFormat, GLsizei width, GLsizei height,
-GLenum format, GLenum type, const void *data );*/
-/* not implemented */
-
-/*Build2DMipmaps(textureData) -> error */
-static int luaglu_build_2d_mipmaps(lua_State *L)
+/*glu.Project(objx, objy, objz, modelMatrixArray, projMatrixArray, viewportArray) -> error, winx, winy, winz */
+static int luaglu_project(lua_State *L)
 {
-  GLenum target, format, type;
-  GLubyte *pixels;
-  GLint internalFormat;
-  GLsizei width, height, w, h;
-  int result;
+  GLdouble winx, winy, winz;
+  GLdouble modelMatrix[16];
+  GLdouble projMatrix[16]; 
+  GLint viewport[4];
+  int error;
 
-  h = luagl_get_array2uc(L, 1, &pixels, &w);
+  luaglu_load_matrix16d(L, 4, modelMatrix);
+  luaglu_load_matrix16d(L, 5, projMatrix);
+  luaglu_load_viewport(L, 6, viewport);
 
-  lua_getfield(L, 1, "target");  target = luagl_get_gl_enum(L, -1);  lua_remove(L, -1);
-  lua_getfield(L, 1, "format");  format = luagl_get_gl_enum(L, -1);  lua_remove(L, -1);
-  lua_getfield(L, 1, "type");    type   = luagl_get_gl_enum(L, -1);  lua_remove(L, -1);
-  lua_getfield(L, 1, "width");   width  = (GLsizei)luaL_checkinteger(L, -1);  lua_remove(L, -1);
-  lua_getfield(L, 1, "height");  height = (GLsizei)luaL_checkinteger(L, -1);  lua_remove(L, -1);
-  lua_getfield(L, 1, "components");  internalFormat = (GLint)luaL_checkinteger(L, -1);  lua_remove(L, -1);
+  error = gluProject(luaL_checknumber(L, 1), luaL_checknumber(L, 2), luaL_checknumber(L, 3), 
+                     modelMatrix, projMatrix, viewport, &winx, &winy, &winz);
+  lua_pushnumber(L, error);
 
-  w /= internalFormat;
+  if (error == GL_TRUE)
+  {
+    lua_pushnumber(L, winx);
+    lua_pushnumber(L, winy);
+    lua_pushnumber(L, winz);
+    return 4;
+  }
+  else
+    return 1;
+}
 
-  if (width > w)
-    width = w;
+/*glu.UnProject(winx, winy, winz, modelMatrixArray, projMatrixArray, viewportArray) -> error, objx, objy, objz */
+static int luaglu_unproject(lua_State *L)
+{
+  GLdouble objx, objy, objz;
+  GLdouble modelMatrix[16];
+  GLdouble projMatrix[16]; 
+  GLint viewport[4];
+  int error;
 
-  if (height > h)
-    height = h;
+  luaglu_load_matrix16d(L, 4, modelMatrix);
+  luaglu_load_matrix16d(L, 5, projMatrix);
+  luaglu_load_viewport(L, 6, viewport);
 
-  result = gluBuild2DMipmaps(target, internalFormat, width, height, format, type, pixels);
+  error = gluUnProject(luaL_checknumber(L, 1), luaL_checknumber(L, 2), luaL_checknumber(L, 3), 
+                       modelMatrix, projMatrix, viewport, &objx, &objy, &objz);
+  lua_pushnumber(L, error);
 
-  LUAGL_DELETE_ARRAY(pixels);
+  if (error == GL_TRUE)
+  {
+    lua_pushnumber(L, objx);
+    lua_pushnumber(L, objy);
+    lua_pushnumber(L, objz);
+    return 4;
+  }
+  else
+    return 1;
+}
 
-  lua_pushnumber(L, result);
+static int luaglu_get_depth(GLenum format)
+{
+  int depth = 0;
+  switch(format)
+  {
+  case GL_DEPTH_COMPONENT:
+  case GL_STENCIL_INDEX:
+  case GL_COLOR_INDEX:
+  case GL_RED:
+  case GL_GREEN:
+  case GL_BLUE:
+  case GL_ALPHA:
+  case GL_LUMINANCE:
+    depth = 1;
+    break;
 
+  case GL_LUMINANCE_ALPHA:
+    depth = 2;
+    break;
+
+  case GL_RGB:
+#ifdef GL_BGR_EXT
+  case GL_BGR_EXT:
+#endif
+    depth = 3;
+    break;
+
+  case GL_RGBA:
+#ifdef GL_BGRA_EXT
+  case GL_BGRA_EXT:
+#endif
+    depth = 4;
+    break;
+  }
+
+  return depth;
+}
+
+/*glu.ScaleImage(format, widthin, heightin, pixelsArrayin, widthout, heightout) -> error, pixelsArrayout */
+static int luaglu_scaleimage(lua_State *L)
+{
+  GLenum format;
+  GLfloat *pixelsin, *pixelsout;
+  int widthout, heightout, sizeout, depth, error;
+
+  format = luagl_get_gl_enum(L, 1);
+  depth = luaglu_get_depth(format);
+  if (depth == 0)
+    luaL_argerror(L, 1, "unknown format");
+
+  luagl_get_arrayf(L, 4, &pixelsin);
+
+  widthout = luaL_checkinteger(L, 5);
+  heightout = luaL_checkinteger(L, 6);
+  sizeout = widthout*heightout*depth;
+
+  pixelsout = LUAGL_NEW_ARRAY(GLfloat, sizeout);
+
+  error = gluScaleImage(format, luaL_checkinteger(L, 2), luaL_checkinteger(L, 3), GL_FLOAT, pixelsin,
+                                widthout, heightout, GL_FLOAT, pixelsout);
+  lua_pushnumber(L, error);
+
+  if (error == 0)
+    luagl_push_arrayf(L, pixelsout, sizeout);
+  else
+    lua_pushnil(L);
+
+  LUAGL_DELETE_ARRAY(pixelsin);
+  LUAGL_DELETE_ARRAY(pixelsout);
+
+  return 2;
+}
+
+/*glu.ScaleImageRaw(format, widthin, heightin, typein, pixelsin, widthout, heightout, typeout, pixelsout) -> error */
+static int luaglu_scaleimageraw(lua_State *L)
+{
+  lua_pushnumber(L, gluScaleImage(luagl_get_gl_enum(L, 1), luaL_checkinteger(L, 2), luaL_checkinteger(L, 3), luagl_get_gl_enum(L, 4), luagl_checkuserdata(L, 5),
+                                                           luaL_checkinteger(L, 6), luaL_checkinteger(L, 7), luagl_get_gl_enum(L, 8), luagl_checkuserdata(L, 9)));
   return 1;
 }
 
-/*int gluBuild3DMipmaps( GLenum target,
-GLint internalFormat, GLsizei width, GLsizei height,
-GLsizei depth, GLenum format, GLenum type,
-const void *data );*/
-/* not implemented */
+/*BuildMipmaps(components, format, pixelsArray) -> error */
+static int luaglu_build_mipmaps(lua_State *L)
+{
+  GLubyte *pixels;
+  GLsizei width, height;
+  int components;
+
+  components = luaL_checkinteger(L, 1);
+  height = luagl_get_array2uc(L, 3, &pixels, &width);
+
+  if (height != -1)
+  {
+    lua_pushnumber(L, gluBuild2DMipmaps(GL_TEXTURE_2D, components, width/components, height, 
+                 luagl_get_gl_enum(L, 2), GL_UNSIGNED_BYTE, pixels));
+  }
+  else
+  {
+    /* if not 2D, get 1D */
+    width = luagl_get_arrayuc(L, 3, &pixels);
+    lua_pushnumber(L, gluBuild1DMipmaps(GL_TEXTURE_1D, components, width/components, 
+                 luagl_get_gl_enum(L, 2), GL_UNSIGNED_BYTE, pixels));
+  }
+  LUAGL_DELETE_ARRAY(pixels);
+  return 1;
+}
+
+/*Build1DMipmaps(components, width, format, type, pixels) -> error      (userdata)*/
+static int luaglu_build_1d_mipmaps(lua_State *L)
+{
+  lua_pushnumber(L, gluBuild1DMipmaps(GL_TEXTURE_1D, (GLint)luaL_checkinteger(L, 1), luaL_checkinteger(L, 2), 
+               luagl_get_gl_enum(L, 3), luagl_get_gl_enum(L, 4), luagl_checkuserdata(L, 5)));
+  return 1;
+}
+
+/*Build2DMipmaps(components, width, height, format, type, pixels) -> error      (userdata)*/
+/*or BuildMipmaps(textureData) -> error */
+static int luaglu_build_2d_mipmaps(lua_State *L)
+{
+  if (lua_isnumber(L, 1))
+  {
+    lua_pushnumber(L, gluBuild2DMipmaps(GL_TEXTURE_2D, (GLint)luaL_checkinteger(L, 1), luaL_checkinteger(L, 2), luaL_checkinteger(L, 3), 
+                 luagl_get_gl_enum(L, 4), luagl_get_gl_enum(L, 5), luagl_checkuserdata(L, 6)));
+  }
+  else
+  {
+    /* Old form, using only one table */
+    GLenum target, format, type;
+    GLubyte *pixels;
+    GLint internalFormat;
+    GLsizei width, height, w, h;
+
+    h = luagl_get_array2uc(L, 1, &pixels, &w);
+    if (h==-1)
+      luaL_argerror(L, 1, "must be a 2D array");
+
+    lua_getfield(L, 1, "target");  target = luagl_get_gl_enum(L, -1);  lua_remove(L, -1);
+    lua_getfield(L, 1, "format");  format = luagl_get_gl_enum(L, -1);  lua_remove(L, -1);
+    lua_getfield(L, 1, "type");    type   = luagl_get_gl_enum(L, -1);  lua_remove(L, -1);
+    lua_getfield(L, 1, "width");   width  = (GLsizei)luaL_checkinteger(L, -1);  lua_remove(L, -1);
+    lua_getfield(L, 1, "height");  height = (GLsizei)luaL_checkinteger(L, -1);  lua_remove(L, -1);
+    lua_getfield(L, 1, "components");  internalFormat = (GLint)luaL_checkinteger(L, -1);  lua_remove(L, -1);
+
+    w /= internalFormat;
+
+    if (width > w)
+      width = w;
+
+    if (height > h)
+      height = h;
+
+    lua_pushnumber(L, gluBuild2DMipmaps(target, internalFormat, width, height, format, type, pixels));
+
+    LUAGL_DELETE_ARRAY(pixels);
+  }
+  return 1;
+}
+
+#ifdef GLU_VERSION_1_3
+/*Build3DMipmaps(components, width, height, depth, format, type, pixels) -> error      (userdata)*/
+static int luaglu_build_3d_mipmaps(lua_State *L)
+{
+  lua_pushnumber(L, gluBuild3DMipmaps(GL_TEXTURE_3D, (GLint)luaL_checkinteger(L, 1), luaL_checkinteger(L, 2), luaL_checkinteger(L, 3), luaL_checkinteger(L, 4), 
+               luagl_get_gl_enum(L, 5), luagl_get_gl_enum(L, 6), luagl_checkuserdata(L, 7)));
+  return 1;
+}
+#endif
 
 
 /* GLU Quadrics */
@@ -336,14 +520,14 @@ typedef struct LuaGLUquadric{
 } LuaGLUquadric;
 
 
-static LuaGLUquadric * checkLuaGLUquadric(lua_State *L, int index) 
+static LuaGLUquadric * luaglu_checkquadric(lua_State *L, int index) 
 {
   LuaGLUquadric * lquad = (LuaGLUquadric *)luaL_checkudata(L,index,LUAGLUQUADRIC);
   luaL_argcheck(L,lquad != NULL,index,"GLUquadric expected");
   return lquad;
 }
 
-static LuaGLUquadric * pushLuaGLUquadric(lua_State *L) 
+static LuaGLUquadric * luaglu_pushquadric(lua_State *L) 
 {
   LuaGLUquadric * lquad = (LuaGLUquadric *)lua_newuserdata(L,sizeof(LuaGLUquadric));
   luaL_getmetatable(L,LUAGLUQUADRIC);
@@ -359,21 +543,21 @@ static int luaglu_new_quadric(lua_State *L)
   if (!quad) 
     luaL_error(L, "glu.NewQuadric failed");
 
-  lquad = pushLuaGLUquadric(L);
+  lquad = luaglu_pushquadric(L);
   lquad->quad = quad;
   return 1;
 }
 
 static int luaglu_quadric_gc(lua_State *L) 
 {
-  LuaGLUquadric * lquad=checkLuaGLUquadric(L,1);
+  LuaGLUquadric * lquad=luaglu_checkquadric(L,1);
   if (lquad->quad) gluDeleteQuadric(lquad->quad);
   return 0;
 }
 
 static int luaglu_quadric_tostring(lua_State *L) 
 {
-  LuaGLUquadric * lquad=checkLuaGLUquadric(L,1);
+  LuaGLUquadric * lquad=luaglu_checkquadric(L,1);
   lua_pushfstring(L,"GLUquadric <%p>",lquad->quad);
   return 1;
 }
@@ -381,7 +565,7 @@ static int luaglu_quadric_tostring(lua_State *L)
 /* quad:Cylinder(base, top, height, slices, stacks) -> quad */
 static int luaglu_cylinder(lua_State *L)
 {
-  LuaGLUquadric *lquad=checkLuaGLUquadric(L,1);
+  LuaGLUquadric *lquad=luaglu_checkquadric(L,1);
 
   gluCylinder(lquad->quad,luaL_checknumber(L, 2), luaL_checknumber(L, 3), luaL_checknumber(L, 4),
               luaL_checkinteger(L, 5), luaL_checkinteger(L, 6));
@@ -393,7 +577,7 @@ static int luaglu_cylinder(lua_State *L)
 /* quad:Disk(inner, outer, slices, loops) -> quad */
 static int luaglu_disk(lua_State *L)
 {
-  LuaGLUquadric *lquad=checkLuaGLUquadric(L,1);
+  LuaGLUquadric *lquad=luaglu_checkquadric(L,1);
 
   gluDisk(lquad->quad,luaL_checknumber(L, 2), luaL_checknumber(L, 3),
     luaL_checkinteger(L, 4), luaL_checkinteger(L, 5));
@@ -405,7 +589,7 @@ static int luaglu_disk(lua_State *L)
 /* quad:PartialDisk (inner, outer, slices, loops, start, sweep) -> quad */
 static int luaglu_partial_disk(lua_State *L)
 {
-  LuaGLUquadric *lquad=checkLuaGLUquadric(L,1);
+  LuaGLUquadric *lquad=luaglu_checkquadric(L,1);
 
   gluPartialDisk(lquad->quad,luaL_checknumber(L, 2), luaL_checknumber(L, 3), 
 		             luaL_checkinteger(L, 4),luaL_checkinteger(L, 5), 
@@ -422,7 +606,7 @@ static int luaglu_partial_disk(lua_State *L)
 /* quad:DrawStyle(draw) -> quad */
 static int luaglu_quadric_draw_style(lua_State *L)
 {
-  LuaGLUquadric *lquad=checkLuaGLUquadric(L,1);
+  LuaGLUquadric *lquad=luaglu_checkquadric(L,1);
   gluQuadricDrawStyle(lquad->quad, luaglu_get_gl_enum(L, 2));
   lua_pushvalue(L,1);
   return 1;
@@ -431,7 +615,7 @@ static int luaglu_quadric_draw_style(lua_State *L)
 /* quad:Normals(normal) -> quad */
 static int luaglu_quadric_normals(lua_State *L)
 {
-  LuaGLUquadric *lquad=checkLuaGLUquadric(L,1);
+  LuaGLUquadric *lquad=luaglu_checkquadric(L,1);
   gluQuadricNormals(lquad->quad, luaglu_get_gl_enum(L, 2));
   lua_pushvalue(L,1);
   return 1;
@@ -441,7 +625,7 @@ static int luaglu_quadric_normals(lua_State *L)
 /* quad:Orientation(orientation) -> quad */
 static int luaglu_quadric_orientation(lua_State *L)
 {
-  LuaGLUquadric *lquad=checkLuaGLUquadric(L,1);
+  LuaGLUquadric *lquad=luaglu_checkquadric(L,1);
   gluQuadricOrientation(lquad->quad, luaglu_get_gl_enum(L, 2));
   lua_pushvalue(L,1);
   return 1;
@@ -451,7 +635,7 @@ static int luaglu_quadric_orientation(lua_State *L)
 /* quad:Texture(texture) -> quad */
 static int luaglu_quadric_texture(lua_State *L)
 {
-  LuaGLUquadric *lquad=checkLuaGLUquadric(L,1);
+  LuaGLUquadric *lquad=luaglu_checkquadric(L,1);
   gluQuadricTexture(lquad->quad, luagl_checkboolean(L,2));
   lua_pushvalue(L,1);
   return 1;
@@ -460,7 +644,7 @@ static int luaglu_quadric_texture(lua_State *L)
 /* quad:Sphere(radius, slices, stacks) -> quad */
 static int luaglu_sphere(lua_State *L)
 {
-  LuaGLUquadric *lquad=checkLuaGLUquadric(L,1);
+  LuaGLUquadric *lquad=luaglu_checkquadric(L,1);
   gluSphere(lquad->quad,luaL_checknumber(L, 2),luaL_checkinteger(L, 3), luaL_checkinteger(L, 4));
   lua_pushvalue(L,1);
   return 1;
@@ -498,14 +682,14 @@ typedef struct LuaGLUnurb{
 } LuaGLUnurb;
 
 
-static LuaGLUnurb* checkLuaGLUnurb(lua_State *L, int index) 
+static LuaGLUnurb* luaglu_checknurb(lua_State *L, int index) 
 {
   LuaGLUnurb * lnurb = (LuaGLUnurb *)luaL_checkudata(L,index,LUAGLUNURB);
   luaL_argcheck(L,lnurb != NULL,index,"GLUnurb expected");
   return lnurb;
 }
 
-static LuaGLUnurb* pushLuaGLUnurb(lua_State *L) 
+static LuaGLUnurb* luaglu_pushnurb(lua_State *L) 
 {
   LuaGLUnurb * lnurb = (LuaGLUnurb *)lua_newuserdata(L,sizeof(LuaGLUnurb));
   luaL_getmetatable(L,LUAGLUNURB);
@@ -521,7 +705,7 @@ static int luaglu_new_nurbs(lua_State *L)
   if (!nurb) 
     luaL_error(L, "glu.NewNurbsRenderer failed");
 
-  lnurb= pushLuaGLUnurb(L);
+  lnurb= luaglu_pushnurb(L);
   lnurb->nurb=nurb;
   lnurb->L=L;
 #ifdef GLU_VERSION_1_3
@@ -537,7 +721,7 @@ static int luaglu_new_nurbs(lua_State *L)
 
 static int luaglu_nurbs_gc(lua_State *L) 
 {
-  LuaGLUnurb * lnurb=checkLuaGLUnurb(L,1);
+  LuaGLUnurb * lnurb=luaglu_checknurb(L,1);
 #ifdef GLU_VERSION_1_3
   luaL_unref(L,LUA_REGISTRYINDEX,lnurb->ref_cb);
 #endif
@@ -547,7 +731,7 @@ static int luaglu_nurbs_gc(lua_State *L)
 
 static int luaglu_nurbs_tostring(lua_State *L) 
 {
-  LuaGLUnurb * lnurb=checkLuaGLUnurb(L,1);
+  LuaGLUnurb * lnurb=luaglu_checknurb(L,1);
   lua_pushfstring(L,"GLUnurb <%p>",lnurb->nurb);
   return 1;
 }
@@ -673,7 +857,7 @@ static void nurbEndDataCB( void *userData )
 /* nurb:NurbsCallback(which, func) -> nurb */
 static int luaglu_nurbs_callback(lua_State *L) 
 {
-  LuaGLUnurb *lnurb=checkLuaGLUnurb(L,1);
+  LuaGLUnurb *lnurb=luaglu_checknurb(L,1);
   GLenum e;
 
   e = luaglu_get_gl_enum(L, 2);
@@ -722,7 +906,7 @@ static int luaglu_nurbs_callback(lua_State *L)
 /* nurb:BeginCurve() -> nurb */
 static int luaglu_begin_curve(lua_State *L) 
 { 
-  LuaGLUnurb *lnurb=checkLuaGLUnurb(L,1);
+  LuaGLUnurb *lnurb=luaglu_checknurb(L,1);
   gluBeginCurve(lnurb->nurb);
   lua_pushvalue(L,1);
   return 1;
@@ -731,7 +915,7 @@ static int luaglu_begin_curve(lua_State *L)
 /* nurb:BeginSurface() -> nurb */
 static int luaglu_begin_surface(lua_State *L) 
 { 
-  LuaGLUnurb *lnurb=checkLuaGLUnurb(L,1);
+  LuaGLUnurb *lnurb=luaglu_checknurb(L,1);
   gluBeginSurface(lnurb->nurb);
   lua_pushvalue(L,1);
   return 1;
@@ -740,7 +924,7 @@ static int luaglu_begin_surface(lua_State *L)
 /* nurb:BeginTrim() -> nurb */
 static int luaglu_begin_trim(lua_State *L) 
 { 
-  LuaGLUnurb *lnurb=checkLuaGLUnurb(L,1);
+  LuaGLUnurb *lnurb=luaglu_checknurb(L,1);
   gluBeginTrim(lnurb->nurb);
   lua_pushvalue(L,1);
   return 1;
@@ -749,7 +933,7 @@ static int luaglu_begin_trim(lua_State *L)
 /* nurb:EndCurve() -> nurb */
 static int luaglu_end_curve(lua_State *L) 
 { 
-  LuaGLUnurb *lnurb=checkLuaGLUnurb(L,1);
+  LuaGLUnurb *lnurb=luaglu_checknurb(L,1);
   gluEndCurve(lnurb->nurb);
   lua_pushvalue(L,1);
   return 1;
@@ -758,7 +942,7 @@ static int luaglu_end_curve(lua_State *L)
 /* nurb:EndSurface() -> nurb */
 static int luaglu_end_surface(lua_State *L) 
 { 
-  LuaGLUnurb *lnurb=checkLuaGLUnurb(L,1);
+  LuaGLUnurb *lnurb=luaglu_checknurb(L,1);
   gluEndSurface(lnurb->nurb);
   lua_pushvalue(L,1);
   return 1;
@@ -767,7 +951,7 @@ static int luaglu_end_surface(lua_State *L)
 /* nurb:EndTrim() -> nurb */
 static int luaglu_end_trim(lua_State *L) 
 { 
-  LuaGLUnurb *lnurb=checkLuaGLUnurb(L,1);
+  LuaGLUnurb *lnurb=luaglu_checknurb(L,1);
   gluEndTrim(lnurb->nurb);
   lua_pushvalue(L,1);
   return 1;
@@ -779,7 +963,7 @@ static int luaglu_get_set_nurbs_property(lua_State *L)
 {
   GLenum e;
   GLfloat value;
-  LuaGLUnurb *lnurb=checkLuaGLUnurb(L,1);
+  LuaGLUnurb *lnurb=luaglu_checknurb(L,1);
 
   e = luaglu_get_gl_enum(L, 2);
 
@@ -801,49 +985,14 @@ static int luaglu_get_set_nurbs_property(lua_State *L)
 /* nurb:LoadSamplingMatrices (modelArray, perspectiveArray, viewArray) -> nurb */
 static int luaglu_load_sampling_matrices(lua_State *L)
 {
-  LuaGLUnurb *lnurb=checkLuaGLUnurb(L,1);
+  LuaGLUnurb *lnurb=luaglu_checknurb(L,1);
   GLfloat modelMatrix[16];
   GLfloat projMatrix[16]; 
   GLint viewport[4];
-  int i;
 
-  if (!lua_istable(L, 2))
-    luaL_typerror(L, 2, lua_typename(L, LUA_TTABLE));
-  if (!lua_istable(L, 3))
-    luaL_typerror(L, 3, lua_typename(L, LUA_TTABLE));
-  if (!lua_istable(L, 4))
-    luaL_typerror(L, 4, lua_typename(L, LUA_TTABLE));
-
-  if(luaL_getn(L, 2) < 16)
-    luaL_argerror(L, 2, "invalid number of items in table (n<16)");
-  if(luaL_getn(L, 3) < 16)
-    luaL_argerror(L, 3, "invalid number of items in table (n<16)");
-  if(luaL_getn(L, 4) < 4)
-    luaL_argerror(L, 4, "invalid number of items in table (n<4)");
-
-  for (i=0;i<16;i++) 
-  {
-    lua_pushnumber(L,i);
-    lua_gettable(L,2);
-    modelMatrix[i]=(GLfloat)luaL_checknumber(L,-1);
-    lua_pop(L,1);
-  }
-
-  for (i=0;i<16;i++) 
-  {
-    lua_pushnumber(L,i);
-    lua_gettable(L,3);
-    projMatrix[i]=(GLfloat)luaL_checknumber(L,-1);
-    lua_pop(L,1);
-  }
-
-  for (i=0;i<4;i++) 
-  {
-    lua_pushnumber(L,i);
-    lua_gettable(L,4);
-    viewport[i]=luaL_checkinteger(L,-1);
-    lua_pop(L,1);
-  }
+  luaglu_load_matrix16f(L, 2, modelMatrix);
+  luaglu_load_matrix16f(L, 3, projMatrix);
+  luaglu_load_viewport(L, 4, viewport);
 
   gluLoadSamplingMatrices(lnurb->nurb,modelMatrix,projMatrix,viewport);
 
@@ -854,7 +1003,7 @@ static int luaglu_load_sampling_matrices(lua_State *L)
 /* nurb:Curve (knotsArray, controlArray, type) -> nurb */
 static int luaglu_nurbs_curve(lua_State *L)
 {
-  LuaGLUnurb *lnurb=checkLuaGLUnurb(L,1);
+  LuaGLUnurb *lnurb=luaglu_checknurb(L,1);
   GLint ptsCount=0;
   GLint knotCount=0;
   GLfloat *knots;
@@ -925,7 +1074,7 @@ static int luaglu_nurbs_curve(lua_State *L)
 /* nurb:Surface (sKnotsArray, tKnotsArray, controlArray, type) -> nurb */
 static int luaglu_nurbs_surface(lua_State *L) 
 {
-  LuaGLUnurb *lnurb=checkLuaGLUnurb(L,1);
+  LuaGLUnurb *lnurb=luaglu_checknurb(L,1);
   GLint sKnotCount=0;
   GLint tKnotCount=0;
   GLfloat *sKnots;
@@ -976,6 +1125,13 @@ static int luaglu_nurbs_surface(lua_State *L)
   tPtsCount = luagl_get_array2f(L, 4, &points, &sPtsCount);
   sPtsCount /= size;
 
+  if (tPtsCount==-1)
+  {
+    LUAGL_DELETE_ARRAY(sKnots);
+    LUAGL_DELETE_ARRAY(tKnots);
+    luaL_argerror(L, 4, "must be a table of tables");
+  }
+
   sStride=size;
   tStride=size*sPtsCount;
 
@@ -1003,7 +1159,7 @@ static int luaglu_nurbs_surface(lua_State *L)
 /* nurb:PwlCurve (dataArray, type) -> nurb */
 static int luaglu_pwl_curve(lua_State *L)
 {
-  LuaGLUnurb *lnurb=checkLuaGLUnurb(L,1);
+  LuaGLUnurb *lnurb=luaglu_checknurb(L,1);
   GLint ptsCount=0;
   GLint stride;
   GLfloat *points;
@@ -1080,14 +1236,42 @@ static const luaL_reg luaglunurb_methods[] = {
 };
 
 
+
+/* Tesselation
+gluNextContour
+gluBeginPolygon
+gluEndPolygon
+gluNewTess
+gluTessBeginContour
+gluTessBeginPolygon
+gluTessCallback
+gluTessEndContour
+gluTessEndPolygon
+gluTessNormal
+gluTessProperty
+gluTessVertex
+gluDeleteTess
+gluGetTessProperty
+*/
+
+
 static const luaL_reg luaglu_lib[] = {
   {"GetString", luaglu_get_string},
   {"Ortho2D", luaglu_ortho_2D},
   {"Perspective", luaglu_perspective},
   {"LookAt", luaglu_look_at},
   {"PickMatrix", luaglu_pick_matrix},
+  {"BuildMipmaps", luaglu_build_mipmaps},
+  {"Build1DMipmaps", luaglu_build_1d_mipmaps},
   {"Build2DMipmaps", luaglu_build_2d_mipmaps},
+#ifdef GLU_VERSION_1_3
+  {"Build3DMipmaps", luaglu_build_3d_mipmaps},
+#endif
   {"ErrorString", luaglu_error_string},
+  {"Project", luaglu_project},
+  {"UnProject", luaglu_unproject},
+  {"ScaleImage", luaglu_scaleimage},
+  {"ScaleImageRaw", luaglu_scaleimageraw},
 
   /* Quadric */
   {"NewQuadric", luaglu_new_quadric},
