@@ -1,1 +1,1 @@
-dofile("test/animate.lua")
+print("Hello, World!")
