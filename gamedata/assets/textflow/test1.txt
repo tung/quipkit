@@ -1,4 +1,0 @@
-This is a test textflow asset.
-Here is the second line.
-Here's the third.
-This is the final line. Bye!
