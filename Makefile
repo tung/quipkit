@@ -2,9 +2,6 @@ CFLAGS:=-std=c99 -W -Wall -Wextra
 
 
 
-ALSA_CFLAGS:=
-ALSA_LIBS:=-lasound
-
 GL_CFLAGS:=`pkg-config --cflags gl`
 GL_LIBS:=`pkg-config --libs gl`
 GLU_CFLAGS:=
@@ -20,7 +17,6 @@ SDL_LIBS:=`sdl-config --libs`
 LUAGL_DIR:=lib/gl/luagl/
 LUASDL_DIR:=lib/sdl/LuaSDL_new/
 LUASDL_DIR_BACK:=../../../
-PROTEAAUDIO_DIR:=lib/proteaAudio/
 SDLGL_DIR:=lib/sdlgl/
 TOLUAPP_DIR:=contrib/tolua++/
 
@@ -29,10 +25,10 @@ TOLUAPP_DIR:=contrib/tolua++/
 ### Tasks ###
 
 .PHONY: all
-all: game all_luagl ${LUASDL_DIR}libluasdl.so all_toluapp ${PROTEAAUDIO_DIR}libproaudio.so ${SDLGL_DIR}libsdlgl.so
+all: game all_luagl ${LUASDL_DIR}libluasdl.so all_toluapp ${SDLGL_DIR}libsdlgl.so
 
 .PHONY: clean
-clean: clean_game clean_luagl clean_luasdl clean_toluapp clean_proteaaudio clean_sdlgl
+clean: clean_game clean_luagl clean_luasdl clean_toluapp clean_sdlgl
 
 
 
@@ -122,40 +118,6 @@ clean_luasdl:
 	-rm -f ${LUASDL_DIR}SDL_bind.o
 	-rm -f ${LUASDL_DIR}SDL_bind.c ${LUASDL_DIR}SDL_bind.h
 	-rm -f ${LUASDL_DIR}pkg/SDL_config.h.pkg ${LUASDL_DIR}pkg/SDL_platform.h.pkg
-
-
-### proteaAudio bindings ###
-
-PROTEAAUDIO_CFLAGS:=-O2 -Wall -I${PROTEAAUDIO_DIR}rtaudio
-PROTEAAUDIO_LIBS:=-lpthread ${ALSA_LIBS} ${LUA_LIBS}
-
-${PROTEAAUDIO_DIR}libproaudio.so: ${PROTEAAUDIO_DIR}proAudioRt_lua.o ${PROTEAAUDIO_DIR}libproaudio.a
-	g++ -shared -Wl,-soname,$(notdir $@) -o $@ ${PROTEAAUDIO_LIBS} $^
-
-${PROTEAAUDIO_DIR}proAudioRt_lua.o: ${PROTEAAUDIO_DIR}proAudioRt_lua.cpp ${PROTEAAUDIO_DIR}proAudioRt.h
-	g++ -fPIC -o $@ ${PROTEAAUDIO_CFLAGS} ${LUA_CFLAGS} -c $<
-
-${PROTEAAUDIO_DIR}libproaudio.a: ${PROTEAAUDIO_DIR}proAudio.o ${PROTEAAUDIO_DIR}proAudioRt.o ${PROTEAAUDIO_DIR}stb_vorbis.o ${PROTEAAUDIO_DIR}rtaudio/RtAudio.o
-	ar -rcs $@ $+
-
-${PROTEAAUDIO_DIR}rtaudio/RtAudio.o: ${PROTEAAUDIO_DIR}rtaudio/RtAudio.cpp ${PROTEAAUDIO_DIR}rtaudio/RtAudio.h ${PROTEAAUDIO_DIR}rtaudio/RtError.h
-	g++ -fPIC -o $@ ${PROTEAAUDIO_CFLAGS} -DHAVE_GETTIMEOFDAY -D__LINUX_ALSA__ -c $<
-
-${PROTEAAUDIO_DIR}stb_vorbis.o: ${PROTEAAUDIO_DIR}stb_vorbis.c
-	gcc -fPIC -o $@ ${PROTEAAUDIO_CFLAGS} -c $<
-
-${PROTEAAUDIO_DIR}proAudioRt.o: ${PROTEAAUDIO_DIR}proAudioRt.cpp ${PROTEAAUDIO_DIR}proAudioRt.h ${PROTEAAUDIO_DIR}rtaudio/RtAudio.h ${PROTEAAUDIO_DIR}rtaudio/RtError.h
-	g++ -fPIC -o $@ ${PROTEAAUDIO_CFLAGS} -c $<
-
-${PROTEAAUDIO_DIR}proAudio.o: ${PROTEAAUDIO_DIR}proAudio.cpp ${PROTEAAUDIO_DIR}proAudio.h
-	g++ -fPIC -o $@ ${PROTEAAUDIO_CFLAGS} -c $<
-
-.PHONY: clean_proteaaudio
-clean_proteaaudio:
-	-rm -f ${PROTEAAUDIO_DIR}libproaudio.so
-	-rm -f ${PROTEAAUDIO_DIR}libproaudio.a
-	-rm -f ${PROTEAAUDIO_DIR}*.o
-	-rm -f ${PROTEAAUDIO_DIR}rtaudio/RtAudio.o
 
 
 ### sdlgl helper library ##
