@@ -2,9 +2,6 @@ CFLAGS:=-std=c99 -W -Wall -Wextra
 
 
 
-ALSA_CFLAGS:=
-ALSA_LIBS:=-lasound
-
 GL_CFLAGS:=`pkg-config --cflags gl`
 GL_LIBS:=`pkg-config --libs gl`
 GLU_CFLAGS:=
@@ -16,20 +13,11 @@ LUA_LIBS:=`pkg-config --libs lua5.1`
 SDL_CFLAGS:=`sdl-config --cflags`
 SDL_LIBS:=`sdl-config --libs`
 
-TCLTK_CFLAGS:=-I/usr/include/tcl8.5
-TCLTK_LIBS:=-ltcl8.5
 
-
-
-LTCLTK_DIR:=dev/lib/tcltk/ltcltk-0.9-1/
 LUAGL_DIR:=lib/gl/luagl/
 LUASDL_DIR:=lib/sdl/LuaSDL_new/
 LUASDL_DIR_BACK:=../../../
-LUASOCKET_DIR:=dev/lib/socket/luasocket-2.0.2/
-OLDLUASDL_DIR:=lib/sdl/luaSDL/
-PROTEAAUDIO_DIR:=lib/proteaAudio/
 SDLGL_DIR:=lib/sdlgl/
-SPAWN_DIR:=dev/lib/spawn/
 TOLUAPP_DIR:=contrib/tolua++/
 
 
@@ -37,10 +25,10 @@ TOLUAPP_DIR:=contrib/tolua++/
 ### Tasks ###
 
 .PHONY: all
-all: game all_luagl ${LUASDL_DIR}libluasdl.so all_toluapp ${PROTEAAUDIO_DIR}libproaudio.so ${SDLGL_DIR}libsdlgl.so edit all_luasocket ${LTCLTK_DIR}ltcl.so ${SPAWN_DIR}libspawn.so
+all: game all_luagl ${LUASDL_DIR}libluasdl.so all_toluapp ${SDLGL_DIR}libsdlgl.so
 
 .PHONY: clean
-clean: clean_game clean_luagl clean_luasdl clean_toluapp clean_proteaaudio clean_sdlgl clean_edit clean_luasocket clean_ltcltk clean_spawn
+clean: clean_game clean_luagl clean_luasdl clean_toluapp clean_sdlgl
 
 
 
@@ -132,40 +120,6 @@ clean_luasdl:
 	-rm -f ${LUASDL_DIR}pkg/SDL_config.h.pkg ${LUASDL_DIR}pkg/SDL_platform.h.pkg
 
 
-### proteaAudio bindings ###
-
-PROTEAAUDIO_CFLAGS:=-O2 -Wall -I${PROTEAAUDIO_DIR}rtaudio
-PROTEAAUDIO_LIBS:=-lpthread ${ALSA_LIBS} ${LUA_LIBS}
-
-${PROTEAAUDIO_DIR}libproaudio.so: ${PROTEAAUDIO_DIR}proAudioRt_lua.o ${PROTEAAUDIO_DIR}libproaudio.a
-	g++ -shared -Wl,-soname,$(notdir $@) -o $@ ${PROTEAAUDIO_LIBS} $^
-
-${PROTEAAUDIO_DIR}proAudioRt_lua.o: ${PROTEAAUDIO_DIR}proAudioRt_lua.cpp ${PROTEAAUDIO_DIR}proAudioRt.h
-	g++ -fPIC -o $@ ${PROTEAAUDIO_CFLAGS} ${LUA_CFLAGS} -c $<
-
-${PROTEAAUDIO_DIR}libproaudio.a: ${PROTEAAUDIO_DIR}proAudio.o ${PROTEAAUDIO_DIR}proAudioRt.o ${PROTEAAUDIO_DIR}stb_vorbis.o ${PROTEAAUDIO_DIR}rtaudio/RtAudio.o
-	ar -rcs $@ $+
-
-${PROTEAAUDIO_DIR}rtaudio/RtAudio.o: ${PROTEAAUDIO_DIR}rtaudio/RtAudio.cpp ${PROTEAAUDIO_DIR}rtaudio/RtAudio.h ${PROTEAAUDIO_DIR}rtaudio/RtError.h
-	g++ -fPIC -o $@ ${PROTEAAUDIO_CFLAGS} -DHAVE_GETTIMEOFDAY -D__LINUX_ALSA__ -c $<
-
-${PROTEAAUDIO_DIR}stb_vorbis.o: ${PROTEAAUDIO_DIR}stb_vorbis.c
-	gcc -fPIC -o $@ ${PROTEAAUDIO_CFLAGS} -c $<
-
-${PROTEAAUDIO_DIR}proAudioRt.o: ${PROTEAAUDIO_DIR}proAudioRt.cpp ${PROTEAAUDIO_DIR}proAudioRt.h ${PROTEAAUDIO_DIR}rtaudio/RtAudio.h ${PROTEAAUDIO_DIR}rtaudio/RtError.h
-	g++ -fPIC -o $@ ${PROTEAAUDIO_CFLAGS} -c $<
-
-${PROTEAAUDIO_DIR}proAudio.o: ${PROTEAAUDIO_DIR}proAudio.cpp ${PROTEAAUDIO_DIR}proAudio.h
-	g++ -fPIC -o $@ ${PROTEAAUDIO_CFLAGS} -c $<
-
-.PHONY: clean_proteaaudio
-clean_proteaaudio:
-	-rm -f ${PROTEAAUDIO_DIR}libproaudio.so
-	-rm -f ${PROTEAAUDIO_DIR}libproaudio.a
-	-rm -f ${PROTEAAUDIO_DIR}*.o
-	-rm -f ${PROTEAAUDIO_DIR}rtaudio/RtAudio.o
-
-
 ### sdlgl helper library ##
 
 SDLGL_CFLAGS:=${QKENG_CFLAGS} ${SDL_CFLAGS} ${GL_CFLAGS} ${GLU_CFLAGS}
@@ -253,66 +207,3 @@ clean_toluapp:
 	-rm -f ${TOLUAPP_DIR}src/bin/toluabind_default.o
 	-rmdir ${TOLUAPP_DIR}bin
 	-rmdir ${TOLUAPP_DIR}lib
-
-
-
-### Quipkit Editor ###
-
-QKED_CFLAGS:=${CFLAGS} ${LUA_CFLAGS}
-QKED_LIBS:=${LUA_LIBS}
-
-edit: edit.o
-	gcc -o $@ ${QKED_LIBS} $^
-
-edit.o: edit.c
-	gcc -o $@ ${QKED_CFLAGS} -c $^
-
-.PHONY: clean_edit
-clean_edit:
-	-rm -f edit
-	-rm -f edit.o
-
-
-### LuaSocket ###
-
-.PHONY: all_luasocket
-all_luasocket:
-	cd ${LUASOCKET_DIR} && LUAINC=${LUA_CFLAGS} make all
-
-.PHONY: clean_luasocket
-clean_luasocket:
-	cd ${LUASOCKET_DIR} && make clean
-
-
-### Spawn library ###
-
-SPAWN_CFLAGS:=${QKED_CFLAGS}
-SPAWN_LIBS:=${QKED_LIBS}
-
-${SPAWN_DIR}libspawn.so: ${SPAWN_DIR}spawn.o
-	gcc -shared -Wl,-soname,$(notdir $@) -o $@ ${SPAWN_LIBS} $+
-
-${SPAWN_DIR}spawn.o: ${SPAWN_DIR}spawn.c
-	gcc -fPIC -o $@ ${SPAWN_CFLAGS} -c $<
-
-.PHONY: clean_spawn
-clean_spawn:
-	-rm -f ${SPAWN_DIR}libspawn.so
-	-rm -f ${SPAWN_DIR}*.o
-
-
-### Tcl bindings (and thus Tk too) ###
-
-LTCLTK_CFLAGS:=${QKED_CFLAGS} ${TCLTK_CFLAGS}
-LTCLTK_LIBS:=${QKED_LIBS} ${TCLTK_LIBS}
-
-${LTCLTK_DIR}ltcl.so: ${LTCLTK_DIR}ltcl.o
-	gcc -shared -Wl,-soname,$(notdir $@) -o $@ ${LTCLTK_LIBS} $+
-
-${LTCLTK_DIR}ltcl.o: ${LTCLTK_DIR}ltcl.c
-	gcc -fPIC -o $@ ${LTCLTK_CFLAGS} -c $<
-
-.PHONY: clean_ltcltk
-clean_ltcltk:
-	-rm -f ${LTCLTK_DIR}ltcl.so
-	-rm -f ${LTCLTK_DIR}*.o

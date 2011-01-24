@@ -32,9 +32,5 @@
 			<Depends filename="contrib/tolua++/tolua++_libs.cbp" />
 			<Depends filename="lib/sdl/LuaSDL_new/SDL_bind.cbp" />
 		</Project>
-		<Project filename="edit.cbp">
-			<Depends filename="dev/lib/tcltk/ltcltk-0.9-1/ltcl.cbp" />
-		</Project>
-		<Project filename="dev/lib/tcltk/ltcltk-0.9-1/ltcl.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
