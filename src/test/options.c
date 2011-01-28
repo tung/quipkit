@@ -86,7 +86,7 @@ static void TestShortForm() {
 
 
 static void TestMixedArgs() {
-    TEST_ARGS(0, "./options", "--width", "800", "--height", "600", "--script", "startup/main.lua", "--", "abc", "xyz");
+    TEST_ARGS(7, "./options", "--width", "800", "--height", "600", "--script", "startup/main.lua", "--", "abc", "xyz");
 
     TEST_ASSERT(o.has_width);
     TEST_ASSERT(o.has_height);
