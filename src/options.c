@@ -1,30 +1,11 @@
+#include "options.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 
-#define MAX_PATH 256
-
-
-typedef struct {
-    char has_script;
-    char script[MAX_PATH];
-    char has_config;
-    char config[MAX_PATH];
-    char has_base;
-    char base[MAX_PATH];
-    char has_width;
-    int  width;
-    char has_height;
-    int  height;
-    char has_fullscreen;
-    char fullscreen;
-    char has_channels;
-    int  channels;
-} Options;
-
-
-void Options_init(Options *o) {
+static void opt_InitOptions(opt_Options *o) {
     o->has_script = 0;
     o->has_config = 0;
     o->has_base = 0;
@@ -36,20 +17,20 @@ void Options_init(Options *o) {
 
 
 /* TODO: Move this elsewhere and implement it. */
-void fs_AbsolutePath(char *path, char *dest, int dest_size) {
+static void fs_AbsolutePath(char *path, char *dest, int dest_size) {
     strncpy(dest, path, dest_size);
 }
 
 
-static int ParseOptions(int argc, char *argv[], Options *opts, int *script_args_start) {
-    #define ParseOptions_DUPCHECK(po_opt) \
+int opt_ParseOptions(int argc, char *argv[], opt_Options *opts, int *script_args_start) {
+    #define PO_DUPCHECK(po_opt) \
         do { \
             if (opts->has_##po_opt) { \
                 fprintf(stderr, "--" #po_opt " can't be given twice\n"); \
                 return 1; \
             } \
         } while (0)
-    #define ParseOptions_NEXTARG(po_opt, po_err_arg_needed) \
+    #define PO_NEXTARG(po_opt, po_err_arg_needed) \
         do { \
             ++o; \
             if (o >= argc) { \
@@ -57,7 +38,8 @@ static int ParseOptions(int argc, char *argv[], Options *opts, int *script_args_
                 return 1; \
             } \
         } while(0)
-    #define ParseOptions_GETFLAG(po_opt) \
+
+    #define PO_GETFLAG(po_opt) \
         do { \
             if (strcmp(argv[o], "0") == 0) { \
                 opts->po_opt = 0; \
@@ -69,7 +51,7 @@ static int ParseOptions(int argc, char *argv[], Options *opts, int *script_args_
             } \
             opts->has_##po_opt = 1; \
         } while(0)
-    #define ParseOptions_GETNUMBER(po_opt, po_cmp, po_num) \
+    #define PO_GETNUMBER(po_opt, po_cmp, po_num) \
         do { \
             opts->po_opt = atoi(argv[o]); \
             if (!(opts->po_opt po_cmp po_num)) { \
@@ -78,48 +60,49 @@ static int ParseOptions(int argc, char *argv[], Options *opts, int *script_args_
             } \
             opts->has_##po_opt = 1; \
         } while(0)
-    #define ParseOptions_GETPATH(po_opt) \
+    #define PO_GETPATH(po_opt) \
         do { \
             fs_AbsolutePath(argv[o], opts->po_opt, MAX_PATH); \
             opts->has_##po_opt = 1; \
         } while (0)
-    #define ParseOptions_FLAG(po_opt) \
+
+    #define PO_FLAG(po_opt) \
         do { \
-            ParseOptions_DUPCHECK(po_opt); \
-            ParseOptions_NEXTARG(po_opt, "an argument"); \
-            ParseOptions_GETFLAG(po_opt); \
+            PO_DUPCHECK(po_opt); \
+            PO_NEXTARG(po_opt, "an argument"); \
+            PO_GETFLAG(po_opt); \
         } while (0)
-    #define ParseOptions_NUMBER(po_opt, po_cmp, po_num) \
+    #define PO_NUMBER(po_opt, po_cmp, po_num) \
         do { \
-            ParseOptions_DUPCHECK(po_opt); \
-            ParseOptions_NEXTARG(po_opt, "a number argument"); \
-            ParseOptions_GETNUMBER(po_opt, po_cmp, po_num); \
+            PO_DUPCHECK(po_opt); \
+            PO_NEXTARG(po_opt, "a number argument"); \
+            PO_GETNUMBER(po_opt, po_cmp, po_num); \
         } while (0)
-    #define ParseOptions_PATH(po_opt) \
+    #define PO_PATH(po_opt) \
         do { \
-            ParseOptions_DUPCHECK(po_opt); \
-            ParseOptions_NEXTARG(po_opt, "a path argument"); \
-            ParseOptions_GETPATH(po_opt); \
+            PO_DUPCHECK(po_opt); \
+            PO_NEXTARG(po_opt, "a path argument"); \
+            PO_GETPATH(po_opt); \
         } while(0)
 
-    Options_init(opts);
+    opt_InitOptions(opts);
     *script_args_start = argc;
     int o = 1;
     while (o < argc) {
         if (strcmp(argv[o], "--script") == 0) {
-            ParseOptions_PATH(script);
+            PO_PATH(script);
         } else if (strcmp(argv[o], "--config") == 0) {
-            ParseOptions_PATH(config);
+            PO_PATH(config);
         } else if (strcmp(argv[o], "--base") == 0) {
-            ParseOptions_PATH(base);
+            PO_PATH(base);
         } else if (strcmp(argv[o], "--width") == 0) {
-            ParseOptions_NUMBER(width, >, 0);
+            PO_NUMBER(width, >, 0);
         } else if (strcmp(argv[o], "--height") == 0) {
-            ParseOptions_NUMBER(height, >, 0);
+            PO_NUMBER(height, >, 0);
         } else if (strcmp(argv[o], "--fullscreen") == 0) {
-            ParseOptions_FLAG(fullscreen);
+            PO_FLAG(fullscreen);
         } else if (strcmp(argv[o], "--channels") == 0) {
-            ParseOptions_NUMBER(channels, >, -1);
+            PO_NUMBER(channels, >, -1);
         } else if (strcmp(argv[o], "--help") == 0) {
             printf("Usage: ./game <args> -- <script args>\n"
                     "args:\n"
@@ -159,42 +142,12 @@ static int ParseOptions(int argc, char *argv[], Options *opts, int *script_args_
     }
     return 0;
 
-    #undef ParseOptions_DUPCHECK
-    #undef ParseOptions_NEXTARG
-    #undef ParseOptions_GETFLAG
-    #undef ParseOptions_GETNUMBER
-    #undef ParseOptions_GETPATH
-    #undef ParseOptions_FLAG
-    #undef ParseOptions_NUMBER
-    #undef ParseOptions_PATH
-}
-
-
-int main(int argc, char *argv[]) {
-    Options cmd_line_opts;
-    int script_args_start;
-    int po_ret = ParseOptions(argc, argv, &cmd_line_opts, &script_args_start);
-    switch (po_ret) {
-    case 1:
-        return 1;
-    case 2:
-        return 0;
-    default:
-        break;
-    }
-    if (cmd_line_opts.has_script) { printf("script: %s\n", cmd_line_opts.script); }
-    if (cmd_line_opts.has_config) { printf("config: %s\n", cmd_line_opts.config); }
-    if (cmd_line_opts.has_base) { printf("base: %s\n", cmd_line_opts.base); }
-    if (cmd_line_opts.has_width) { printf("width: %d\n", cmd_line_opts.width); }
-    if (cmd_line_opts.has_height) { printf("height: %d\n", cmd_line_opts.height); }
-    if (cmd_line_opts.has_fullscreen) { printf("fullscreen: %d\n", cmd_line_opts.fullscreen); }
-    if (cmd_line_opts.has_channels) { printf("channels: %d\n", cmd_line_opts.channels); }
-    if (script_args_start < argc) {
-        printf("script args:");
-        for (int i = script_args_start; i < argc; ++i) {
-            printf(" %s", argv[i]);
-        }
-        printf("\n");
-    }
-    return 0;
+    #undef PO_DUPCHECK
+    #undef PO_NEXTARG
+    #undef PO_GETFLAG
+    #undef PO_GETNUMBER
+    #undef PO_GETPATH
+    #undef PO_FLAG
+    #undef PO_NUMBER
+    #undef PO_PATH
 }

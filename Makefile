@@ -25,10 +25,10 @@ TOLUAPP_DIR:=contrib/tolua++/
 ### Tasks ###
 
 .PHONY: all
-all: game all_luagl ${LUASDL_DIR}libluasdl.so all_toluapp ${SDLGL_DIR}libsdlgl.so
+all: game tests all_luagl ${LUASDL_DIR}libluasdl.so all_toluapp ${SDLGL_DIR}libsdlgl.so
 
 .PHONY: clean
-clean: clean_game clean_luagl clean_luasdl clean_toluapp clean_sdlgl
+clean: clean_game clean_tests clean_luagl clean_luasdl clean_toluapp clean_sdlgl
 
 
 
@@ -37,16 +37,42 @@ clean: clean_game clean_luagl clean_luasdl clean_toluapp clean_sdlgl
 QKENG_CFLAGS:=${CFLAGS} ${LUA_CFLAGS}
 QKENG_LIBS:=${LUA_LIBS}
 
-game: game.o
+game: src/game.o src/options.o
 	gcc -o $@ ${QKENG_LIBS} $^
 
-game.o: game.c
-	gcc -o $@ ${QKENG_CFLAGS} -c $^
+src/game.o: src/game.c src/options.h
+	gcc -o $@ ${QKENG_CFLAGS} -c $<
+
+src/options.o: src/options.c src/options.h
+	gcc -o $@ ${CFLAGS} -c $<
 
 .PHONY: clean_game
 clean_game:
 	-rm -f game
-	-rm -f game.o
+	-rm -f src/game.o
+	-rm -f src/options.o
+
+
+### Quipkit Engine Tests ###
+
+TESTS_DIR:=src/test/
+
+.PHONY: tests
+tests: ${TESTS_DIR}options
+
+.PHONY: run_tests
+run_tests: ${TESTS_DIR}options
+	${TESTS_DIR}options
+
+${TESTS_DIR}options: ${TESTS_DIR}options.o src/options.o
+	gcc -o $@ ${CFLAGS} $^
+
+${TESTS_DIR}options.o: ${TESTS_DIR}options.c src/options.h
+	gcc -o $@ ${CFLAGS} -c $<
+
+.PHONY: clean_tests
+clean_tests:
+	rm -rf ${TESTS_DIR}options{,.o}
 
 
 ### LuaGL ###
