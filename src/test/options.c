@@ -78,7 +78,7 @@ static void TestScriptArgs() {
 
 
 static void TestShortForm() {
-    TEST_ARGS(1, "./options", "startup/main.lua", "abc", "xyz");
+    TEST_ARGS(3, "./options", "startup/main.lua", "abc", "xyz");
     TEST_ASSERT(o.has_script);
     TEST_ASSERT(strcmp(o.script, "startup/main.lua") == 0);
     TEST_ASSERT(script_args_start == 2);
