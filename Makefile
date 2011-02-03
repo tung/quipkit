@@ -37,13 +37,16 @@ clean: clean_game clean_tests clean_luagl clean_luasdl clean_toluapp clean_sdlgl
 QKENG_CFLAGS:=${CFLAGS} ${LUA_CFLAGS}
 QKENG_LIBS:=${LUA_LIBS}
 
-game: src/game.o src/options.o
+game: src/game.o src/fs.o src/options.o
 	gcc -o $@ ${QKENG_LIBS} $^
 
 src/game.o: src/game.c src/options.h
 	gcc -o $@ ${QKENG_CFLAGS} -c $<
 
-src/options.o: src/options.c src/options.h
+src/fs.o: src/fs_linux.c src/fs.h
+	gcc -o $@ ${CFLAGS} -c $<
+
+src/options.o: src/options.c src/options.h src/fs.h
 	gcc -o $@ ${CFLAGS} -c $<
 
 .PHONY: clean_game
@@ -62,9 +65,9 @@ tests: ${TESTS_DIR}options
 
 .PHONY: run_tests
 run_tests: ${TESTS_DIR}options
-	${TESTS_DIR}options
+	cd ${TESTS_DIR} && ./options
 
-${TESTS_DIR}options: ${TESTS_DIR}options.o src/options.o
+${TESTS_DIR}options: ${TESTS_DIR}options.o src/options.o src/fs.o
 	gcc -o $@ ${CFLAGS} $^
 
 ${TESTS_DIR}options.o: ${TESTS_DIR}options.c src/options.h

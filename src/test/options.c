@@ -35,16 +35,16 @@ int tests_failed;
 
 
 static void TestPaths() {
-    TEST_ARGS(6, "./options", "--script", "test/path.lua", "--config", "test/config.txt", "--base", "test");
+    TEST_ARGS(6, "./options", "--script", "startup/main.lua", "--config", "startup/config.txt", "--base", "startup");
     (void)script_args_start;
 
     TEST_ASSERT(o.has_script);
     TEST_ASSERT(o.has_config);
     TEST_ASSERT(o.has_base);
 
-    TEST_ASSERT(strcmp(o.script, "test/path.lua") == 0);
-    TEST_ASSERT(strcmp(o.config, "test/config.txt") == 0);
-    TEST_ASSERT(strcmp(o.base, "test") == 0);
+    TEST_ASSERT(strstr(o.script, "startup/main.lua"));
+    TEST_ASSERT(strstr(o.config, "startup/config.txt"));
+    TEST_ASSERT(strstr(o.base, "startup"));
 }
 
 
@@ -80,7 +80,7 @@ static void TestScriptArgs() {
 static void TestShortForm() {
     TEST_ARGS(3, "./options", "startup/main.lua", "abc", "xyz");
     TEST_ASSERT(o.has_script);
-    TEST_ASSERT(strcmp(o.script, "startup/main.lua") == 0);
+    TEST_ASSERT(strstr(o.script, "startup/main.lua"));
     TEST_ASSERT(script_args_start == 2);
 }
 
@@ -96,7 +96,7 @@ static void TestMixedArgs() {
 
     TEST_ASSERT(o.width == 800);
     TEST_ASSERT(o.height == 600);
-    TEST_ASSERT(strcmp(o.script, "startup/main.lua") == 0);
+    TEST_ASSERT(strstr(o.script, "startup/main.lua"));
 }
 
 

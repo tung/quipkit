@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "fs.h"
+
 
 static void opt_InitOptions(opt_Options *o) {
     o->has_script = 0;
@@ -13,12 +15,6 @@ static void opt_InitOptions(opt_Options *o) {
     o->has_height = 0;
     o->has_fullscreen = 0;
     o->has_channels = 0;
-}
-
-
-/* TODO: Move this elsewhere and implement it. */
-static void fs_AbsolutePath(char *path, char *dest, int dest_size) {
-    strncpy(dest, path, dest_size);
 }
 
 
@@ -62,7 +58,10 @@ int opt_ParseOptions(int argc, char *argv[], opt_Options *opts, int *script_args
         } while(0)
     #define PO_GETPATH(po_opt) \
         do { \
-            fs_AbsolutePath(argv[o], opts->po_opt, MAX_PATH); \
+            if (fs_AbsolutePath(argv[o], opts->po_opt, MAX_PATH)) { \
+                fprintf(stderr, "no such --" #po_opt " path: %s\n", argv[o]); \
+                return 1; \
+            } \
             opts->has_##po_opt = 1; \
         } while (0)
 
