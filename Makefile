@@ -68,10 +68,10 @@ run_tests: ${TESTS_DIR}options
 	cd ${TESTS_DIR} && ./options
 
 ${TESTS_DIR}options: ${TESTS_DIR}options.o src/options.o src/fs.o
-	gcc -o $@ ${CFLAGS} $^
+	gcc -o $@ ${QKENG_LIBS} $^
 
 ${TESTS_DIR}options.o: ${TESTS_DIR}options.c src/options.h
-	gcc -o $@ ${CFLAGS} -c $<
+	gcc -o $@ ${QKENG_CFLAGS} -c $<
 
 .PHONY: clean_tests
 clean_tests:

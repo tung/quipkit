@@ -28,5 +28,10 @@ typedef struct {
  */
 int opt_ParseOptions(int argc, char *argv[], opt_Options *opts, int *script_args_start);
 
+/**
+ * Load the game config file.
+ */
+int opt_LoadConfig(const opt_Options *cmd_line_opts, opt_Options *config_opts);
+
 
 #endif
