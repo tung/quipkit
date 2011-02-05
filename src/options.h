@@ -24,12 +24,20 @@ typedef struct {
 
 
 /**
+ * Get the message from the last failed function call.
+ */
+const char *opt_GetError();
+
+
+/**
  * Read program arguments into opts, and mark where script args begin in script_args_start.
+ * Returns 0 on success, 1 on failure and -1 to exit with a message.
  */
 int opt_ParseOptions(int argc, char *argv[], opt_Options *opts, int *script_args_start);
 
 /**
  * Load the game config file.
+ * Returns 0 on success or 1 on failure.
  */
 int opt_LoadConfig(const opt_Options *cmd_line_opts, opt_Options *config_opts);
 
