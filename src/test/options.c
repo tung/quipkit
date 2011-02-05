@@ -10,14 +10,9 @@
     opt_Options o; \
     int script_args_start; \
     int po_ret = opt_ParseOptions(argc, argv, &o, &script_args_start); \
-    switch (po_ret) { \
-        case 1: \
-        case 2: \
-            tests_run = test_num; \
-            tests_failed = test_num; \
-            break; \
-        default: \
-            break; \
+    if (po_ret) { \
+        tests_run += test_num; \
+        tests_failed += test_num; \
     }
 
 #define TEST_ASSERT(cond) \
