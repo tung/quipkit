@@ -244,7 +244,10 @@ int opt_LoadConfig(const opt_Options *cmd_line_opts, opt_Options *config_opts) {
 
     luaL_openlibs(L);
 
-    if (luaL_loadfile(L, "conf.lua")) {
+    char conf_lua[MAX_PATH];
+    fs_EnginePath(conf_lua, MAX_PATH);
+    fs_Append(conf_lua, MAX_PATH, "conf.lua");
+    if (luaL_loadfile(L, conf_lua)) {
         OPT_SET_ERROR("couldn't load conf.lua config bootstrap");
         lua_close(L);
         return 1;
