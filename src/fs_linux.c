@@ -9,10 +9,10 @@
 
 
 
-int fs_AbsolutePath(const char *path, char *buf, int buf_size) {
+int fs_AbsolutePath(const char *path, char *buf, unsigned int buf_size) {
     char *rp = realpath(path, NULL);
     if (rp == NULL) { return -1; }
-    int rp_len = strlen(rp);
+    unsigned int rp_len = strlen(rp);
     if (rp_len >= buf_size) {
         free(rp);
         return -1;
@@ -24,7 +24,7 @@ int fs_AbsolutePath(const char *path, char *buf, int buf_size) {
 }
 
 
-int fs_EnginePath(char *buf, int buf_size) {
+int fs_EnginePath(char *buf, unsigned int buf_size) {
     /* Use a temp buffer because dirname might reuse its input string. */
     char tmp_buf[buf_size];
     ssize_t len = readlink("/proc/self/exe", tmp_buf, buf_size - 1);
@@ -39,7 +39,7 @@ int fs_EnginePath(char *buf, int buf_size) {
 }
 
 
-int fs_Append(char *buf, int buf_size, const char *str) {
+int fs_Append(char *buf, unsigned int buf_size, const char *str) {
     size_t buf_len = strlen(buf);
     size_t str_len = strlen(str);
     if (buf_len + 1 + str_len + 1 >= (size_t)buf_size) {
