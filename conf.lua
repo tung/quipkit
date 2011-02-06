@@ -23,7 +23,6 @@ end
 
 local function LoadConfig(conf_path)
     local conf = {}
-    local env = getfenv()
     local chunk = loadfile(conf_path)
     if chunk == nil then
         return nil
