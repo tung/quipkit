@@ -49,9 +49,6 @@ if args.config then
     end
 else
     local script = args.script
-    if script == nil then
-        script = "startup/main.lua"
-    end
     local specific_path = string.sub(UpToLastChar(script, "."), 1, -2) .. "-config.txt"
     local general_path = DirName(script) .. "config.txt"
     conf = LoadConfig(specific_path)

@@ -260,8 +260,13 @@ int opt_LoadConfig(const opt_Options *cmd_line_opts, opt_Options *config_opts) {
     }
     if (cmd_line_opts->has_script) {
         lua_pushstring(L, cmd_line_opts->script);
-        lua_setfield(L, -2, "script");
+    } else {
+        char default_script[MAX_PATH];
+        fs_EnginePath(default_script, MAX_PATH);
+        fs_Append(default_script, MAX_PATH, "startup/main.lua");
+        lua_pushstring(L, default_script);
     }
+    lua_setfield(L, -2, "script");
     if (lua_pcall(L, 1, 1, 0)) {
         OPT_SET_ERROR("%s", lua_tostring(L, -1));
         lua_close(L);
