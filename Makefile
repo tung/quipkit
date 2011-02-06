@@ -40,7 +40,7 @@ QKENG_LIBS:=${LUA_LIBS}
 game: src/game.o src/fs.o src/options.o
 	gcc -o $@ ${QKENG_LIBS} $^
 
-src/game.o: src/game.c src/options.h
+src/game.o: src/game.c src/fs.h src/options.h
 	gcc -o $@ ${QKENG_CFLAGS} -c $<
 
 src/fs.o: src/fs_linux.c src/fs.h

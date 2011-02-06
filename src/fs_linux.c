@@ -48,3 +48,8 @@ int fs_Append(char *buf, int buf_size, const char *str) {
     strcat(strcat(buf, "/"), str);
     return 0;
 }
+
+
+int fs_ChDir(const char *path) {
+    return chdir(path) ? 1 : 0;
+}

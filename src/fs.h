@@ -17,5 +17,10 @@ int fs_EnginePath(char *buf, int buf_size);
  */
 int fs_Append(char *buf, int buf_size, const char *str);
 
+/**
+ * Change the working directory.
+ */
+int fs_ChDir(const char *path);
+
 
 #endif
