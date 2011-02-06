@@ -39,6 +39,7 @@
 		<Linker>
 			<Add library="contrib\lua\lua51.lib" />
 			<Add library="contrib\lua\lua5.1.lib" />
+			<Add library="shlwapi" />
 			<Add directory="contrib\lua" />
 		</Linker>
 		<Unit filename="Makefile">
@@ -47,55 +48,27 @@
 		<Unit filename="README.textile">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
-		<Unit filename="game.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="init.lua">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="lib\game.lua">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Unit filename="main.lua">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
-		<Unit filename="test\animate.lua">
-			<Option target="&lt;{~None~}&gt;" />
+		<Unit filename="src\fs.h" />
+		<Unit filename="src\fs_windows.c">
+			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="test\blit.lua">
-			<Option target="&lt;{~None~}&gt;" />
+		<Unit filename="src\game.c">
+			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="test\blitpng.lua">
-			<Option target="&lt;{~None~}&gt;" />
+		<Unit filename="src\options.c">
+			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="test\game.lua">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="test\gametest.lua">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="test\gl.lua">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
+		<Unit filename="src\options.h" />
 		<Unit filename="test\glob.png">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
-		<Unit filename="test\key.lua">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="test\pngtest.lua">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="test\poll.lua">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="test\smile.lua">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
 		<Unit filename="test\smile.png">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="test\wait.lua">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Extensions>

@@ -6,7 +6,7 @@
 *.layout
 *_build_log.html
 game
-edit
+game.exe
 config.tbl
 /obj
 /bin
