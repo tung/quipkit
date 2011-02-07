@@ -45,7 +45,6 @@
 			<Add library=".\SDL_bind.o" />
 			<Add library="tolua++" />
 			<Add library="..\..\..\contrib\lua\lua51.lib" />
-			<Add library="..\..\..\contrib\lua\lua5.1.lib" />
 			<Add library="SDL" />
 			<Add library="..\..\..\contrib\sdl\lib\SDL_ttf.lib" />
 			<Add library="..\..\..\contrib\sdl\lib\SDL_image.lib" />

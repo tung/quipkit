@@ -39,7 +39,6 @@
 		<Linker>
 			<Add library="opengl32" />
 			<Add library="..\..\..\contrib\lua\lua51.lib" />
-			<Add library="..\..\..\contrib\lua\lua5.1.lib" />
 			<Add directory="..\..\..\contrib\lua" />
 		</Linker>
 		<ExtraCommands>

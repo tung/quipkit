@@ -38,7 +38,6 @@
 		</Compiler>
 		<Linker>
 			<Add library="contrib\lua\lua51.lib" />
-			<Add library="contrib\lua\lua5.1.lib" />
 			<Add library="shlwapi" />
 			<Add directory="contrib\lua" />
 		</Linker>

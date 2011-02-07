@@ -45,7 +45,6 @@
 		<Linker>
 			<Add library="tolua++" />
 			<Add library="..\lua\lua51.lib" />
-			<Add library="..\lua\lua5.1.lib" />
 			<Add directory="..\lua" />
 		</Linker>
 		<Unit filename="include\tolua++.h" />
