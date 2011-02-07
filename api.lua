@@ -7,6 +7,9 @@ end
 table.insert(package_path_list, 1, "./lib/?.lua")
 package.path = table.concat(package_path_list, ";")
 
+-- Detect Windows.
+rawset(_G, "WIN32", os.getenv("WINDIR") ~= nil)
+
 -- TODO: Load Quipkit API here.
 
 package.path = old_package_path
