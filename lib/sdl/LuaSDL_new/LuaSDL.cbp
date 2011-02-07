@@ -53,6 +53,10 @@
 			<Add directory="..\..\..\contrib\lua" />
 			<Add directory="..\..\..\contrib\sdl\lib" />
 		</Linker>
+		<ExtraCommands>
+			<Add after='cmd /c copy &quot;${TARGET_OUTPUT_FILE}&quot; .' />
+			<Mode after="always" />
+		</ExtraCommands>
 		<Unit filename="..\..\sdl.lua">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>

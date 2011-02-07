@@ -43,6 +43,10 @@
 			<Add library="..\..\..\contrib\lua\lua5.1.lib" />
 			<Add directory="..\..\..\contrib\lua" />
 		</Linker>
+		<ExtraCommands>
+			<Add after='cmd /c copy &quot;${TARGET_OUTPUT_FILE}&quot; .' />
+			<Mode after="always" />
+		</ExtraCommands>
 		<Unit filename="luagl_const.c">
 			<Option compilerVar="CC" />
 		</Unit>

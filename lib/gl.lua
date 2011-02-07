@@ -1,7 +1,6 @@
 local path
 if WIN32 then
-    -- TODO: Support Release target too.
-    path = "lib/gl/luagl/bin/Debug/luagl.dll"
+    path = "lib/gl/luagl/LuaGL.dll"
 else
     -- Assume Linux for now.
     path = "lib/gl/luagl/libluagl.so"

@@ -1,2 +1,4 @@
 bin/Debug/*.dll
 bin/Release/*.dll
+LuaGL.dll
+LuaGLU.dll
