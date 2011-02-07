@@ -94,7 +94,7 @@ static int load_api(lua_State *L) {
 
 
 int main(int argc, char *argv[]) {
-    opt_Options cmd_line_opts, config_opts;
+    opt_Options cmd_line_opts, config_opts, final_opts;
     int script_args_start;
 
     int gc_ret = get_config(argc, argv, &cmd_line_opts, &config_opts, &script_args_start);
@@ -109,9 +109,15 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "couldn't prepare Lua state for game\n");
         return 1;
     }
+
     luaL_openlibs(L);
-    int la_ret = load_api(L);
-    if (la_ret) {
+
+    if (load_api(L)) {
+        lua_close(L);
+        return 1;
+    }
+
+    if (opt_ConfigGame(&cmd_line_opts, &config_opts, &final_opts)) {
         lua_close(L);
         return 1;
     }

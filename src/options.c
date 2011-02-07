@@ -291,3 +291,49 @@ int opt_LoadConfig(const opt_Options *cmd_line_opts, opt_Options *config_opts) {
     #undef LC_GET_NUMBER
     #undef LC_GET_PATH
 }
+
+
+int opt_ConfigGame(const opt_Options *cmd_line_opts, const opt_Options *config_opts, opt_Options *game_opts) {
+    #define CG_CMD_OR_CONF_OR_DEFAULT(cg_opt, cg_default) \
+        do { \
+            if (cmd_line_opts->has_##cg_opt) { \
+                game_opts->cg_opt = cmd_line_opts->cg_opt; \
+            } else if (config_opts->has_##cg_opt) { \
+                game_opts->cg_opt = config_opts->cg_opt; \
+            } else { \
+                game_opts->cg_opt = cg_default; \
+            } \
+            game_opts->has_##cg_opt = 1; \
+        } while(0)
+    #define CG_CMD_OR_DEFAULT_STR(cg_opt) \
+        do { \
+            if (cmd_line_opts->has_##cg_opt) { \
+                strcpy(game_opts->cg_opt, cmd_line_opts->cg_opt); \
+            } else { \
+                strcpy(game_opts->cg_opt, default_##cg_opt); \
+            } \
+            game_opts->has_##cg_opt = 1; \
+        } while(0)
+
+    char default_base[MAX_PATH];
+    if (fs_EnginePath(default_base, MAX_PATH)) { return 1; }
+    if (fs_Append(default_base, MAX_PATH, "startup")) { return 1; }
+
+    char default_script[MAX_PATH];
+    strcpy(default_script, default_base);
+    if (fs_Append(default_script, MAX_PATH, "main.lua")) { return 1; }
+
+    opt_InitOptions(game_opts);
+
+    CG_CMD_OR_DEFAULT_STR(script);
+    CG_CMD_OR_DEFAULT_STR(base);
+    CG_CMD_OR_CONF_OR_DEFAULT(width, DEFAULT_WIDTH);
+    CG_CMD_OR_CONF_OR_DEFAULT(height, DEFAULT_HEIGHT);
+    CG_CMD_OR_CONF_OR_DEFAULT(fullscreen, DEFAULT_FULLSCREEN);
+    CG_CMD_OR_CONF_OR_DEFAULT(channels, DEFAULT_CHANNELS);
+
+    return 0;
+
+    #undef CG_CMD_OR_CONF_OR_DEFAULT
+    #undef CG_CMD_OR_DEFAULT_STR
+}
