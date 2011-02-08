@@ -93,6 +93,35 @@ static int LoadApi(lua_State *L) {
 }
 
 
+static int RunGame(lua_State *L, opt_Options *opts, int argc, char *argv[], int script_args_start) {
+    if (fs_ChDir(opts->base)) {
+        fprintf(stderr, "couldn't change to base directory %s\n", opts->base);
+        return 1;
+    }
+
+    lua_pushcfunction(L, TracebackLua);
+    if (luaL_loadfile(L, opts->script)) {
+        fprintf(stderr, "couldn't load game script: %s\n", lua_tostring(L, -1));
+        lua_pop(L, 2);
+        return 1;
+    }
+
+    for (int i = script_args_start; i < argc; ++i) {
+        lua_pushstring(L, argv[i]);
+    }
+
+    int num_args = argc - script_args_start;
+    if (lua_pcall(L, num_args, 0, num_args - 2)) {
+        fprintf(stderr, "%s\n", lua_tostring(L, -1));
+        lua_gc(L, LUA_GCCOLLECT, 0);
+        return 1;
+    }
+    lua_pop(L, 1);
+
+    return 0;
+}
+
+
 int main(int argc, char *argv[]) {
     opt_Options cmd_line_opts, config_opts, final_opts;
     int script_args_start;
@@ -118,6 +147,11 @@ int main(int argc, char *argv[]) {
     }
 
     if (opt_ConfigGame(&cmd_line_opts, &config_opts, &final_opts)) {
+        lua_close(L);
+        return 1;
+    }
+
+    if (RunGame(L, &final_opts, argc, argv, script_args_start)) {
         lua_close(L);
         return 1;
     }
