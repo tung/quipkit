@@ -7,7 +7,7 @@
 #include "options.h"
 
 
-static void dump_options(const char *label, const opt_Options *opts) {
+static void DumpOptions(const char *label, const opt_Options *opts) {
     printf("%s:\n", label);
     if (opts->has_script) { printf("script: %s\n", opts->script); }
     if (opts->has_config) { printf("config: %s\n", opts->config); }
@@ -19,21 +19,21 @@ static void dump_options(const char *label, const opt_Options *opts) {
 }
 
 
-static int get_config(int argc, char *argv[], opt_Options *cmd_line_opts, opt_Options *config_opts, int *script_args_start) {
+static int GetConfig(int argc, char *argv[], opt_Options *cmd_line_opts, opt_Options *config_opts, int *script_args_start) {
     int po_ret = opt_ParseOptions(argc, argv, cmd_line_opts, script_args_start);
     if (po_ret) {
         printf("%s\n", opt_GetError());
         if (po_ret == -1) { return -1; }
         return 1;
     }
-    dump_options("Command line options", cmd_line_opts);
+    DumpOptions("Command line options", cmd_line_opts);
 
     int lc_ret = opt_LoadConfig(cmd_line_opts, config_opts);
     if (lc_ret) {
         printf("%s\n", opt_GetError());
         return 1;
     }
-    dump_options("Config options", config_opts);
+    DumpOptions("Config options", config_opts);
 
     if (*script_args_start < argc) {
         printf("Script args:");
@@ -47,7 +47,7 @@ static int get_config(int argc, char *argv[], opt_Options *cmd_line_opts, opt_Op
 }
 
 
-static int traceback_lua(lua_State *L) {
+static int TracebackLua(lua_State *L) {
     if (!lua_isstring(L, 1)) { return 1; }
     lua_getfield(L, LUA_GLOBALSINDEX, "debug");
     if (!lua_istable(L, -1)) {
@@ -66,7 +66,7 @@ static int traceback_lua(lua_State *L) {
 }
 
 
-static int load_api(lua_State *L) {
+static int LoadApi(lua_State *L) {
     char engine_path[MAX_PATH];
     if (fs_EnginePath(engine_path, MAX_PATH)) {
         fprintf(stderr, "couldn't get engine path to load Quipkit's API\n");
@@ -77,7 +77,7 @@ static int load_api(lua_State *L) {
         return 1;
     }
 
-    lua_pushcfunction(L, traceback_lua);
+    lua_pushcfunction(L, TracebackLua);
     if (luaL_loadfile(L, "api.lua")) {
         fprintf(stderr, "%s\ncouldn't load api.lua bootstrap script\n", lua_tostring(L, -1));
         return 1;
@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
     opt_Options cmd_line_opts, config_opts, final_opts;
     int script_args_start;
 
-    int gc_ret = get_config(argc, argv, &cmd_line_opts, &config_opts, &script_args_start);
+    int gc_ret = GetConfig(argc, argv, &cmd_line_opts, &config_opts, &script_args_start);
     switch (gc_ret) {
     case -1: return 0;
     case 1: return 1;
@@ -112,7 +112,7 @@ int main(int argc, char *argv[]) {
 
     luaL_openlibs(L);
 
-    if (load_api(L)) {
+    if (LoadApi(L)) {
         lua_close(L);
         return 1;
     }
