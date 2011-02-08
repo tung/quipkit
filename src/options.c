@@ -248,8 +248,10 @@ int opt_LoadConfig(const opt_Options *cmd_line_opts, opt_Options *config_opts) {
     luaL_openlibs(L);
 
     char conf_lua[MAX_PATH];
-    fs_EnginePath(conf_lua, MAX_PATH);
-    fs_Append(conf_lua, MAX_PATH, "conf.lua");
+    if (fs_EnginePath(conf_lua, MAX_PATH) || fs_Append(conf_lua, MAX_PATH, "conf.lua")) {
+        OPT_SET_ERROR("couldn't build path to conf.lua");
+        return 1;
+    }
     if (luaL_loadfile(L, conf_lua)) {
         OPT_SET_ERROR("couldn't load conf.lua config bootstrap");
         lua_close(L);
@@ -265,8 +267,12 @@ int opt_LoadConfig(const opt_Options *cmd_line_opts, opt_Options *config_opts) {
         lua_pushstring(L, cmd_line_opts->script);
     } else {
         char default_script[MAX_PATH];
-        fs_EnginePath(default_script, MAX_PATH);
-        fs_Append(default_script, MAX_PATH, "startup/main.lua");
+        if (fs_EnginePath(default_script, MAX_PATH) ||
+                fs_Append(default_script, MAX_PATH, "startup") ||
+                fs_Append(default_script, MAX_PATH, "main.lua")) {
+            OPT_SET_ERROR("couldn't build path to default game script");
+            return 1;
+        }
         lua_pushstring(L, default_script);
     }
     lua_setfield(L, -2, "script");
