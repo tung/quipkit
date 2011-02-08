@@ -86,6 +86,16 @@ static void TestShortForm() {
 }
 
 
+static void TestShortFormBad() {
+    char *argv[] = { "./options", "i_dont_exist", "abc", "xyz" };
+    int argc = sizeof(argv) / sizeof(char *);
+    opt_Options o;
+    int script_args_start;
+    int po_ret = opt_ParseOptions(argc, argv, &o, &script_args_start);
+    TEST_ASSERT(po_ret != 0);
+}
+
+
 static void TestMixedArgs() {
     TEST_ARGS(7, "./options", "--width", "800", "--height", "600", "--script", "startup/main.lua", "--", "abc", "xyz");
 
@@ -289,6 +299,7 @@ int main() {
     TestChannels();
     TestScriptArgs();
     TestShortForm();
+    TestShortFormBad();
     TestMixedArgs();
     TestConfigGameDefaults();
     TestConfigGameCommandLineOnly();

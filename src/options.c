@@ -149,7 +149,10 @@ int opt_ParseOptions(int argc, char *argv[], opt_Options *opts, int *script_args
                 return 1;
             }
             /* Short-form arguments: ./game script arg1 arg2 arg3 ... */
-            fs_AbsolutePath(argv[o], opts->script, MAX_PATH);
+            if (fs_AbsolutePath(argv[o], opts->script, MAX_PATH)) {
+                OPT_SET_ERROR("no such --script path: %s", argv[o]);
+                return 1;
+            }
             opts->has_script = 1;
             *script_args_start = o + 1;
             break;
