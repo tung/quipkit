@@ -5,15 +5,21 @@ Quipkit is an RPG kit for programmers. It runs on Lua, SDL and OpenGL, and works
 
 h2. Rationale
 
-I'm tung, the creator of Quipkit and a long time "Sphere RPG Engine":http://spheredev.org/ user.
+Quipkit aims to solve the same problem as "Sphere":http://spheredev.org/ : how to help people make RPGs. Sphere does it by:
 
-Quipkit aims to solve the same problem as Sphere: how to help people make RPGs.
+* giving tools to make assets,
+* having a pre-made engine and formats to quickly make a prototype, and
+* letting those be customised to evolve the prototype into a finished RPG.
 
-Sphere tried to solve this with pre-made engine code, data formats and tools. To make an RPG, you'd create assets with its tools. They would be used in a quick prototype running on its pre-made code and data formats. To complete the RPG, you'd customise the pre-made code and data formats. The quirks in the pre-made code and data formats made the last part impossible for newbies, and chronically frustrating to seasoned programmers. Because of that, Sphere didn't help people make RPGs as much as it should have.
+Sphere's problem is that its pre-made engine and formats contain many quirks, making that last part impossible for newbies and frustrating for programmers.
 
-Quipkit aims to be a strong foundation for RPGs and their tools, hence why it's only for programmers. The DIY approach makes creating a prototype slower, but makes evolving it into a complete RPG much easier by side-stepping the quirks of pre-made code.
+Why not just make a quirk-free engine and formats then? Quirks exist when features don't work the way they're expected to, and everybody has different expectations for their games. There are several responses to this:
 
-Why not just make pre-made code without quirks? Making an RPG engine for lots of people means lots of use cases, which leads to lots of branches in code, which turn into lots of quirks. Sphere was made by very skilled programmers, and even it couldn't avoid this fate. Quipkit can, but only if it focuses on being a good foundation by layering over the OS and providing game essentials like input, graphics, and sound.
+* Make a fully-featured engine. Sphere did this, but couldn't avoid its fate, even though it was made by skilled programmers.
+* Make a small engine and ignore feature requests. This isn't useful to people who need those features, and takes focus away from making a solid foundation.
+* Have people make their own engine on top of a solid foundation for completing RPGs.
+
+Quipkit opts for the last approach. It aims to be a small, solid layer of game essentials like input, graphics and sound over the OS, good not only for making an RPG, but also the tools along the way.
 
 
 h2. More Info
