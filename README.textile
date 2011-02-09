@@ -1,17 +1,19 @@
 h1. Quipkit
 
-Quipkit is a 2D JRPG engine for programmers. It works on Windows and Linux.
-
-Unlike most RPG engines, Quipkit's editor lets you create custom tools and scripts, meaning that making lots of content becomes much easier if you invest your time wisely.
-
-The way of Quipkit is divided into game states on a stack (called _gamelets_), assets, and the custom tools/scripts used to make said assets.
+Quipkit is an RPG kit for programmers. It runs on Lua, SDL and OpenGL, and works on Windows and Linux.
 
 
-h2. Status
+h2. Rationale
 
-The engine builds on both Windows and Linux: see the build instructions at doc/build.textile. It's nearly done.
+I'm tung, the creator of Quipkit and a long time "Sphere RPG Engine":http://spheredev.org/ user.
 
-The editor, on the other hand, is little more than a "hello world" dialog box right now. I'm working on it, honest.
+Quipkit aims to solve the same problem as Sphere: how to help people make RPGs.
+
+Sphere tried to solve this with pre-made engine code, data formats and tools. To make an RPG, you'd create assets with its tools. They would be used in a quick prototype running on its pre-made code and data formats. To complete the RPG, you'd customise the pre-made code and data formats. The quirks in the pre-made code and data formats made the last part impossible for newbies, and chronically frustrating to seasoned programmers. Because of that, Sphere didn't help people make RPGs as much as it should have.
+
+Quipkit aims to be a strong foundation for RPGs and their tools, hence why it's only for programmers. The DIY approach makes creating a prototype slower, but makes evolving it into a complete RPG much easier by side-stepping the quirks of pre-made code.
+
+Why not just make pre-made code without quirks? Making an RPG engine for lots of people means lots of use cases, which leads to lots of branches in code, which turn into lots of quirks. Sphere was made by very skilled programmers, and even it couldn't avoid this fate. Quipkit can, but only if it focuses on being a good foundation by layering over the OS and providing game essentials like input, graphics, and sound.
 
 
 h2. More Info
