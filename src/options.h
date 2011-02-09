@@ -1,3 +1,7 @@
+/**
+ * See copyright notice in doc/COPYRIGHT.
+ */
+
 #ifndef QK_OPTIONS_H
 #define QK_OPTIONS_H
 

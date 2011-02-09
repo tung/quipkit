@@ -1,3 +1,5 @@
+--[[ See copyright notice in doc/COPYRIGHT. ]]
+
 local path
 if WIN32 then
     path = "lib/sdl/LuaSDL_new/LuaSDL.dll"

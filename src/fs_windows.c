@@ -1,3 +1,7 @@
+/**
+ * See copyright notice in doc/COPYRIGHT.
+ */
+
 #include "fs.h"
 
 #include <shlwapi.h>

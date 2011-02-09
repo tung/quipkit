@@ -1,3 +1,7 @@
+/**
+ * See copyright notice in doc/COPYRIGHT.
+ */
+
 #include "fs.h"
 
 /* _GNU_SOURCE defined for realpath from stdlib.h */

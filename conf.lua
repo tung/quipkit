@@ -1,3 +1,5 @@
+--[[ See copyright notice in doc/COPYRIGHT. ]]
+
 -- Config loader: tries to load the game config file based on the --config or --script command line arguments.
 local function UpToLastChar(str, char)
     local result = ""

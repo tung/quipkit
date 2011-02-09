@@ -1,3 +1,5 @@
+--[[ See copyright notice in doc/COPYRIGHT. ]]
+
 -- Add path of library bootstrapping scripts to package.path.
 local old_package_path = package.path
 local package_path_list = {}

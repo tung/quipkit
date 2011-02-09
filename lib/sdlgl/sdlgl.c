@@ -1,3 +1,7 @@
+/**
+ * See copyright notice in doc/COPYRIGHT.
+ */
+
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <lua.h>

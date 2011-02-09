@@ -1,3 +1,7 @@
+/**
+ * See copyright notice in doc/COPYRIGHT.
+ */
+
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>

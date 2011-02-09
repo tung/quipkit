@@ -1,3 +1,7 @@
+/**
+ * See copyright notice in doc/COPYRIGHT.
+ */
+
 #ifndef QK_FS_H
 #define QK_FS_H
 
