@@ -82,23 +82,90 @@ static int RunGame(lua_State *L, opt_Options *opts, int argc, char *argv[], int 
     }
 
     lua_pushcfunction(L, TracebackLua);
-    if (luaL_loadfile(L, opts->script)) {
-        fprintf(stderr, "couldn't load game script: %s\n", lua_tostring(L, -1));
+    int traceback_fn = lua_gettop(L);
+
+    /* Load init and close functions to be called around game script chunk. */
+    char wrap_path[MAX_PATH];
+    if (fs_EnginePath(wrap_path, MAX_PATH) || fs_Append(wrap_path, MAX_PATH, "wrap.lua")) {
+        fprintf(stderr, "couldn't build path to wrap.lua wrapper functions\n");
+        lua_pop(L, 1);
+        return 1;
+    }
+    if (luaL_loadfile(L, wrap_path)) {
+        fprintf(stderr, "couldn't load wrap.lua wrapper functions: %s\n", lua_tostring(L, -1));
         lua_pop(L, 2);
         return 1;
     }
+    lua_createtable(L, 0, 4);
+    lua_pushinteger(L, opts->width);
+    lua_setfield(L, -2, "width");
+    lua_pushinteger(L, opts->height);
+    lua_setfield(L, -2, "height");
+    lua_pushboolean(L, opts->fullscreen);
+    lua_setfield(L, -2, "fullscreen");
+    lua_pushinteger(L, opts->channels);
+    lua_setfield(L, -2, "channels");
+    if (lua_pcall(L, 1, 2, traceback_fn)) {
+        fprintf(stderr, "wrapper load error: %s\n", lua_tostring(L, -1));
+        lua_pop(L, 2);
+        return 1;
+    }
+    int init_fn = lua_gettop(L) - 1;
+    int close_fn = lua_gettop(L);
+    if (!lua_isfunction(L, init_fn) || !lua_isfunction(L, close_fn)) {
+        fprintf(stderr, "wrap.lua didn't return init and close functions\n");
+        lua_pop(L, 3);
+        return 1;
+    }
 
+    /* Call init function from wrap.lua. */
+    lua_pushvalue(L, init_fn);
+    if (lua_pcall(L, 0, 0, traceback_fn)) {
+        fprintf(stderr, "init error: %s\n", lua_tostring(L, -1));
+        /* Pop: traceback, init, close, error */
+        lua_pop(L, 4);
+        return 1;
+    }
+
+    /* Load and run the game script. */
+    if (luaL_loadfile(L, opts->script)) {
+        fprintf(stderr, "couldn't load game script: %s\n", lua_tostring(L, -1));
+        lua_pushvalue(L, close_fn);
+        if (lua_pcall(L, 0, 0, traceback_fn)) {
+            fprintf(stderr, "close error: %s\n", lua_tostring(L, -1));
+            lua_pop(L, 1);
+        }
+        /* Pop: traceback, init, close, error */
+        lua_pop(L, 4);
+        return 1;
+    }
     for (int i = script_args_start; i < argc; ++i) {
         lua_pushstring(L, argv[i]);
     }
-
     int num_args = argc - script_args_start;
-    if (lua_pcall(L, num_args, 0, num_args - 2)) {
+    if (lua_pcall(L, num_args, 0, traceback_fn)) {
         fprintf(stderr, "%s\n", lua_tostring(L, -1));
-        lua_gc(L, LUA_GCCOLLECT, 0);
+        lua_pushvalue(L, close_fn);
+        if (lua_pcall(L, 0, 0, traceback_fn)) {
+            fprintf(stderr, "close error: %s\n", lua_tostring(L, -1));
+            lua_pop(L, 1);
+        }
+        /* Pop: traceback, init, close, error */
+        lua_pop(L, 4);
         return 1;
     }
-    lua_pop(L, 1);
+
+    /* Call close function from wrap.lua. */
+    lua_pushvalue(L, close_fn);
+    if (lua_pcall(L, 0, 0, traceback_fn)) {
+        fprintf(stderr, "close error: %s\n", lua_tostring(L, -1));
+        /* Pop: traceback, init, close, error */
+        lua_pop(L, 4);
+        return 1;
+    }
+
+    /* Pop: traceback, init, close */
+    lua_pop(L, 3);
 
     return 0;
 }
