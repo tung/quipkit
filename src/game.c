@@ -60,15 +60,22 @@ static int LoadApi(lua_State *L) {
     }
 
     lua_pushcfunction(L, TracebackLua);
+    int traceback_fn = lua_gettop(L);
+
     if (luaL_loadfile(L, "api.lua")) {
         fprintf(stderr, "%s\ncouldn't load api.lua bootstrap script\n", lua_tostring(L, -1));
+        /* Pop: traceback, error */
+        lua_pop(L, 2);
         return 1;
     }
-    if (lua_pcall(L, 0, 0, -2)) {
+    if (lua_pcall(L, 0, 0, traceback_fn)) {
         fprintf(stderr, "%s\n", lua_tostring(L, -1));
-        lua_gc(L, LUA_GCCOLLECT, 0);
+        /* Pop: traceback, error */
+        lua_pop(L, 2);
         return 1;
     }
+
+    /* Pop: traceback */
     lua_pop(L, 1);
 
     return 0;
