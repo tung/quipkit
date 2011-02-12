@@ -1,6 +1,6 @@
-local arg = { n = select('#', ...); ... }
-
-print("Hello, World! " .. tostring(arg.n) .. " argument(s) passed" .. (arg.n == 0 and "." or ":"))
-for _, v in ipairs(arg) do
-    print(v)
-end
+local done = false
+repeat
+    game.sleep(10)
+    local e = game.event(true)
+    done = e.type == "exit"
+until done
