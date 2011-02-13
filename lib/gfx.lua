@@ -21,3 +21,7 @@ function clear()
     -- Assume the clear colour is set correctly.
     gl.Clear(gl.COLOR_BUFFER_BIT)
 end
+
+
+
+return _M
