@@ -31,8 +31,20 @@ local function init()
         error("SDL_SetVideoMode: " .. SDL.SDL_GetError())
     end
 
+    -- Set up OpenGL.
+    gl.Viewport(0, 0, width, height)
+    gl.MatrixMode(gl.PROJECTION)
+    gl.LoadIdentity()
+    gl.Ortho(0, width, height, 0, -1, 1)
+
     -- Assumed clear colour used by gfx.clear.
     gl.ClearColor(0, 0, 0, 0)
+
+    -- Texturing on by default.
+    gl.Enable(gl.TEXTURE_2D)
+
+    -- Accept byte-aligned textures.
+    gl.PixelStore(gl.UNPACK_ALIGNMENT, 1)
 end
 
 
