@@ -18,5 +18,6 @@ require 'sdl'
 
 -- Pre-load engine API.
 require 'game'
+require 'gfx'
 
 package.path = old_package_path

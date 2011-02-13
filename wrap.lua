@@ -30,6 +30,9 @@ local function init()
     if not SDL.SDL_SetVideoMode(width, height, 32, SDL.SDL_OPENGL) then
         error("SDL_SetVideoMode: " .. SDL.SDL_GetError())
     end
+
+    -- Assumed clear colour used by gfx.clear.
+    gl.ClearColor(0, 0, 0, 0)
 end
 
 

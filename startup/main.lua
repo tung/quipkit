@@ -1,6 +1,7 @@
 local done = false
 repeat
-    game.sleep(10)
+    gfx.clear()
+    gfx.flip()
     local e = game.event(true)
     done = e.type == "exit"
 until done
