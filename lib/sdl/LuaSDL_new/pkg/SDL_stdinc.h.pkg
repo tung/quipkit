@@ -57,7 +57,7 @@ void SDL_free(void *mem);
 // interface for macros
 
 char * SDL_getenv(const char *name);
-int SDL_putenv(const char *variable);
+int SDL_putenv(char *variable);
 
 // TODO: need to pass the compare function, use Lua's table.sort for now
 // extern void SDL_qsort(void *base, size_t nmemb, size_t size,

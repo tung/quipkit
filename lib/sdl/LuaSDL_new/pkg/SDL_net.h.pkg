@@ -113,10 +113,19 @@ $       	int ready;
 $       } _SDLNet_GenericSocket;
 
 extern struct _SDLNet_SocketSet * SDLNet_AllocSocketSet(int maxsockets);
-extern int SDLNet_AddSocket(struct _SDLNet_SocketSet * set, struct _SDLNet_GenericSocket *sock);
-extern int SDLNet_DelSocket(struct _SDLNet_SocketSet * set, struct _SDLNet_GenericSocket *sock);
+extern int _SDLNet_AddSocket @ SDLNet_AddSocket(struct _SDLNet_SocketSet * set, _SDLNet_GenericSocket *sock);
+extern int _SDLNet_DelSocket @ SDLNet_DelSocket(struct _SDLNet_SocketSet * set, _SDLNet_GenericSocket *sock);
 extern int SDLNet_CheckSockets(struct _SDLNet_SocketSet * set, Uint32 timeout);
 extern void SDLNet_FreeSocketSet(struct _SDLNet_SocketSet * set);
+
+$       static inline int _SDLNet_AddSocket(struct _SDLNet_SocketSet * set, _SDLNet_GenericSocket *sock)
+$       {
+$           return SDLNet_AddSocket(set, (SDLNet_GenericSocket)sock);
+$       }
+$       static inline int _SDLNet_DelSocket(struct _SDLNet_SocketSet * set, _SDLNet_GenericSocket *sock)
+$       {
+$           return SDLNet_DelSocket(set, (SDLNet_GenericSocket)sock);
+$       }
 
 // interface for macros
 
@@ -126,14 +135,14 @@ int SDLNet_TCP_DelSocket(struct _SDLNet_SocketSet * set, struct _TCPsocket *sock
 int SDLNet_UDP_DelSocket(struct _SDLNet_SocketSet * set, struct _UDPsocket *sock);
 
 // NOTE: overloaded, was macro SDLNet_SocketReady(sock)
-SDL_bool _SDLNet_SocketReady @ SDLNet_SocketReady(struct _SDLNet_GenericSocket *sock);
+SDL_bool _SDLNet_SocketReady @ SDLNet_SocketReady(_SDLNet_GenericSocket *sock);
 SDL_bool _SDLNet_TCP_SocketReady @ SDLNet_SocketReady(struct _TCPsocket *sock);
 SDL_bool _SDLNet_UDP_SocketReady @ SDLNet_SocketReady(struct _UDPsocket *sock);
 
 // NOTE: overloaded, was macro SDLNet_SocketReady(sock)
-$       static inline SDL_bool _SDLNet_SocketReady(SDLNet_GenericSocket sock)
+$       static inline SDL_bool _SDLNet_SocketReady(_SDLNet_GenericSocket *sock)
 $       {
-$           return SDLNet_SocketReady(sock);
+$           return SDLNet_SocketReady((SDLNet_GenericSocket)sock);
 $       }
 $       static inline SDL_bool _SDLNet_TCP_SocketReady(TCPsocket sock)
 $       {
