@@ -83,11 +83,6 @@ static int LoadApi(lua_State *L) {
 
 
 static int RunGame(lua_State *L, opt_Options *opts, int argc, char *argv[], int script_args_start) {
-    if (fs_ChDir(opts->base)) {
-        fprintf(stderr, "couldn't change to base directory %s\n", opts->base);
-        return 1;
-    }
-
     lua_pushcfunction(L, TracebackLua);
     int traceback_fn = lua_gettop(L);
 
@@ -135,6 +130,10 @@ static int RunGame(lua_State *L, opt_Options *opts, int argc, char *argv[], int 
     }
 
     /* Load and run the game script. */
+    if (fs_ChDir(opts->base)) {
+        fprintf(stderr, "couldn't change to base directory %s\n", opts->base);
+        return 1;
+    }
     if (luaL_loadfile(L, opts->script)) {
         fprintf(stderr, "couldn't load game script: %s\n", lua_tostring(L, -1));
         lua_pushvalue(L, close_fn);

@@ -12,10 +12,6 @@ package.path = table.concat(package_path_list, ";")
 -- Detect Windows.
 rawset(_G, "WIN32", os.getenv("WINDIR") ~= nil)
 
--- Pre-load modules for wrap.lua.
-require 'gl'
-require 'sdl'
-
 -- Pre-load engine API.
 require 'game'
 require 'gfx'
