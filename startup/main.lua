@@ -1,5 +1,6 @@
 local smile = gfx.image:new('smile.png')
-local x, y = 0, 0
+local x = math.floor((gfx.w - smile.w) / 2)
+local y = math.floor((gfx.h - smile.h) / 2)
 local dx, dy, speed = 0, 0, 4
 
 local done = false
@@ -20,8 +21,14 @@ repeat
             done = true
         end
     end
-    if dx ~= 0 then x = x + dx end
-    if dy ~= 0 then y = y + dy end
+    if dx ~= 0 then
+        x = x + dx
+        x = x < 0 and 0 or (x + smile.w >= gfx.w and gfx.w - smile.w - 1 or x)
+    end
+    if dy ~= 0 then
+        y = y + dy
+        y = y < 0 and 0 or (y + smile.h >= gfx.h and gfx.h - smile.h - 1 or y)
+    end
 
     gfx.clear()
     smile:draw(x, y)

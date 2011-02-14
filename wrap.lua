@@ -6,6 +6,10 @@ require 'sdl'
 local gl = gl
 local SDL = SDL
 
+require 'gfx'
+
+local gfx = gfx
+
 
 
 local opts = ...
@@ -17,6 +21,10 @@ local function init()
     local height = opts.height
     local fullscreen = opts.fullscreen
     local channels = opts.channels
+
+    gfx.w = width
+    gfx.h = height
+    gfx.fullscreen = fullscreen
 
     if SDL.SDL_Init(SDL.SDL_INIT_EVERYTHING) == -1 then
         error("Couldn't init SDL: " .. SDL.SDL_GetError())
