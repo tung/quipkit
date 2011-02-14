@@ -4,6 +4,8 @@ require 'sdl'
 
 local SDL = SDL
 
+local string = string
+
 module(...)
 
 
@@ -13,6 +15,21 @@ function sleep(ms)
     SDL.SDL_Delay(ms)
 end
 
+
+-- Map of SDL key constants to Quipkit key strings.
+local key_strings
+do
+    -- k('blah') == SDL.SDLK_BLAH
+    local function k(name)
+        return SDL["SDLK_" .. string.upper(name)]
+    end
+    key_strings = {
+        [k('up')] = 'up',
+        [k('down')] = 'down',
+        [k('left')] = 'left',
+        [k('right')] = 'right',
+    }
+end
 
 -- SDL_Event userdatum so we're not constantly making/destroying them.
 -- Used in game.event.
@@ -36,8 +53,14 @@ function event(wait)
     -- Translate the SDL event.
     local s = m_sdl_ev
     local e = {}
-    if s.type == SDL.SDL_QUIT then
-        e.type = "exit"
+    if s.type == SDL.SDL_KEYDOWN then
+        e.type = 'keydown'
+        e.key = key_strings[s.key.keysym.sym]
+    elseif s.type == SDL.SDL_KEYUP then
+        e.type = 'keyup'
+        e.key = key_strings[s.key.keysym.sym]
+    elseif s.type == SDL.SDL_QUIT then
+        e.type = 'exit'
     end
 
     return e
