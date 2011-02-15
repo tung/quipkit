@@ -47,7 +47,7 @@ src/fs.o: src/fs_linux.c src/fs.h
 	gcc -o $@ ${CFLAGS} -c $<
 
 src/options.o: src/options.c src/options.h src/fs.h
-	gcc -o $@ ${CFLAGS} -c $<
+	gcc -o $@ ${QKENG_CFLAGS} -c $<
 
 .PHONY: clean_game
 clean_game:
