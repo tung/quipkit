@@ -1,5 +1,8 @@
 --[[ See copyright notice in doc/COPYRIGHT ]]
 
+local old_package_path = package.path
+package.path = './lib/?.lua;' .. package.path
+
 require 'gl'
 require 'sdl'
 
@@ -9,6 +12,8 @@ local SDL = SDL
 require 'gfx'
 
 local gfx = gfx
+
+package.path = old_package_path
 
 
 
