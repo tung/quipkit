@@ -1,4 +1,4 @@
-local smile = gfx.image:new('smile.png')
+local smile = gfx.image:new('smile.png'):sub(8, 8, 16, 16)
 local x = math.floor((gfx.w - smile.w) / 2)
 local y = math.floor((gfx.h - smile.h) / 2)
 local dx, dy, speed = 0, 0, 4
