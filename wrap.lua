@@ -4,9 +4,11 @@ local old_package_path = package.path
 package.path = './lib/?.lua;' .. package.path
 
 require 'gl'
+require 'glu'
 require 'sdl'
 
 local gl = gl
+local glu = glu
 local SDL = SDL
 
 require 'gfx'
@@ -44,11 +46,14 @@ local function init()
         error("SDL_SetVideoMode: " .. SDL.SDL_GetError())
     end
 
-    -- Set up OpenGL.
+    -- Set up OpenGL for 2D.
     gl.Viewport(0, 0, width, height)
     gl.MatrixMode(gl.PROJECTION)
     gl.LoadIdentity()
-    gl.Ortho(0, width, height, 0, -1, 1)
+    glu.Ortho2D(0, width, height, 0)
+    gl.MatrixMode(gl.MODELVIEW)
+    gl.LoadIdentity()
+    gl.Translate(0.375, 0.375, 0)
 
     -- Assumed clear colour used by gfx.clear.
     gl.ClearColor(0, 0, 0, 0)
