@@ -152,7 +152,6 @@ static int TextureIndex(lua_State *L) {
     return 1;
 }
 
-
 /* Constructor for sdlgl.texture userdatum. Call like sdlgl.texture:new(my_sdl_surface). */
 /* userdatum<SDL_Surface **> -> userdatum<sdlgl.texture> */
 static int TextureNew(lua_State *L) {
@@ -167,8 +166,8 @@ static int TextureNew(lua_State *L) {
 
     /* Import the pixels with the right dimensions and format. */
     SDL_Surface *proxy;
-    int full_w = surface->w;
-    int full_h = surface->h;
+    int full_w = surface->w < 64 ? 64 : surface->w;
+    int full_h = surface->h < 64 ? 64 : surface->h;
     proxy = SDL_CreateRGBSurface(SDL_SWSURFACE, full_w, full_h, 32,
                                  RMASK, GMASK, BMASK, AMASK);
     if (proxy == NULL) {
