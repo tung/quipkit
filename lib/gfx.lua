@@ -75,12 +75,9 @@ function image:new(path)
     local texture = sdlgl.texture:new(image)
     SDL.SDL_FreeSurface(image)
 
-    local tex_w = texture.texW
-    local tex_h = texture.texH
-
     local o = {
-        w = tex_w,
-        h = tex_h,
+        w = texture.w,
+        h = texture.h,
         path = path,
         _texture = texture,
         _texture_x1 = 0,
