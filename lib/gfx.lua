@@ -14,7 +14,6 @@ local table = table
 local error = error
 local getmetatable = getmetatable
 local setmetatable = setmetatable
-local tostring = tostring
 
 module(...)
 
@@ -93,20 +92,18 @@ end
 -- create a new sub-image gfx.image object from an image
 function image:sub(x, y, w, h)
     if self._texture_x1 + x < 0 then
-        error("gfx.image:sub: left edge of sub-image must be >= 0 " ..
-                "(x = " .. tostring(x) .. ")")
+        error("left edge of sub-image must be >= 0 (x = " .. x .. ")")
     end
     if self._texture_x1 + x + w > self._texture.texW then
-        error("gfx.image:sub: right edge of sub-image must be <= texture width " ..
-                "(x = " .. tostring(x) .. "; w = " .. tostring(w) .. ")")
+        error("right edge of sub-image must be <= texture width (" ..
+                self._texture.texW .. ") (x = " .. x .. "; w = " .. w .. ")")
     end
     if self._texture_y1 + y < 0 then
-        error("gfx.image:sub: top edge of sub-image must be >= 0 " ..
-                "(y = " .. tostring(y) .. ")")
+        error("top edge of sub-image must be >= 0 (y = " .. y .. ")")
     end
     if self._texture_y1 + y + h > self._texture.texH then
-        error("gfx.image:sub: bottom edge of sub-image must be <= texture height " ..
-                "(y = " .. tostring(y) .. "; h = " .. tostring(h) .. ")")
+        error("bottom edge of sub-image must be <= texture height (" ..
+                self._texture.texH .. ") (y = " .. y .. "; h = " .. h .. ")")
     end
 
     local o = {
@@ -127,10 +124,10 @@ end
 -- create a list of rows of sub-images, each with the given width and height
 function image:tiles(tilew, tileh)
     if tilew <= 0 then
-        error("tilew (" .. tostring(tilew) .. ") must be > 0")
+        error("tilew (" .. tilew .. ") must be > 0")
     end
     if tileh <= 0 then
-        error("tileh (" .. tostring(tileh) .. ") must be > 0")
+        error("tileh (" .. tileh .. ") must be > 0")
     end
 
     local rows = {}
