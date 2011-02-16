@@ -19,14 +19,40 @@ module(...)
 
 
 
+-- OpenGL 'immediate mode' mode cache variable.
+-- May be any of the modes gl.Begin takes, or nil outside immediate mode.
+-- Used by gl_mode below.
+local m_gl_mode
+
+-- Switch or end OpenGL immediate mode.
+-- Takes the same modes as gl.Begin, or nil to call gl.End.
+-- Call this before any potential OpenGL calls.
+local function gl_mode(mode)
+    if m_gl_mode then
+        if mode ~= m_gl_mode then
+            gl.End()
+        end
+    end
+    if mode and mode ~= m_gl_mode then
+        gl.Begin(mode)
+    end
+    if m_gl_mode ~= mode then
+        m_gl_mode = mode
+    end
+end
+
+
+
 -- show everything drawn to the screen
 function flip()
+    gl_mode()
     SDL.SDL_GL_SwapBuffers()
 end
 
 
 -- clear the screen
 function clear()
+    gl_mode()
     -- Assume the clear colour is set correctly.
     gl.Clear(gl.COLOR_BUFFER_BIT)
 end
@@ -40,6 +66,8 @@ image.__index = image
 
 -- load an image from the given path
 function image:new(path)
+    gl_mode()
+
     local image = SDL.IMG_Load(path)
     if not image then
         error("IMG_Load: " .. SDL.IMG_GetError())
@@ -65,27 +93,38 @@ function image:new(path)
 end
 
 
+-- Cached OpenGL texture ID.
+-- Can't change textures in immediate mode, so textures are
+-- only switched when absolutely needed.
+-- Used by gfx.image:draw.
+local m_last_tex_id
+
 -- draw an image on the screen
 function image:draw(x, y)
+    local tex_id = self._texture.texId
     local tex_x1 = self._texture_x1
     local tex_x2 = self._texture_x2
     local tex_y1 = self._texture_y1
     local tex_y2 = self._texture_y2
 
-    gl.BindTexture(gl.TEXTURE_2D, self._texture.texId)
-    gl.Begin(gl.QUADS)
-        gl.TexCoord(tex_x1, tex_y1)
-        gl.Vertex(x, y)
+    if tex_id ~= m_last_tex_id then
+        gl_mode()
+        gl.BindTexture(gl.TEXTURE_2D, self._texture.texId)
+        m_last_tex_id = tex_id
+    end
 
-        gl.TexCoord(tex_x2, tex_y1)
-        gl.Vertex(x + self.w, y)
+    gl_mode(gl.QUADS)
+    gl.TexCoord(tex_x1, tex_y1)
+    gl.Vertex(x, y)
 
-        gl.TexCoord(tex_x2, tex_y2)
-        gl.Vertex(x + self.w, y + self.h)
+    gl.TexCoord(tex_x2, tex_y1)
+    gl.Vertex(x + self.w, y)
 
-        gl.TexCoord(tex_x1, tex_y2)
-        gl.Vertex(x, y + self.h)
-    gl.End()
+    gl.TexCoord(tex_x2, tex_y2)
+    gl.Vertex(x + self.w, y + self.h)
+
+    gl.TexCoord(tex_x1, tex_y2)
+    gl.Vertex(x, y + self.h)
 end
 
 
