@@ -1,4 +1,10 @@
-local smile = gfx.image:new('smile.png'):sub(8, 8, 16, 16)
+local smile = gfx.image:new('smile.png')
+local smile_tiles = smile:tiles(16, 16)
+local smile_tl = smile_tiles[1][1]
+local smile_tr = smile_tiles[1][2]
+local smile_bl = smile_tiles[2][1]
+local smile_br = smile_tiles[2][2]
+
 local x = math.floor((gfx.w - smile.w) / 2)
 local y = math.floor((gfx.h - smile.h) / 2)
 local dx, dy, speed = 0, 0, 4
@@ -31,7 +37,10 @@ repeat
     end
 
     gfx.clear()
-    smile:draw(x, y)
+    smile_br:draw(x, y)
+    smile_bl:draw(x + smile_br.w, y)
+    smile_tr:draw(x, y + smile_br.h)
+    smile_tl:draw(x + smile_br.w, y + smile_br.h)
     gfx.flip()
     game.sleep(10)
 until done

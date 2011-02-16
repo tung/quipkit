@@ -8,6 +8,9 @@ local gl = gl
 local SDL = SDL
 local sdlgl = sdlgl
 
+local math = math
+local table = table
+
 local error = error
 local getmetatable = getmetatable
 local setmetatable = setmetatable
@@ -118,6 +121,27 @@ function image:sub(x, y, w, h)
     }
     setmetatable(o, getmetatable(self))
     return o
+end
+
+
+-- create a list of rows of sub-images, each with the given width and height
+function image:tiles(tilew, tileh)
+    if tilew <= 0 then
+        error("tilew (" .. tostring(tilew) .. ") must be > 0")
+    end
+    if tileh <= 0 then
+        error("tileh (" .. tostring(tileh) .. ") must be > 0")
+    end
+
+    local rows = {}
+    for r = 1, math.floor(self.h / tileh) do
+        local row = {}
+        for c = 1, math.floor(self.w / tilew) do
+            table.insert(row, self:sub((c - 1) * tilew, (r - 1) * tileh, tilew, tileh))
+        end
+        table.insert(rows, row)
+    end
+    return rows
 end
 
 
