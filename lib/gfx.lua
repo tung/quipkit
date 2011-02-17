@@ -82,8 +82,8 @@ function image:new(path)
         _texture = texture,
         _texture_x1 = 0,
         _texture_y1 = 0,
-        _texture_x2 = 1,
-        _texture_y2 = 1
+        _texture_x2 = texture.w / texture.texW,
+        _texture_y2 = texture.h / texture.texH
     }
     setmetatable(o, self)
     return o
