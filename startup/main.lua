@@ -58,9 +58,11 @@ repeat
     end
 
     gfx.clear()
-    for map_y = 1, map_h do
-        for map_x = 1, map_w do
-            tiles[map[map_y][map_x]]:draw((map_x - 1) * 16, (map_y - 1) * 16)
+    for map_y = 1, math.ceil(gfx.h / 16) do
+        for map_x = 1, math.ceil(gfx.w / 16) do
+            local tile_x = (map_x - 1) % map_w + 1
+            local tile_y = (map_y - 1) % map_h + 1
+            tiles[map[tile_y][tile_x]]:draw((map_x - 1) * 16, (map_y - 1) * 16)
         end
     end
     smile_br:draw(x, y)
