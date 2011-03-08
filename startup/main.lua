@@ -1,3 +1,40 @@
+local function BufferTileMap()
+    local map = {
+        {3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3},
+        {3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3},
+        {3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3},
+        {3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3},
+        {3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3},
+        {3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3},
+        {3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3},
+        {3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3},
+        {3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3},
+        {3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3},
+        {3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3},
+        {3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3},
+        {3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3},
+        {3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3},
+        {3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3},
+    }
+    local map_w = #(map[1])
+    local map_h = #map
+
+    local ibuf_map = gfx.ibuf:new(gfx.image:new('tiles.png'))
+    local TILE_SIZE = 16
+    ibuf_map:settile(TILE_SIZE)
+    for map_y = 1, math.ceil(gfx.h / TILE_SIZE) do
+        for map_x = 1, math.ceil(gfx.w / TILE_SIZE) do
+            local tile_x = (map_x - 1) % map_w + 1
+            local tile_y = (map_y - 1) % map_h + 1
+            ibuf_map:addtile(map[tile_y][tile_x], 1, (map_x - 1) * TILE_SIZE, (map_y - 1) * TILE_SIZE)
+        end
+    end
+    ibuf_map:pack()
+
+    return ibuf_map
+end
+
+
 local smile = gfx.image:new('smile.png')
 local smile_tiles = smile:tiles(16, 16)
 local smile_tl = smile_tiles[1][1]
@@ -9,26 +46,8 @@ local x = math.floor((gfx.w - smile.w) / 2)
 local y = math.floor((gfx.h - smile.h) / 2)
 local dx, dy, speed = 0, 0, 4
 
-local tiles = gfx.image:new('tiles.png'):tiles(16, 16)[1]
-local map = {
-    {3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3},
-    {3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3},
-    {3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3},
-    {3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3},
-    {3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3},
-    {3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3},
-    {3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3},
-    {3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3},
-    {3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3},
-    {3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3},
-    {3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3},
-    {3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3},
-    {3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3},
-    {3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3},
-    {3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3},
-}
-local map_w = #(map[1])
-local map_h = #map
+local ibuf_map = BufferTileMap()
+
 
 local done = false
 repeat
@@ -57,18 +76,10 @@ repeat
         y = y < 0 and 0 or (y + smile.h >= gfx.h and gfx.h - smile.h - 1 or y)
     end
 
-    gfx.clear()
-    for map_y = 1, math.ceil(gfx.h / 16) do
-        for map_x = 1, math.ceil(gfx.w / 16) do
-            local tile_x = (map_x - 1) % map_w + 1
-            local tile_y = (map_y - 1) % map_h + 1
-            tiles[map[tile_y][tile_x]]:draw((map_x - 1) * 16, (map_y - 1) * 16)
-        end
-    end
+    ibuf_map:draw()
     smile_br:draw(x, y)
     smile_bl:draw(x + smile_br.w, y)
     smile_tr:draw(x, y + smile_br.h)
     smile_tl:draw(x + smile_br.w, y + smile_br.h)
     gfx.flip()
-    game.sleep(10)
 until done
