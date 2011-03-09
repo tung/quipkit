@@ -55,6 +55,14 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="sdlgl.h" />
+		<Unit filename="texture.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="texture.h" />
+		<Unit filename="varray.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="varray.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />
