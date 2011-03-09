@@ -154,16 +154,22 @@ clean_luasdl:
 SDLGL_CFLAGS:=${QKENG_CFLAGS} ${SDL_CFLAGS} ${GL_CFLAGS} ${GLU_CFLAGS}
 SDLGL_LIBS:=${QKENG_LIBS} ${SDL_LIBS} ${GL_LIBS} ${GLU_LIBS}
 
-${SDLGL_DIR}libsdlgl.so: ${SDLGL_DIR}sdlgl.o
+${SDLGL_DIR}libsdlgl.so: ${SDLGL_DIR}sdlgl.o ${SDLGL_DIR}texture.o ${SDLGL_DIR}varray.o
 	gcc -shared -Wl,-soname,$(notdir $@) -o $@ ${SDLGL_LIBS} $^
 
-${SDLGL_DIR}sdlgl.o: ${SDLGL_DIR}sdlgl.c
+${SDLGL_DIR}sdlgl.o: ${SDLGL_DIR}sdlgl.c ${SDLGL_DIR}texture.h ${SDLGL_DIR}varray.h
+	gcc -fPIC -o $@ ${SDLGL_CFLAGS} -c $<
+
+${SDLGL_DIR}texture.o: ${SDLGL_DIR}texture.c ${SDLGL_DIR}texture.h
+	gcc -fPIC -o $@ ${SDLGL_CFLAGS} -c $<
+
+${SDLGL_DIR}varray.o: ${SDLGL_DIR}varray.c ${SDLGL_DIR}varray.h ${SDLGL_DIR}texture.h
 	gcc -fPIC -o $@ ${SDLGL_CFLAGS} -c $<
 
 .PHONY: clean_sdlgl
 clean_sdlgl:
 	-rm -f ${SDLGL_DIR}libsdlgl.so
-	-rm -f ${SDLGL_DIR}sdlgl.o
+	-rm -f ${SDLGL_DIR}*.o
 
 
 ### tolua++ utility ###
