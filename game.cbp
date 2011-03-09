@@ -47,6 +47,18 @@
 		<Unit filename="README.textile">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
+		<Unit filename="api.lua">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="conf.lua">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="lib\game.lua">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="lib\gfx.lua">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="src\fs.h" />
 		<Unit filename="src\fs_windows.c">
 			<Option compilerVar="CC" />
@@ -62,6 +74,9 @@
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Unit filename="test\smile.png">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="wrap.lua">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Extensions>
