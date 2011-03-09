@@ -3,6 +3,7 @@
 require 'sdl'
 
 local SDL = SDL
+local WIN32 = WIN32
 
 module(...)
 
@@ -162,6 +163,10 @@ end
 -- Used in game.event.
 local m_sdl_ev = SDL.SDL_Event_local()
 
+-- Detect left or right Alt to make Alt-F4 work on Windows.
+local m_lalt_down = false
+local m_ralt_down = false
+
 -- poll (or wait for) and return the next queued input event
 function event(wait)
     if wait == nil then wait = false end
@@ -181,9 +186,27 @@ function event(wait)
     local s = m_sdl_ev
     local e = {}
     if s.type == SDL.SDL_KEYDOWN then
-        e.type = 'keydown'
-        e.key = key_strings[s.key.keysym.sym]
+        local keysym = s.key.keysym.sym
+        if WIN32 and (m_lalt_down or m_ralt_down) and keysym == SDL.SDLK_F4 then
+            -- Note: SDL on Windows doesn't seem to detect
+            -- events for most keys when either alt is held down.
+            e.type = 'exit'
+        else
+            if keysym == SDL.SDLK_LALT then
+                m_lalt_down = true
+            elseif keysym == SDL.SDLK_RALT then
+                m_ralt_down = true
+            end
+            e.type = 'keydown'
+            e.key = key_strings[keysym]
+        end
     elseif s.type == SDL.SDL_KEYUP then
+        local keysym = s.key.keysym.sym
+        if keysym == SDL.SDLK_LALT then
+            m_lalt_down = false
+        elseif keysym == SDL.SDLK_RALT then
+            m_ralt_down = false
+        end
         e.type = 'keyup'
         e.key = key_strings[s.key.keysym.sym]
     elseif s.type == SDL.SDL_QUIT then
