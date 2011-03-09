@@ -47,12 +47,6 @@
 		<Unit filename="README.textile">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
-		<Unit filename="init.lua">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
-		<Unit filename="main.lua">
-			<Option target="&lt;{~None~}&gt;" />
-		</Unit>
 		<Unit filename="src\fs.h" />
 		<Unit filename="src\fs_windows.c">
 			<Option compilerVar="CC" />
