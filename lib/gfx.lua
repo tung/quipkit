@@ -62,9 +62,17 @@ function image:new(path)
 end
 
 
--- draw an image on the screen
-function image:draw(x, y)
-    local tex_id = self._texture.texId
+-- draw an image on the screen, optionally stretched (clockwise)
+function image:draw(x, y, x2, y2, x3, y3, x4, y4)
+    if not x2 then
+        x2 = x + self.w
+        y2 = y
+        x3 = x + self.w
+        y3 = y + self.h
+        x4 = x
+        y4 = y + self.h
+    end
+
     local tex_x1 = self._texture_x1
     local tex_x2 = self._texture_x2
     local tex_y1 = self._texture_y1
@@ -77,13 +85,13 @@ function image:draw(x, y)
         gl.Vertex(x, y)
 
         gl.TexCoord(tex_x2, tex_y1)
-        gl.Vertex(x + self.w, y)
+        gl.Vertex(x2, y2)
 
         gl.TexCoord(tex_x2, tex_y2)
-        gl.Vertex(x + self.w, y + self.h)
+        gl.Vertex(x3, y3)
 
         gl.TexCoord(tex_x1, tex_y2)
-        gl.Vertex(x, y + self.h)
+        gl.Vertex(x4, y4)
     gl.End()
 end
 
