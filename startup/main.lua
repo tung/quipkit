@@ -35,15 +35,10 @@ local function BufferTileMap()
 end
 
 
-local smile = gfx.image:new('smile.png')
-local smile_tiles = smile:tiles(16, 16)
-local smile_tl = smile_tiles[1][1]
-local smile_tr = smile_tiles[1][2]
-local smile_bl = smile_tiles[2][1]
-local smile_br = smile_tiles[2][2]
+local player = gfx.image:new('glob.png'):tiles(32, 32)[1][1]
 
-local x = math.floor((gfx.w - smile.w) / 2)
-local y = math.floor((gfx.h - smile.h) / 2)
+local x = math.floor((gfx.w - player.w) / 2)
+local y = math.floor((gfx.h - player.h) / 2)
 local dx, dy, speed = 0, 0, 4
 
 local ibuf_map = BufferTileMap()
@@ -69,17 +64,14 @@ repeat
     end
     if dx ~= 0 then
         x = x + dx
-        x = x < 0 and 0 or (x + smile.w >= gfx.w and gfx.w - smile.w - 1 or x)
+        x = x < 0 and 0 or (x + player.w >= gfx.w and gfx.w - player.w - 1 or x)
     end
     if dy ~= 0 then
         y = y + dy
-        y = y < 0 and 0 or (y + smile.h >= gfx.h and gfx.h - smile.h - 1 or y)
+        y = y < 0 and 0 or (y + player.h >= gfx.h and gfx.h - player.h - 1 or y)
     end
 
     ibuf_map:draw()
-    smile_br:draw(x, y)
-    smile_bl:draw(x + smile_br.w, y)
-    smile_tr:draw(x, y + smile_br.h)
-    smile_tl:draw(x + smile_br.w, y + smile_br.h)
+    player:draw(x, y)
     gfx.flip()
 until done
