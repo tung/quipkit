@@ -213,15 +213,15 @@ static int TextureIndex(lua_State *L) {
         lua_pushcfunction(L, TextureBind);
     } else if (strncmp(key, "unbind", 7) == 0) {
         lua_pushcfunction(L, TextureUnbind);
-    } else if (strncmp(key, "w", 1) == 0) {
+    } else if (strncmp(key, "w", 2) == 0) {
         lua_pushinteger(L, tex->w);
-    } else if (strncmp(key, "h", 1) == 0) {
+    } else if (strncmp(key, "h", 2) == 0) {
         lua_pushinteger(L, tex->h);
-    } else if (strncmp(key, "texId", 5) == 0) {
+    } else if (strncmp(key, "texId", 6) == 0) {
         lua_pushinteger(L, tex->texId);
-    } else if (strncmp(key, "texW", 4) == 0) {
+    } else if (strncmp(key, "texW", 5) == 0) {
         lua_pushinteger(L, tex->texW);
-    } else if (strncmp(key, "texH", 4) == 0) {
+    } else if (strncmp(key, "texH", 5) == 0) {
         lua_pushinteger(L, tex->texH);
     } else {
         lua_pushnil(L);
