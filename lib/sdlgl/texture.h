@@ -9,6 +9,7 @@ typedef struct {
     int w, h;
     GLuint texId;
     int texW, texH;
+    int texHasAlpha;
 } sdlgl_Texture;
 
 

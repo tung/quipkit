@@ -28,12 +28,15 @@
 
 /* Draws all of src onto dest, alpha and all. */
 /* Returns 0 on success, -1 on failure. */
-static int RawBlit(SDL_Surface *src, SDL_Surface *dest) {
+static int RawBlit(SDL_Surface *src, SDL_Surface *dest, int *has_alpha) {
     if (SDL_MUSTLOCK(src) && SDL_LockSurface(src) == -1) return -1;
     if (SDL_MUSTLOCK(dest) && SDL_LockSurface(dest) == -1) {
         if (SDL_MUSTLOCK(src)) SDL_UnlockSurface(src);
         return -1;
     }
+
+    /* Detect with a local variable so we're not deref'ing has_alpha every pixel. */
+    int has_alpha_local = 0;
 
     int min_w = (src->w < dest->w) ? src->w : dest->w;
     int min_h = (src->h < dest->h) ? src->h : dest->h;
@@ -64,9 +67,11 @@ static int RawBlit(SDL_Surface *src, SDL_Surface *dest) {
                 default: src_pixel = 0;
             }
             if (use_key && src_pixel == key) {
+                if (!has_alpha_local) has_alpha_local = 1;
                 continue;
             }
             SDL_GetRGBA(src_pixel, src->format, &r, &g, &b, &a);
+            if (!has_alpha_local && a < 255) has_alpha_local = 1;
 
             /* Put pixel to dest. */
             Uint32 dest_pixel = SDL_MapRGBA(dest->format, r, g, b, a);
@@ -92,8 +97,19 @@ static int RawBlit(SDL_Surface *src, SDL_Surface *dest) {
         }
     }
 
+    *has_alpha = has_alpha_local;
+
     if (SDL_MUSTLOCK(dest)) SDL_UnlockSurface(dest);
     if (SDL_MUSTLOCK(src)) SDL_UnlockSurface(src);
+    return 0;
+}
+
+
+/* Bind the texture, enabling blending if needed. */
+static int TextureBind(lua_State *L) {
+    sdlgl_Texture *tex = luaL_checkudata(L, 1, "sdlgl.texture");
+    glBindTexture(GL_TEXTURE_2D, tex->texId);
+    if (tex->texHasAlpha) glEnable(GL_BLEND);
     return 0;
 }
 
@@ -107,26 +123,6 @@ static int TextureGc(lua_State *L) {
     return 0;
 }
 
-
-/* __index metamethod of sdlgl.texture userdata. */
-static int TextureIndex(lua_State *L) {
-    sdlgl_Texture *tex = luaL_checkudata(L, 1, "sdlgl.texture");
-    const char *key = luaL_checkstring(L, 2);
-    if (strncmp(key, "w", 1) == 0) {
-        lua_pushinteger(L, tex->w);
-    } else if (strncmp(key, "h", 1) == 0) {
-        lua_pushinteger(L, tex->h);
-    } else if (strncmp(key, "texId", 5) == 0) {
-        lua_pushinteger(L, tex->texId);
-    } else if (strncmp(key, "texW", 4) == 0) {
-        lua_pushinteger(L, tex->texW);
-    } else if (strncmp(key, "texH", 4) == 0) {
-        lua_pushinteger(L, tex->texH);
-    } else {
-        lua_pushnil(L);
-    }
-    return 1;
-}
 
 /* Constructor for sdlgl.texture userdatum. Call like sdlgl.texture:new(my_sdl_surface). */
 /* userdatum<SDL_Surface **> -> userdatum<sdlgl.texture> */
@@ -149,7 +145,9 @@ static int TextureNew(lua_State *L) {
     if (proxy == NULL) {
         return luaL_error(L, "SDL_CreateRGBSurface failed: %s", SDL_GetError());
     }
-    if (RawBlit(surface, proxy) == -1) {
+
+    int has_alpha;
+    if (RawBlit(surface, proxy, &has_alpha) == -1) {
         SDL_FreeSurface(proxy);
         return luaL_error(L, "cannot convert SDL_Surface to needed format");
     }
@@ -190,9 +188,44 @@ static int TextureNew(lua_State *L) {
     tex->texId = textures[0];
     tex->texW = full_w;
     tex->texH = full_h;
+    tex->texHasAlpha = has_alpha;
     luaL_getmetatable(L, "sdlgl.texture");
     lua_setmetatable(L, -2);
 
+    return 1;
+}
+
+
+/* Unbind the texture, disabling blending if needed. */
+static int TextureUnbind(lua_State *L) {
+    sdlgl_Texture *tex = luaL_checkudata(L, 1, "sdlgl.texture");
+    if (tex->texHasAlpha) glDisable(GL_BLEND);
+    return 0;
+}
+
+
+/* __index metamethod of sdlgl.texture userdata. */
+/* Out of alphabetical order because of method declaration dependencies above. */
+static int TextureIndex(lua_State *L) {
+    sdlgl_Texture *tex = luaL_checkudata(L, 1, "sdlgl.texture");
+    const char *key = luaL_checkstring(L, 2);
+    if (strncmp(key, "bind", 5) == 0) {
+        lua_pushcfunction(L, TextureBind);
+    } else if (strncmp(key, "unbind", 7) == 0) {
+        lua_pushcfunction(L, TextureUnbind);
+    } else if (strncmp(key, "w", 1) == 0) {
+        lua_pushinteger(L, tex->w);
+    } else if (strncmp(key, "h", 1) == 0) {
+        lua_pushinteger(L, tex->h);
+    } else if (strncmp(key, "texId", 5) == 0) {
+        lua_pushinteger(L, tex->texId);
+    } else if (strncmp(key, "texW", 4) == 0) {
+        lua_pushinteger(L, tex->texW);
+    } else if (strncmp(key, "texH", 4) == 0) {
+        lua_pushinteger(L, tex->texH);
+    } else {
+        lua_pushnil(L);
+    }
     return 1;
 }
 

@@ -78,21 +78,21 @@ function image:draw(x, y, x2, y2, x3, y3, x4, y4)
     local tex_y1 = self._texture_y1
     local tex_y2 = self._texture_y2
 
-    gl.BindTexture(gl.TEXTURE_2D, self._texture.texId)
+    self._texture:bind()
+        gl.Begin(gl.QUADS)
+            gl.TexCoord(tex_x1, tex_y1)
+            gl.Vertex(x, y)
 
-    gl.Begin(gl.QUADS)
-        gl.TexCoord(tex_x1, tex_y1)
-        gl.Vertex(x, y)
+            gl.TexCoord(tex_x2, tex_y1)
+            gl.Vertex(x2, y2)
 
-        gl.TexCoord(tex_x2, tex_y1)
-        gl.Vertex(x2, y2)
+            gl.TexCoord(tex_x2, tex_y2)
+            gl.Vertex(x3, y3)
 
-        gl.TexCoord(tex_x2, tex_y2)
-        gl.Vertex(x3, y3)
-
-        gl.TexCoord(tex_x1, tex_y2)
-        gl.Vertex(x4, y4)
-    gl.End()
+            gl.TexCoord(tex_x1, tex_y2)
+            gl.Vertex(x4, y4)
+        gl.End()
+    self._texture:unbind()
 end
 
 

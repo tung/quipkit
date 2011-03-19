@@ -63,6 +63,9 @@ local function init()
 
     -- Accept byte-aligned textures.
     gl.PixelStore(gl.UNPACK_ALIGNMENT, 1)
+
+    -- Calculate blending with source alpha.
+    gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 end
 
 

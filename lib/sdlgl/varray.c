@@ -22,8 +22,12 @@ static int VarrayDraw(lua_State *L) {
     }
 
     lua_rawgeti(L, LUA_REGISTRYINDEX, va->texture_ref);
-    sdlgl_Texture *tex = luaL_checkudata(L, -1, "sdlgl.texture");
-    glBindTexture(GL_TEXTURE_2D, tex->texId);
+    luaL_checkudata(L, -1, "sdlgl.texture");
+
+    /* Call the texture's bind method. */
+    lua_getfield(L, -1, "bind");
+    lua_pushvalue(L, -2);
+    lua_call(L, 1, 0);
 
     /* For now, keep arrays off unless we need them. */
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -36,6 +40,11 @@ static int VarrayDraw(lua_State *L) {
 
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisableClientState(GL_VERTEX_ARRAY);
+
+    /* Call the texture's unbind method. */
+    lua_getfield(L, -1, "unbind");
+    lua_pushvalue(L, -2);
+    lua_call(L, 1, 0);
 
     return 0;
 }
