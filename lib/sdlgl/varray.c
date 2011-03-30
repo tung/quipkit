@@ -149,7 +149,7 @@ static const struct luaL_reg sdlgl_VarrayMethods[] = {
 };
 
 void luaopen_sdlgl_varray(lua_State *L, int module_index) {
-	if (module_index < 0) { module_index = lua_gettop(L) + module_index + 1; }
+    if (module_index < 0) { module_index = lua_gettop(L) + module_index + 1; }
     lua_pushliteral(L, "varray");
     luaL_newmetatable(L, "sdlgl.varray");
     luaL_register(L, NULL, sdlgl_VarrayMethods);
