@@ -32,6 +32,12 @@ function clear()
 end
 
 
+-- scale drawing coordinates along the x- and y-axes
+function scale(sx, sy)
+    gl.Scale(sx, sy or sx, 1)
+end
+
+
 
 --[[ gfx.image object ]]
 
