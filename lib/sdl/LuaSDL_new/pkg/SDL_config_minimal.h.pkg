@@ -80,12 +80,10 @@ typedef uint64_t	Uint64;
 #define SDL_VIDEO_DRIVER_AALIB 1
 #define SDL_VIDEO_DRIVER_CACA 1
 #define SDL_VIDEO_DRIVER_DGA 1
-#define SDL_VIDEO_DRIVER_DIRECTFB 1
 #define SDL_VIDEO_DRIVER_DUMMY 1
 #define SDL_VIDEO_DRIVER_FBCON 1
 #define SDL_VIDEO_DRIVER_X11 1
 #define SDL_VIDEO_DRIVER_X11_DGAMOUSE 1
-#define SDL_VIDEO_DRIVER_X11_DPMS 1
 // tolua++ doesn't convert these properly.
 //#define SDL_VIDEO_DRIVER_X11_DYNAMIC "libX11.so.6"
 //#define SDL_VIDEO_DRIVER_X11_DYNAMIC_XEXT "libXext.so.6"
